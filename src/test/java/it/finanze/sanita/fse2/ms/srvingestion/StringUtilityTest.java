@@ -29,17 +29,4 @@ class StringUtilityTest extends AbstractTest {
 		
 	} 
 	
-	@Test
-	void generateTransactionUIDTest() {
-		String uuidIpMode = StringUtility.generateTransactionUID(UIDModeEnum.IP_UUID); 
-		String uuidHostnameMode = StringUtility.generateTransactionUID(UIDModeEnum.HOSTNAME_UUID); 
-		String uuidIdMode = StringUtility.generateTransactionUID(UIDModeEnum.UUID_UUID);  
-
-		assertEquals(String.class, uuidIpMode.getClass()); 
-		assertEquals(String.class, uuidHostnameMode.getClass()); 
-		assertEquals(String.class, uuidIdMode.getClass()); 
-
-		assertEquals(64, uuidIdMode.length()); 
-
-	}
 }

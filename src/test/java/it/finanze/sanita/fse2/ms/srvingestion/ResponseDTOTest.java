@@ -101,17 +101,14 @@ class ResponseDTOTest extends AbstractTest {
 		
 		documentResponseDto.setSpanID(SPAN_ID_TEST); 
 		documentResponseDto.setTraceID(TRACE_ID_TEST); 
-		documentResponseDto.setTransactionId(IN_TX_ID_TEST); 
 		
 		
 		assertEquals(DocumentResponseDTO.class, documentResponseDto.getClass()); 
 		assertEquals(String.class, documentResponseDto.getSpanID().getClass()); 
 		assertEquals(String.class, documentResponseDto.getTraceID().getClass()); 
-		assertEquals(String.class, documentResponseDto.getTransactionId().getClass()); 
 		
 		assertEquals(SPAN_ID_TEST, documentResponseDto.getSpanID()); 
 		assertEquals(TRACE_ID_TEST, documentResponseDto.getTraceID()); 
-		assertEquals(IN_TX_ID_TEST, documentResponseDto.getTransactionId()); 
 
 	}
 	
@@ -119,17 +116,15 @@ class ResponseDTOTest extends AbstractTest {
 	void documentResponseDtoTestWithArgsConstructor() {
 		LogTraceInfoDTO logTraceInfoDto = new LogTraceInfoDTO(SPAN_ID_TEST, TRACE_ID_TEST); 
 		
-		DocumentResponseDTO documentResponseDto = new DocumentResponseDTO(logTraceInfoDto, IN_TX_ID_TEST); 
+		DocumentResponseDTO documentResponseDto = new DocumentResponseDTO(logTraceInfoDto); 
 		
 		
 		assertEquals(DocumentResponseDTO.class, documentResponseDto.getClass()); 
 		assertEquals(String.class, documentResponseDto.getSpanID().getClass()); 
 		assertEquals(String.class, documentResponseDto.getTraceID().getClass()); 
-		assertEquals(String.class, documentResponseDto.getTransactionId().getClass()); 
 		
 		assertEquals(SPAN_ID_TEST, documentResponseDto.getSpanID()); 
 		assertEquals(TRACE_ID_TEST, documentResponseDto.getTraceID()); 
-		assertEquals(IN_TX_ID_TEST, documentResponseDto.getTransactionId()); 
 
 	}
 

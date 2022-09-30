@@ -55,7 +55,7 @@ public interface IDocumentCTL extends Serializable {
     @Operation(summary = "Add a document to the staging MongoDB", description = "Servizio che consente di aggiungere un documento alla base dati di staging.")
     @ApiResponse(content = @Content(mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(implementation = DocumentResponseDTO.class)))
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Creazione Documento avvenuta con successo", content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = DocumentResponseDTO.class))),
+            @ApiResponse(responseCode = "201", description = "Creazione Documento avvenuta con successo", content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = DocumentResponseDTO.class))),
             @ApiResponse(responseCode = "500", description = "Internal Server Error", content = @Content(mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(implementation = ErrorResponseDTO.class))) })
     ResponseEntity<DocumentResponseDTO> addDocument(HttpServletRequest request, @RequestBody DocumentReferenceDTO document) throws IOException, OperationException, KafkaException, EmptyDocumentException, DocumentAlreadyExistsException;
 

@@ -76,8 +76,6 @@ public class DocumentCTL extends AbstractCTL implements IDocumentCTL {
 		log.info(Constants.Logs.CALLED_API_POST_DOCUMENT); 
 		kafkaLogger.info(Constants.Logs.CALLED_API_POST_DOCUMENT, OperationLogEnum.PUB_CDA2, ResultLogEnum.OK, new Date());
 
-		final String transactionId = StringUtility.generateTransactionUID(UIDModeEnum.UUID_UUID); 
-
 		document.setInsertionDate(new Date()); 
 		DocumentReferenceETY ety = documentService.insert(document); 
 		String mongoId = ety.getId();
@@ -85,7 +83,7 @@ public class DocumentCTL extends AbstractCTL implements IDocumentCTL {
 
 		kafkaService.notifyDataProcessor(topic, mongoId, ProcessorOperationEnum.PUBLISH);
 		
-		return new ResponseEntity<>(new DocumentResponseDTO(getLogTraceInfo(), transactionId), HttpStatus.OK); 
+		return new ResponseEntity<>(new DocumentResponseDTO(getLogTraceInfo()), HttpStatus.CREATED); 
 
 	}
 
@@ -142,8 +140,7 @@ public class DocumentCTL extends AbstractCTL implements IDocumentCTL {
 				throw new UnsupportedOperationException("Unsupported operation");
 		}
 
-		final String transactionId = StringUtility.generateTransactionUID(UIDModeEnum.UUID_UUID); 
-		return new ResponseEntity<>(new DocumentResponseDTO(getLogTraceInfo(), transactionId), HttpStatus.OK);
+		return new ResponseEntity<>(new DocumentResponseDTO(getLogTraceInfo()), HttpStatus.OK);
 	}
 
 
@@ -152,8 +149,6 @@ public class DocumentCTL extends AbstractCTL implements IDocumentCTL {
 		log.info(Constants.Logs.CALLED_API_DELETE_DOCUMENT); 
 		kafkaLogger.info(Constants.Logs.CALLED_API_DELETE_DOCUMENT, OperationLogEnum.DELETE_CDA2, ResultLogEnum.OK, new Date()); 
 		
-		final String transactionId = StringUtility.generateTransactionUID(UIDModeEnum.UUID_UUID); 
-
 		DocumentReferenceDTO documentReferenceDTO = new DocumentReferenceDTO();
 		documentReferenceDTO.setIdentifier(identifier);
 		documentReferenceDTO.setOperation(ProcessorOperationEnum.DELETE);
@@ -176,7 +171,7 @@ public class DocumentCTL extends AbstractCTL implements IDocumentCTL {
 			kafkaService.notifyDataProcessor(topic, mongoId, ProcessorOperationEnum.DELETE);
 		}
 
-		return new ResponseEntity<>(new DocumentResponseDTO(getLogTraceInfo(), transactionId), HttpStatus.OK); 
+		return new ResponseEntity<>(new DocumentResponseDTO(getLogTraceInfo()), HttpStatus.OK); 
 
 	}
 

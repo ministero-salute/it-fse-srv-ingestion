@@ -7,7 +7,10 @@ import org.springframework.stereotype.Component;
 
 import lombok.Data;
 
-
+/** 
+ * The Srv Query Configuration Class 
+ *
+ */
 @Data
 @Component
 public class SrvQueryCFG implements Serializable {
@@ -19,7 +22,9 @@ public class SrvQueryCFG implements Serializable {
 	private static final long serialVersionUID = -6217442923704906883L; 
 		
 
-	/** EDS Srv Query Config **/
+	/**
+	 *  EDS Srv Query Config
+	 */
 	@Value("${eds-srvquery.url.host}")
 	private String edsSrvQueryHost;
 	

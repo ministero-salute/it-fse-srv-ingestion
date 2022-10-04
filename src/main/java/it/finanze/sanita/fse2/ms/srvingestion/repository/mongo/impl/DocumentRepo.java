@@ -19,7 +19,10 @@ import it.finanze.sanita.fse2.ms.srvingestion.utility.ProfileUtility;
 
 import org.springframework.data.mongodb.core.query.Query;
 
-
+/** 
+ * The implementation of the Document Repo 
+ *
+ */
 @Repository
 public class DocumentRepo implements IDocumentRepo, Serializable {
 

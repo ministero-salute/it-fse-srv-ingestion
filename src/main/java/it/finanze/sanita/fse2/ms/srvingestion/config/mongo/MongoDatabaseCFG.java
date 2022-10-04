@@ -36,6 +36,9 @@ public class MongoDatabaseCFG {
     @Autowired
     private ApplicationContext appContext;
 
+	/** 
+	 * The Mongo URI 
+	 */
 	@Value("${data.mongodb.uri}")
 	private String mongoUri; 
  

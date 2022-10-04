@@ -19,6 +19,10 @@ import io.swagger.v3.oas.models.media.MediaType;
 import io.swagger.v3.oas.models.media.Content;
 
 
+/** 
+ * 
+ * Configuration Class for Swagger. 
+ */
 @Configuration
 @SuppressWarnings("all")
 public class OpenApiCFG {
@@ -26,8 +30,10 @@ public class OpenApiCFG {
 	@Autowired
 	private CustomSwaggerCFG customOpenapi;
 
+	/** 
+	 * Empty Constructor 
+	 */
 	public OpenApiCFG() {
-		// Empty constructor.
 	}
 	
 	@Bean

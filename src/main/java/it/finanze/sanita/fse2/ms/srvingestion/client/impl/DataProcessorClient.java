@@ -17,6 +17,10 @@ import it.finanze.sanita.fse2.ms.srvingestion.exceptions.BusinessException;
 import it.finanze.sanita.fse2.ms.srvingestion.exceptions.ConnectionRefusedException;
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * The Data Processor Client 
+ *
+ */
 @Slf4j
 @Component
 public class DataProcessorClient implements IDataProcessorClient {
@@ -27,9 +31,15 @@ public class DataProcessorClient implements IDataProcessorClient {
 	private static final long serialVersionUID = 3728786139875056695L;
 
 	
+	/**
+	 * Rest Template
+	 */
     @Autowired
     private transient RestTemplate restTemplate;
 
+    /**
+     * The Data Processor Configuration 
+     */
     @Autowired
     private DataProcessorCFG dataProcessorCFG; 
     

@@ -14,6 +14,9 @@ public class ConnectionRefusedException extends RuntimeException {
 	 */
 	private static final long serialVersionUID = 1L;
 	
+	/** 
+	 * Connection refused url 
+	 */
 	private final String url;
 
 	public ConnectionRefusedException(final String inUrl, final String msg) {

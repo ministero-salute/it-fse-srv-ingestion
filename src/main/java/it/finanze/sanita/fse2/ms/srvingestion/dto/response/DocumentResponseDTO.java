@@ -3,6 +3,10 @@ package it.finanze.sanita.fse2.ms.srvingestion.dto.response;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
+/** 
+ * Document Response DTO 
+ *
+ */
 @Data
 @EqualsAndHashCode(callSuper = true)
 public class DocumentResponseDTO extends ResponseDTO { 

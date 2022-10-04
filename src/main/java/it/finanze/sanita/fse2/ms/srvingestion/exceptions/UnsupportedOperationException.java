@@ -1,5 +1,9 @@
 package it.finanze.sanita.fse2.ms.srvingestion.exceptions;
 
+/** 
+ * Thrown when the operation is not supported by the Ingestion Microservice 
+ *
+ */
 public class UnsupportedOperationException extends Exception {
 
 	

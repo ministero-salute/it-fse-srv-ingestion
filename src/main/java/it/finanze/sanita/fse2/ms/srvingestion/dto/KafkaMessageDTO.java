@@ -5,6 +5,10 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+/** 
+ * Kafka Message DTO 
+ *
+ */
 @Getter
 @Setter
 @NoArgsConstructor

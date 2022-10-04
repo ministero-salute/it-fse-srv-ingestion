@@ -13,7 +13,11 @@ import it.finanze.sanita.fse2.ms.srvingestion.exceptions.OperationException;
 import it.finanze.sanita.fse2.ms.srvingestion.exceptions.UnsupportedOperationException;
 
 
-
+/** 
+ * This class contains all the methods for building error responses
+ * according to the given exception
+ *
+ */
 public final class ErrorBuilderDTO {
 
     public static final String GENERIC_ERROR = "Generic error";
@@ -41,6 +45,12 @@ public final class ErrorBuilderDTO {
     private ErrorBuilderDTO() {}
 
 
+    /** 
+     * 
+     * @param trace  The LogInfoDTO Object, with Trace and Span ID 
+     * @param ex  The exception 
+     * @return ErrorResponseDTO  The error response DTO 
+     */
     public static ErrorResponseDTO createGenericError(LogTraceInfoDTO trace, Exception ex) {
         return new ErrorResponseDTO(
             trace,
@@ -52,6 +62,12 @@ public final class ErrorBuilderDTO {
         );
     }
 
+    /** 
+     * 
+     * @param trace  The LogInfoDTO Object, with Trace and Span ID 
+     * @param ex  The exception 
+     * @return ErrorResponseDTO  The error response DTO 
+     */
     public static ErrorResponseDTO createOperationError(LogTraceInfoDTO trace, OperationException ex) {
         return new ErrorResponseDTO(
             trace,
@@ -63,6 +79,12 @@ public final class ErrorBuilderDTO {
         );
     } 
     
+    /** 
+     * 
+     * @param trace  The LogInfoDTO Object, with Trace and Span ID 
+     * @param ex  The exception 
+     * @return ErrorResponseDTO  The error response DTO 
+     */
     public static ErrorResponseDTO createUnsupportedOperationError(LogTraceInfoDTO trace, UnsupportedOperationException ex) {
         return new ErrorResponseDTO(
             trace,
@@ -74,6 +96,12 @@ public final class ErrorBuilderDTO {
         );
     } 
     
+    /** 
+     * 
+     * @param trace  The LogInfoDTO Object, with Trace and Span ID 
+     * @param ex  The exception 
+     * @return ErrorResponseDTO  The error response DTO 
+     */
     public static ErrorResponseDTO createDocumentNotFoundError(LogTraceInfoDTO trace, DocumentNotFoundException ex) {
         return new ErrorResponseDTO(
             trace,
@@ -85,6 +113,12 @@ public final class ErrorBuilderDTO {
         );
     } 
     
+    /** 
+     * 
+     * @param trace  The LogInfoDTO Object, with Trace and Span ID 
+     * @param ex  The exception 
+     * @return ErrorResponseDTO  The error response DTO 
+     */
     public static ErrorResponseDTO createDocumentAlreadyExistsError(LogTraceInfoDTO trace, DocumentAlreadyExistsException ex) {
         return new ErrorResponseDTO(
             trace,
@@ -96,6 +130,12 @@ public final class ErrorBuilderDTO {
         );
     } 
     
+    /** 
+     * 
+     * @param trace  The LogInfoDTO Object, with Trace and Span ID 
+     * @param ex  The exception 
+     * @return ErrorResponseDTO  The error response DTO 
+     */
     public static ErrorResponseDTO createConnectionRefusedError(LogTraceInfoDTO trace, ConnectionRefusedException ex) {
         return new ErrorResponseDTO(
             trace,
@@ -107,6 +147,12 @@ public final class ErrorBuilderDTO {
         );
     } 
     
+    /** 
+     * 
+     * @param trace  The LogInfoDTO Object, with Trace and Span ID 
+     * @param ex  The exception 
+     * @return ErrorResponseDTO  The error response DTO 
+     */
     public static ErrorResponseDTO createEmptyDocumentError(LogTraceInfoDTO trace, EmptyDocumentException ex) {
         return new ErrorResponseDTO(
             trace,

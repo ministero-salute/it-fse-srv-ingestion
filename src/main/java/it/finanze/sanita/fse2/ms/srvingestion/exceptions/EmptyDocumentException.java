@@ -1,5 +1,9 @@
 package it.finanze.sanita.fse2.ms.srvingestion.exceptions;
 
+/** 
+ * Thrown when the document to be inserted is empty 
+ * 
+ */
 public class EmptyDocumentException extends Exception {
 	
 	

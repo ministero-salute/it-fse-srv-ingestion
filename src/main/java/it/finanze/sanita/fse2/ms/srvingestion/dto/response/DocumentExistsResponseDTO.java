@@ -8,6 +8,10 @@ import javax.validation.constraints.Size;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
+/** 
+ * Response of the Srv Query call 
+ *
+ */
 @Data
 @EqualsAndHashCode(callSuper = true)
 public class DocumentExistsResponseDTO extends ResponseDTO { 
@@ -21,6 +25,9 @@ public class DocumentExistsResponseDTO extends ResponseDTO {
 	@Size(min = DEFAULT_STRING_MIN_SIZE, max = DEFAULT_STRING_MAX_SIZE)
 	private String transactionId; 
 	
+	/** 
+	 * True if the document exists on the FHIR server 
+	 */
 	private Boolean result; 
 	
 

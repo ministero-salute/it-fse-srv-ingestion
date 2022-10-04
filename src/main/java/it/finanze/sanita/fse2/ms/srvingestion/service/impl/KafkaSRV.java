@@ -20,10 +20,10 @@ import it.finanze.sanita.fse2.ms.srvingestion.utility.EncryptDecryptUtility;
 import lombok.extern.slf4j.Slf4j;
 
 /**
+ * Kafka management service implementation. 
  * 
  * @author vincenzoingenito
  *
- * Kafka management service.
  */
 @Service
 @Slf4j

@@ -1,5 +1,9 @@
 package it.finanze.sanita.fse2.ms.srvingestion.exceptions;
 
+/** 
+ * Thrown when a document already exists on the FHIR server 
+ *
+ */
 public class DocumentAlreadyExistsException extends Exception {
 
 

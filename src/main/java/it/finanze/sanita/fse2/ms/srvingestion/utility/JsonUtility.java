@@ -7,6 +7,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 
 /**
+ * JSON Utility Class 
+ * 
  * @author AndreaPerquoti
  *
  */
@@ -20,7 +22,7 @@ public class JsonUtility {
      * @throws IllegalStateException
      */
     private JsonUtility() {
-        // Void constructor.
+
     }
 
     private static ObjectMapper mapper = new ObjectMapper();
@@ -28,8 +30,8 @@ public class JsonUtility {
     /**
      * Methods that converts an Object to a JSON string.
      *
-     * @param obj Object to convert.
-     * @return JSON String representation of the Object.
+     * @param obj  Object to convert.
+     * @return Object  JSON String representation of the Object.
      */
     public static <T> String objectToJson(T obj) {
         String jsonString = "";
@@ -43,12 +45,6 @@ public class JsonUtility {
         return jsonString;
     }
 
-    /**
-     * Methods that converts a JSON String to a Class of a defined type.
-     *
-     * @param jsonString JSON String representation of the Object.
-     * @return Object created from the JSON String or {@code null} if the conversion fails.
-     */
     public static <T> T jsonToObject(String jsonString, Class<T> clazz) {
         T obj = null;
         try {
@@ -59,6 +55,7 @@ public class JsonUtility {
 
         return obj;
     }
+
 
     public static <T> T clone (Object object, Class<T> outputClass) {
         return JsonUtility.jsonToObject(JsonUtility.objectToJson(object), outputClass);

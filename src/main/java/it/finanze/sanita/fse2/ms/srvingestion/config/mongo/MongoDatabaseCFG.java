@@ -30,6 +30,9 @@ import it.finanze.sanita.fse2.ms.srvingestion.config.Constants;
 @EnableMongoRepositories(basePackages = Constants.ComponentScan.CONFIG_MONGO)
 public class MongoDatabaseCFG {
 
+	/** 
+	 * The Mongo URI 
+	 */
 	@Value("${data.mongodb.uri}")
 	private String mongoUri;
 	

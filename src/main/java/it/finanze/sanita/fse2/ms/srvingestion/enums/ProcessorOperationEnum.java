@@ -2,6 +2,10 @@ package it.finanze.sanita.fse2.ms.srvingestion.enums;
 
 import lombok.Getter;
 
+/** 
+ * Represents the operation to be executed on the document 
+ *
+ */
 public enum ProcessorOperationEnum {
 
 	PUBLISH("PUBLISH"),
@@ -9,6 +13,9 @@ public enum ProcessorOperationEnum {
 	REPLACE("REPLACE"),
 	UPDATE("UPDATE");
 	
+	/** 
+	 * The name of the operation 
+	 */
 	@Getter
 	private String name;
 	

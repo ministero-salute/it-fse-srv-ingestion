@@ -6,10 +6,10 @@ import it.finanze.sanita.fse2.ms.srvingestion.service.ILogSRV;
 import it.finanze.sanita.fse2.ms.srvingestion.service.KafkaAbstractSRV;
 
 /**
+ * Kafka Log Service Implementation 
  * 
  * @author vincenzoingenito
  *
- *         Kafka Log service.
  */
 @Service
 public class LogSRV extends KafkaAbstractSRV implements ILogSRV {

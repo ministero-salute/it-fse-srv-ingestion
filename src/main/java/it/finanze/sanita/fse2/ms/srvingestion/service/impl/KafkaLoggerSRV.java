@@ -15,10 +15,11 @@ import it.finanze.sanita.fse2.ms.srvingestion.utility.StringUtility;
 import lombok.extern.slf4j.Slf4j;
 
 /** 
+ * Kafka Logger implementation. Implements Structured Logs,
+ * at all logging levels 
  * 
- * @author: Guido Rocco - IBM 
+ * @author Guido Rocco  
  */ 
-
 @Service
 @Slf4j
 public class KafkaLoggerSRV {
@@ -32,7 +33,7 @@ public class KafkaLoggerSRV {
 	private DateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss.SSS"); 
 
 	/* 
-	 * Implements structured logs, at all logging levels
+	 * Implements structured logs, at trace level 
 	 */
 	public void trace(String message, ILogEnum operation, 
 			ResultLogEnum result, Date startDateOperation) {
@@ -50,6 +51,9 @@ public class KafkaLoggerSRV {
 		logSRV.sendLoggerStatus(jsonObject);
 	} 
 
+	/* 
+	 * Implements structured logs, at debug level 
+	 */
 	public void debug(String message,  ILogEnum operation,  
 			ResultLogEnum result, Date startDateOperation) {
 
@@ -66,6 +70,9 @@ public class KafkaLoggerSRV {
 		logSRV.sendLoggerStatus(jsonObject);
 	} 
 
+	/* 
+	 * Implements structured logs, at infos level 
+	 */
 	public void info(String message, ILogEnum operation,  
 			ResultLogEnum result, Date startDateOperation) {
 
@@ -82,6 +89,9 @@ public class KafkaLoggerSRV {
 		logSRV.sendLoggerStatus(jsonObject);
 	} 
 
+	/* 
+	 * Implements structured logs, at warn level 
+	 */
 	public void warn(String message, ILogEnum operation,  
 			ResultLogEnum result, Date startDateOperation) {
 
@@ -98,6 +108,9 @@ public class KafkaLoggerSRV {
 		logSRV.sendLoggerStatus(jsonObject);
 	} 
 
+	/* 
+	 * Implements structured logs, at error level 
+	 */
 	public void error(String message, ILogEnum operation,  
 			ResultLogEnum result, Date startDateOperation,
 			ILogEnum error) {

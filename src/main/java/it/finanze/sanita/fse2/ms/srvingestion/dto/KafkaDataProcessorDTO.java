@@ -21,13 +21,24 @@ public class KafkaDataProcessorDTO implements AbstractDTO {
 	 */
 	private static final long serialVersionUID = 7080680277816570116L;
 	
-	
+	/** 
+	 * The Event Type 
+	 */
 	private EventTypeEnum eventType;
 	
+	/** 
+	 * The Event Date 
+	 */
 	private Date eventDate;
 	
+	/** 
+	 * The Event Status 
+	 */
 	private EventStatusEnum eventStatus;
 	
+	/** 
+	 * The Kafka message 
+	 */
 	private String message;
 	
 	

@@ -18,6 +18,10 @@ import it.finanze.sanita.fse2.ms.srvingestion.repository.entity.DocumentReferenc
 import it.finanze.sanita.fse2.ms.srvingestion.repository.mongo.impl.DocumentRepo;
 import it.finanze.sanita.fse2.ms.srvingestion.service.IDocumentSRV;
 
+/** 
+ * Document Service Implementation 
+ *
+ */
 @Service
 public class DocumentSRV implements IDocumentSRV, Serializable {
 	
@@ -27,7 +31,9 @@ public class DocumentSRV implements IDocumentSRV, Serializable {
 	 */
 	private static final long serialVersionUID = -2451872011643635887L; 
 	
-	
+	/** 
+	 * Document Repository 
+	 */
 	@Autowired
 	private DocumentRepo documentRepo; 
 	

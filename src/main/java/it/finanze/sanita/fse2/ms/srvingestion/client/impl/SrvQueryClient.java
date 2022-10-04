@@ -16,6 +16,10 @@ import it.finanze.sanita.fse2.ms.srvingestion.exceptions.BusinessException;
 import it.finanze.sanita.fse2.ms.srvingestion.exceptions.ConnectionRefusedException;
 import lombok.extern.slf4j.Slf4j;
 
+/** 
+ * The Srv Query Client 
+ *
+ */
 @Slf4j
 @Component
 public class SrvQueryClient implements ISrvQueryClient {
@@ -26,13 +30,21 @@ public class SrvQueryClient implements ISrvQueryClient {
 	private static final long serialVersionUID = 6601225503534618633L; 
 
 	
-	
+	/**
+	 * The Rest Template 
+	 */
     @Autowired
     private transient RestTemplate restTemplate; 
 
+    /** 
+     * The Srv Query Configuration 
+     */
     @Autowired
     private SrvQueryCFG srvQueryConfig; 
 	
+    /** 
+     * Checks whether the document exists by calling the Srv Query Microservice 
+     */
 	@Override
 	public Boolean checkExists(String docId) {
         log.info("Calling eds Srv Query ep - START"); 

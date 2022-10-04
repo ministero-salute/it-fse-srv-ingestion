@@ -2,6 +2,11 @@ package it.finanze.sanita.fse2.ms.srvingestion.enums;
 
 import lombok.Getter;
 
+/** 
+ * The Enum containing the Operation ID and Description 
+ * in the Structured Log 
+ *
+ */
 public enum OperationLogEnum implements ILogEnum {
 
 	GET_DOCUMENT("GET-DOCUMENT", "Recupero Documento CDA2"),
@@ -11,9 +16,15 @@ public enum OperationLogEnum implements ILogEnum {
 	REPLACE_CDA2("REP-CDA2", "Replace CDA2"),
 	PUB_CDA2("PUB-CDA2", "Pubblicazione CDA2");
 
+	/** 
+	 * The enum code 
+	 */
 	@Getter
 	private String code;
 
+	/** 
+	 * The enum description 
+	 */
 	@Getter
 	private String description;
 

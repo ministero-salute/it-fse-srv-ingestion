@@ -14,10 +14,17 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import it.finanze.sanita.fse2.ms.srvingestion.service.IKafkaSRV;
 
+/** 
+ * The Liveness Check Controller 
+ *
+ */
 @RestController
 @Tag(name = "Health check Status Actuator")
 public class LivenessCheckCTL implements HealthIndicator {
 
+	/** 
+	 * Kafka Service 
+	 */
 	@Autowired 
 	public IKafkaSRV kafkaService; 
 	

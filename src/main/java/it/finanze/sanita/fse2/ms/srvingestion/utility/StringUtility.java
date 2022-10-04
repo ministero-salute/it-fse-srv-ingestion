@@ -1,17 +1,14 @@
 package it.finanze.sanita.fse2.ms.srvingestion.utility;
 
-import java.net.InetAddress;
-import java.util.Arrays;
-import java.util.UUID;
-
 import com.google.gson.Gson;
 
-import it.finanze.sanita.fse2.ms.srvingestion.config.Constants;
-import it.finanze.sanita.fse2.ms.srvingestion.enums.UIDModeEnum;
-import it.finanze.sanita.fse2.ms.srvingestion.exceptions.BusinessException;
 import it.finanze.sanita.fse2.ms.srvingestion.utility.StringUtility;
 import lombok.extern.slf4j.Slf4j;
 
+/** 
+ * String Utility Class 
+ *
+ */
 @Slf4j
 public final class StringUtility {
 
@@ -19,7 +16,7 @@ public final class StringUtility {
 	 * Private constructor to avoid instantiation.
 	 */
 	private StringUtility() {
-		// Constructor intentionally empty.
+
 	}
 
 	/**
@@ -36,14 +33,7 @@ public final class StringUtility {
 		return out;
 	} 
 	
-	/**
-	 * Transformation from Json to Object.
-	 * 
-	 * @param <T>	Generic type of return
-	 * @param json	json
-	 * @param cls	Object class to return
-	 * @return		object
-	 */
+
 	public static <T> T fromJSON(final String json, final Class<T> cls) {
 		return new Gson().fromJson(json, cls);
 	}

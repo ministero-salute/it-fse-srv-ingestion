@@ -15,20 +15,24 @@ public interface IKafkaSRV extends Serializable {
 
 	/**
 	 * Send message over kafka topic
-	 * @param topic
-	 * @param key
-	 * @param value
-	 * @param trans
-	 * @return
+	 * 
+	 * @param topic  The Kafka topic where the message is published  
+	 * @param key  The message key 
+	 * @param value  The message value 
+	 * @param trans  Boolean for transactionality 
+	 * @return RecordMetadata  RecordMetadata
 	 */
 	RecordMetadata sendMessage(String topic, ProcessorOperationEnum key, String value, boolean trans);
- 
 
-	/**
-	 * Send message to publisher microservice over kafka topic
-	 * @param transactionId
-	 * @throws KafkaException 
-	 */
+
+	 /** 
+	  * Send message to Data Processor microservice over kafka topic 
+	  * 
+	  * @param topic  The Kafka topic where the message is published 
+	  * @param transactionId  The transaction ID 
+	  * @param key  The message key 
+	  * @throws KafkaException  Generic Kafka Exception 
+	  */
 	void notifyDataProcessor(String topic, String transactionId, ProcessorOperationEnum key) throws KafkaException;
 	
 

@@ -8,37 +8,44 @@ import it.finanze.sanita.fse2.ms.srvingestion.exceptions.EmptyDocumentException;
 import it.finanze.sanita.fse2.ms.srvingestion.exceptions.OperationException;
 import it.finanze.sanita.fse2.ms.srvingestion.repository.entity.DocumentReferenceETY;
 
+/** 
+ * Interface for Document Service 
+ *
+ */
 public interface IDocumentSRV {
-
 	
     /**
-     * Inserts one document in the staging database
-     * @param dto The document to insert 
-     * @return 
-     * @throws OperationException If a data-layer error occurs
-     * @throws EmptyDocumentException 
+     * Inserts one Document Creation Request in the staging database
+     * 
+     * @param dto  The document to insert 
+     * @return DocumentReferenceETY  The document entity 
+     * @throws OperationException  If a data-layer error occurs
+     * @throws EmptyDocumentException  An exception thrown when a document to be inserted is empty 
      */
 	DocumentReferenceETY insert(DocumentReferenceDTO dto) throws OperationException, EmptyDocumentException; 
 	
     /**
-     * Delete one document from the staging database
-     * @param identifier The identifier of the document to delete 
-     * @throws OperationException If a data-layer error occurs
+     * Inserts one Document Deletion Request in the the staging database
+     * 
+     * @param identifier  The identifier of the document to delete 
      */
 	void delete(String identifier); 
 	
 	
     /**
      * Retrieves a document from the staging database given its Mongo ID
-     * @throws DocumentNotFoundException 
-     * @throws OperationException If a data-layer error occurs
+     * 
+     * @param id  The id of the document to be retrieved 
+     * @return DocumentReferenceDTO  The retrieved document 
+     * @throws DocumentNotFoundException  An exception thrown when the document is not found on MongoDB 
      */
 	DocumentReferenceDTO getDocumentById(String id) throws DocumentNotFoundException;
 
 	
     /**
      * Retrieves the list of all documents from the staging database
-     * @throws OperationException If a data-layer error occurs
+     * 
+     * @return List  The list of all documents retrieved from MongoDB 
      */
 	List<DocumentReferenceDTO> getDocuments();
 

@@ -39,6 +39,7 @@ public class ExceptionCTL extends ResponseEntityExceptionHandler {
      * Handle operation exception.
      *
      * @param ex		exception
+     * @return ErrorResponseDTO  The Exception to be returned 
      */
     @ExceptionHandler(OperationException.class)
     protected ResponseEntity<ErrorResponseDTO> handleOperationException(OperationException ex) {
@@ -58,6 +59,7 @@ public class ExceptionCTL extends ResponseEntityExceptionHandler {
      * Handle Document Not Found exception.
      *
      * @param ex		exception
+     * @return ErrorResponseDTO  The Exception to be returned 
      */
     @ExceptionHandler(DocumentNotFoundException.class)
     protected ResponseEntity<ErrorResponseDTO> handleDocumentNotFoundException(DocumentNotFoundException ex) {
@@ -77,6 +79,7 @@ public class ExceptionCTL extends ResponseEntityExceptionHandler {
      * Handle Document Already Exists exception.
      *
      * @param ex		exception
+     * @return ErrorResponseDTO  The Exception to be returned 
      */
     @ExceptionHandler(DocumentAlreadyExistsException.class)
     protected ResponseEntity<ErrorResponseDTO> handleDocumentAlreadyExistsException(DocumentAlreadyExistsException ex) {
@@ -96,6 +99,7 @@ public class ExceptionCTL extends ResponseEntityExceptionHandler {
      * Handle Empty Document exception.
      *
      * @param ex		exception
+     * @return ErrorResponseDTO  The Exception to be returned 
      */
     @ExceptionHandler(EmptyDocumentException.class)
     protected ResponseEntity<ErrorResponseDTO> handleEmptyDocumentException(EmptyDocumentException ex) {
@@ -113,9 +117,10 @@ public class ExceptionCTL extends ResponseEntityExceptionHandler {
 
     
     /**
-     * Handle Empty Document exception.
+     * Handle Connection Refused exception.
      *
      * @param ex		exception
+     * @return ErrorResponseDTO  The Exception to be returned 
      */
     @ExceptionHandler(ConnectionRefusedException.class)
     protected ResponseEntity<ErrorResponseDTO> handleConnectionRefusedException(ConnectionRefusedException ex) {
@@ -136,6 +141,7 @@ public class ExceptionCTL extends ResponseEntityExceptionHandler {
      * Handle Unsupported Operation exception.
      *
      * @param ex		exception
+     * @return ErrorResponseDTO  The Exception to be returned 
      */
     @ExceptionHandler(UnsupportedOperationException.class)
     protected ResponseEntity<ErrorResponseDTO> handleUnsupportedOperationException(UnsupportedOperationException ex) {
@@ -156,6 +162,7 @@ public class ExceptionCTL extends ResponseEntityExceptionHandler {
      * Handle generic exception.
      *
      * @param ex		exception
+     * @return ErrorResponseDTO  The Exception to be returned 
      */
     @ExceptionHandler(value = {Exception.class})
     protected ResponseEntity<ErrorResponseDTO> handleGenericException(Exception ex) {
@@ -175,7 +182,7 @@ public class ExceptionCTL extends ResponseEntityExceptionHandler {
     
     /**
      * Generate a new {@link LogTraceInfoDTO} instance
-     * @return The new instance
+     * @return LogTraceInfoDTO The new instance
      */
     private LogTraceInfoDTO getLogTraceInfo() {
         // Create instance

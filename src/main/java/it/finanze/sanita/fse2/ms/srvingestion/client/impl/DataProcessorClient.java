@@ -17,6 +17,10 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestTemplate;
 
+/**
+ * The Data Processor Client 
+ *
+ */
 @Slf4j
 @Component
 public class DataProcessorClient implements IDataProcessorClient {
@@ -27,16 +31,27 @@ public class DataProcessorClient implements IDataProcessorClient {
 	private static final long serialVersionUID = 3728786139875056695L;
 
 	
+	/**
+	 * Rest Template
+	 */
     @Autowired
     private transient RestTemplate restTemplate;
 
+    /**
+     * The Data Processor Configuration 
+     */
     @Autowired
     private DataProcessorCFG dataProcessorCFG; 
     
+    /**
+     * The Profile Utility Class 
+     */
     @Autowired
     private transient ProfileUtility profileUtility;
     
-    
+    /** 
+     * Sends the request to the Data Processor Microservice 
+     */
 	@Override
 	public Boolean sendRequestToDataProcessor(DocumentReferenceDTO reqDTO) {
         log.info("Calling eds Data Processor ep - START"); 

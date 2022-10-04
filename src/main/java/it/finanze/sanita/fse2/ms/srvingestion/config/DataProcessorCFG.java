@@ -7,6 +7,10 @@ import org.springframework.stereotype.Component;
 
 import lombok.Data;
 
+/** 
+ * Data Processor Configuration Class 
+ *
+ */
 @Data
 @Component
 public class DataProcessorCFG implements Serializable {
@@ -18,7 +22,9 @@ public class DataProcessorCFG implements Serializable {
 
 	
 	
-	/** EDS Data Processor Config **/
+	/**
+	 *  EDS Data Processor Host 
+	 */
 	@Value("${eds-dataprocessor.url.host}")
 	private String edsDataProcessorHost;
 	

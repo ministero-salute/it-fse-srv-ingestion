@@ -12,9 +12,14 @@ import it.finanze.sanita.fse2.ms.srvingestion.config.kafka.KafkaTopicCFG;
 import it.finanze.sanita.fse2.ms.srvingestion.exceptions.BusinessException;
 import lombok.extern.slf4j.Slf4j;
 
+/** 
+ * Kafka Abstract SRV 
+ *
+ */
 @Service
 @Slf4j
 public abstract class KafkaAbstractSRV {
+	
 	/**
 	 * Transactional producer.
 	 */
@@ -29,9 +34,21 @@ public abstract class KafkaAbstractSRV {
 	@Qualifier("notxkafkatemplate")
 	protected transient KafkaTemplate<String, String> notxKafkaTemplate;
 
+	/** 
+	 * Kafka Topic Config 
+	 */
 	@Autowired
 	protected transient KafkaTopicCFG kafkaTopicCFG;
 
+	/** 
+	 * Calls the kafkaSend function to send a message on a Kafka topic 
+	 * 
+	 * @param topic  The topic where the message is to be sent 
+	 * @param key  The message key 
+	 * @param value  The message value 
+	 * @param trans  Boolean for transactionality 
+	 * @return RecordMetadata  RecordMetadata
+	 */
 	public RecordMetadata sendMessage(String topic, String key, String value, boolean trans) {
 		RecordMetadata out = null;
 		ProducerRecord<String, String> producerRecord = new ProducerRecord<>(topic, key, value);
@@ -44,6 +61,14 @@ public abstract class KafkaAbstractSRV {
 		return out;
 	}
 
+	/** 
+	 * Called by the sendMessage function, sends a message on a Kafka Topic. If transaction 
+	 * boolean is set to true, the operation is performed within a local transaction
+	 * 
+	 * @param producerRecord  The ProducerRecord 
+	 * @param trans  Boolean for transactionality 
+	 * @return RecordMetadata  RecordMetadata
+	 */
 	@SuppressWarnings("unchecked")
 	protected RecordMetadata kafkaSend(ProducerRecord<String, String> producerRecord, boolean trans) {
 		RecordMetadata out = null;

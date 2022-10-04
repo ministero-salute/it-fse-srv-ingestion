@@ -38,8 +38,10 @@ public class KafkaProducerCFG {
 	@Autowired
 	private KafkaProducerPropertiesCFG kafkaProducerPropCFG;
  
-	/** 
-	 *  Kafka producer configurazione.
+
+	/**
+	 * Kafka Producer Config 
+	 * @return Map  Producer Config 
 	 */
 	@Bean 
 	public Map<String, Object> producerConfigs() {
@@ -83,8 +85,8 @@ public class KafkaProducerCFG {
 	}
 
 	/**
-	 * @param id
-	 * @return
+	 * @param id  The ID of the local host
+	 * @return InetAddress  InetAddress 
 	 */
 	private InetAddress getLocalHost() {
 		InetAddress id = null;
@@ -97,8 +99,9 @@ public class KafkaProducerCFG {
 	}
 	
 	/**
-     * Transactional producer.
-     */
+	 * Producer Factory 
+	 * @return ProducerFactory  ProducerFactory
+	 */
 	@Bean
 	@Qualifier("txkafkatemplateFactory") 
 	public ProducerFactory<String, String> producerFactory() {
@@ -107,17 +110,22 @@ public class KafkaProducerCFG {
 	}
 	
 	/**
-     *  Kafka template.
-     */
+	 * KafkaTemplate 
+	 * 
+	 * @return KafkaTemplate  KafkaTemplate
+	 */
 	@Bean
 	@Qualifier("txkafkatemplate") 
 	public KafkaTemplate<String, String> txKafkaTemplate() {
 		return new KafkaTemplate<>(producerFactory());
 	}
 
+
 	/**
-     * Non transactional producer config.
-     */
+	 * Non transactional producer config. 
+	 * 
+	 * @return Map The Producer Config Props 
+	 */
 	@Bean 
 	public Map<String, Object> producerWithoutTransactionConfigs() {
 		Map<String, Object> props = new HashMap<>();
@@ -147,9 +155,11 @@ public class KafkaProducerCFG {
 		return props;
 	}
 	
-	/**
-     * Non transactional producer.
-     */ 
+	/** 
+	 * Non transactional producer 
+	 * 
+	 * @return ProducerFactory  The ProducerFactory
+	 */
 	@Bean
 	@Qualifier("notxkafkatemplateFactory") 
 	public ProducerFactory<String, String> producerFactoryWithoutTransaction() {
@@ -158,8 +168,10 @@ public class KafkaProducerCFG {
 	}
 	
 	/**
-     * Non transactional kafka template.
-     */ 
+	 * Non transactional Kafka Template 
+	 * 
+	 * @return KafkaTemplate  KafkaTemplate
+	 */
 	@Bean
 	@Qualifier("notxkafkatemplate") 
 	public KafkaTemplate<String, String> notxKafkaTemplate() {

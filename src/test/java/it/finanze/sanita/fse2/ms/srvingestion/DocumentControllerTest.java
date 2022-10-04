@@ -1,19 +1,18 @@
 package it.finanze.sanita.fse2.ms.srvingestion;
 
-import brave.Tracer;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import it.finanze.sanita.fse2.ms.srvingestion.base.AbstractTest;
-import it.finanze.sanita.fse2.ms.srvingestion.client.impl.DataProcessorClient;
-import it.finanze.sanita.fse2.ms.srvingestion.client.impl.SrvQueryClient;
-import it.finanze.sanita.fse2.ms.srvingestion.config.Constants;
-import it.finanze.sanita.fse2.ms.srvingestion.controller.impl.DocumentCTL;
-import it.finanze.sanita.fse2.ms.srvingestion.dto.DocumentReferenceDTO;
-import it.finanze.sanita.fse2.ms.srvingestion.enums.PriorityTypeEnum;
-import it.finanze.sanita.fse2.ms.srvingestion.enums.ProcessorOperationEnum;
-import it.finanze.sanita.fse2.ms.srvingestion.repository.entity.DocumentReferenceETY;
-import it.finanze.sanita.fse2.ms.srvingestion.service.IDocumentSRV;
-import it.finanze.sanita.fse2.ms.srvingestion.utility.ProfileUtility;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.BDDMockito.given;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
+import java.util.ArrayList;
+import java.util.List;
+
 import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,16 +27,22 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
-import java.util.ArrayList;
-import java.util.List;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.BDDMockito.given;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import brave.Tracer;
+import it.finanze.sanita.fse2.ms.srvingestion.base.AbstractTest;
+import it.finanze.sanita.fse2.ms.srvingestion.client.impl.DataProcessorClient;
+import it.finanze.sanita.fse2.ms.srvingestion.client.impl.SrvQueryClient;
+import it.finanze.sanita.fse2.ms.srvingestion.config.Constants;
+import it.finanze.sanita.fse2.ms.srvingestion.controller.impl.DocumentCTL;
+import it.finanze.sanita.fse2.ms.srvingestion.dto.DocumentReferenceDTO;
+import it.finanze.sanita.fse2.ms.srvingestion.enums.PriorityTypeEnum;
+import it.finanze.sanita.fse2.ms.srvingestion.enums.ProcessorOperationEnum;
+import it.finanze.sanita.fse2.ms.srvingestion.repository.entity.DocumentReferenceETY;
+import it.finanze.sanita.fse2.ms.srvingestion.service.IDocumentSRV;
+import it.finanze.sanita.fse2.ms.srvingestion.utility.ProfileUtility;
+
+
 
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
 @AutoConfigureMockMvc
@@ -85,6 +90,18 @@ class DocumentControllerTest extends AbstractTest {
     static final String DOCUMENT_TEST_JSON_STRING_REPLACE = "{\"jsonString\": \"testReplace\"}"; 
     
     static final ProcessorOperationEnum DOCUMENT_TEST_OPERATION_DELETE = ProcessorOperationEnum.DELETE; 
+
+	@BeforeAll
+	public void setup() {
+		mongo.dropCollection(DocumentReferenceETY.class);
+		populateStagingCollection();
+
+	}
+
+	@AfterAll
+	public void teardown() {
+		mongo.dropCollection(DocumentReferenceETY.class);
+	}
 
     
     @Test
@@ -375,10 +392,5 @@ class DocumentControllerTest extends AbstractTest {
 	@Test
 	void genericExceptionTest() {
 		assertThrows(Exception.class, () -> { throw new Exception("Test Exception"); }); 
-	}
-
-	@AfterAll
-	public void teardown() {
-		this.dropTestSchema();
 	}
 }

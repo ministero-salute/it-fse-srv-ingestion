@@ -54,10 +54,17 @@ class DocumentServiceTest extends AbstractTest {
     public static final ProcessorOperationEnum DOCUMENT_TEST_OPERATION = ProcessorOperationEnum.PUBLISH;
     
     
-    @BeforeAll
-    public void setup() throws Exception {
-        this.initTestRepository();
-    } 
+	@BeforeAll
+	public void setup() {
+		mongo.dropCollection(DocumentReferenceETY.class);
+		populateStagingCollection();
+
+	}
+
+	@AfterAll
+	public void teardown() {
+		mongo.dropCollection(DocumentReferenceETY.class);
+	}
     
     @Test
     void insertTest() throws OperationException, DocumentNotFoundException, EmptyDocumentException {
@@ -151,12 +158,6 @@ class DocumentServiceTest extends AbstractTest {
     	assertEquals(ProcessorOperationEnum.class, firstElemEtyInList.getOperation().getClass()); 
     	assertEquals(String.class, firstElemEtyInList.getJsonString().getClass()); 
     	
-    } 
-    
-    
-    @AfterAll
-    public void teardown() {
-        this.dropTestSchema();
-    } 
+    }
     
 }

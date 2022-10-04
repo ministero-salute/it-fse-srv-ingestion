@@ -41,10 +41,17 @@ class DocumentRepositoryTest extends AbstractTest {
     
 	
     
-    @BeforeAll
-    public void setup() throws Exception {
-        this.initTestRepository();
-    } 
+	@BeforeAll
+	public void setup() {
+		mongo.dropCollection(DocumentReferenceETY.class);
+		populateStagingCollection();
+
+	}
+
+	@AfterAll
+	public void teardown() {
+		mongo.dropCollection(DocumentReferenceETY.class);
+	}
     
     
     
@@ -104,7 +111,7 @@ class DocumentRepositoryTest extends AbstractTest {
     	assertEquals(DocumentReferenceETY.class, retrievedEty.getClass()); 
     	assertEquals(Document.class, retrievedEty.getDocument().getClass()); 
     	
-    	assertEquals(DOCUMENT_TEST_JSON_STRING_C, retrievedEty.getDocument()); 	
+    	assertEquals(DOCUMENT_TEST_JSON_STRING_C, retrievedEty.getDocument().toJson()); 	
     	
     }
     
@@ -128,12 +135,6 @@ class DocumentRepositoryTest extends AbstractTest {
     	assertEquals(DocumentReferenceETY.class, firstElemEtyInList.getClass()); 
     	assertEquals(Document.class, firstElemEtyInList.getDocument().getClass()); 
     	
-    }
-
-     
-    @AfterAll
-    public void teardown() {
-        this.dropTestSchema();
     } 
     
 } 

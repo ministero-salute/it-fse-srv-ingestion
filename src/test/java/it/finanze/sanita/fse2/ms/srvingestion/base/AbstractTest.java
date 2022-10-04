@@ -31,10 +31,6 @@ public abstract class AbstractTest {
      */
     public static final String DOCUMENT_TEST_FAKE_NAME = "testDocumentFake";
     /**
-     * Test collection name
-     */
-    public static final String DOCUMENT_TEST_COLLECTION = "test_ingestion-staging";
-    /**
      * Sample parameters for multiple tests
      */
     public static final String DOCUMENT_TEST_IDENTIFIER = "testIdentifier"; 
@@ -66,28 +62,10 @@ public abstract class AbstractTest {
     	documentB.setDocument(Document.parse(DOCUMENT_TEST_JSON_STRING_B)); 
    
     	
-        mongo.insert(documentA, DOCUMENT_TEST_COLLECTION);
-        mongo.insert(documentB, DOCUMENT_TEST_COLLECTION);
+        mongo.insert(documentA);
+        mongo.insert(documentB);
 
     
-    }
-
-
-    private void createTestDocument() {
-        mongo.createCollection(DOCUMENT_TEST_COLLECTION);
-    } 
-    
-    
-
-    protected void initTestRepository() throws Exception {
-    	if(!mongo.collectionExists(DOCUMENT_TEST_COLLECTION)) {
-        	createTestDocument(); 
-            populateStagingCollection(); 
-    	}
-    }
-
-    protected void dropTestSchema() {
-          mongo.dropCollection(DOCUMENT_TEST_COLLECTION); 
     }
     
 

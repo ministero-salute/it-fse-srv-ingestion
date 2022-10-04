@@ -2,14 +2,10 @@ package it.finanze.sanita.fse2.ms.srvingestion.utility;
 
 import com.google.gson.Gson;
 
-import it.finanze.sanita.fse2.ms.srvingestion.utility.StringUtility;
-import lombok.extern.slf4j.Slf4j;
-
 /** 
  * String Utility Class 
  *
  */
-@Slf4j
 public final class StringUtility {
 
 	/**

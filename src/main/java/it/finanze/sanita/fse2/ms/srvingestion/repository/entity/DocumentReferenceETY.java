@@ -16,7 +16,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor; 
 
 
-@Document(collection = "ingestion-staging")
+@Document(collection = "#{@ingestionStagingBean}")
 @Data
 @NoArgsConstructor
 public class DocumentReferenceETY {

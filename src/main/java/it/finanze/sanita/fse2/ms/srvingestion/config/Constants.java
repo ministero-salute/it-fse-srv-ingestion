@@ -97,6 +97,13 @@ public final class Constants {
 		private App() {
 			// This method is intentionally left blank.
 		}
+
+		public static final class Collections {
+			public static final String INGESTION_STAGING = "ingestion-staging";
+			
+			private Collections() {
+			}
+		}
 	}
 
 	public static final class Logs {

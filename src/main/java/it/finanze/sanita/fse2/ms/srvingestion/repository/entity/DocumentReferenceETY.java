@@ -42,11 +42,11 @@ public class DocumentReferenceETY {
 	private ProcessorOperationEnum operation;  
 
 	/** 
-	 * The stringified JSON of the document 
+	 * The bundle
 	 */
-	@Field("json_string")
+	@Field("bundle")
 	@Size(min = DEFAULT_STRING_MIN_SIZE, max = DEFAULT_STRING_MAX_SIZE)
-	private String jsonString;
+	private org.bson.Document document;
 	
 	/** 
 	 * The insertion date of the document 

@@ -1,5 +1,6 @@
 package it.finanze.sanita.fse2.ms.srvingestion.base;
 
+import org.bson.Document;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 
@@ -56,13 +57,13 @@ public abstract class AbstractTest {
     	DocumentReferenceETY documentA = new DocumentReferenceETY(); 
     	documentA.setIdentifier(DOCUMENT_TEST_IDENTIFIER_A);
     	documentA.setOperation(DOCUMENT_TEST_OPERATION);
-    	documentA.setJsonString(DOCUMENT_TEST_JSON_STRING_A); 
+    	documentA.setDocument(Document.parse(DOCUMENT_TEST_JSON_STRING_A)); 
     	
     	
     	DocumentReferenceETY documentB = new DocumentReferenceETY(); 
     	documentB.setIdentifier(DOCUMENT_TEST_IDENTIFIER_B); 
     	documentB.setOperation(DOCUMENT_TEST_OPERATION);
-    	documentB.setJsonString(DOCUMENT_TEST_JSON_STRING_B); 
+    	documentB.setDocument(Document.parse(DOCUMENT_TEST_JSON_STRING_B)); 
    
     	
         mongo.insert(documentA, DOCUMENT_TEST_COLLECTION);

@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.bson.Document;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
@@ -90,8 +91,8 @@ public class DocumentSRV implements IDocumentSRV, Serializable {
 		if(!ObjectUtils.isEmpty(documentReferenceETY.getOperation())) {
 			output.setOperation(documentReferenceETY.getOperation());
 		}
-		if(!ObjectUtils.isEmpty(documentReferenceETY.getJsonString()) ) {
-			output.setJsonString(documentReferenceETY.getJsonString());
+		if(!ObjectUtils.isEmpty(documentReferenceETY.getDocument()) ) {
+			output.setJsonString(documentReferenceETY.getDocument().toJson());
 		}
 		if(!ObjectUtils.isEmpty(documentReferenceETY.getInsertionDate()) ) {
 			output.setInsertionDate(documentReferenceETY.getInsertionDate());
@@ -110,7 +111,7 @@ public class DocumentSRV implements IDocumentSRV, Serializable {
 			output.setOperation(documentReferenceDTO.getOperation());
 		} 
 		if(!ObjectUtils.isEmpty(documentReferenceDTO.getJsonString())) {
-			output.setJsonString(documentReferenceDTO.getJsonString());
+			output.setDocument(Document.parse(documentReferenceDTO.getJsonString()));
 		}
 		if(!ObjectUtils.isEmpty(documentReferenceDTO.getInsertionDate())) {
 			output.setInsertionDate(documentReferenceDTO.getInsertionDate());

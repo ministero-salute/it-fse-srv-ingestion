@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.bson.Document;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -52,7 +53,7 @@ class DocumentRepositoryTest extends AbstractTest {
     	DocumentReferenceETY etyA = new DocumentReferenceETY(); 
 
     	etyA.setOperation(ProcessorOperationEnum.PUBLISH);
-    	etyA.setJsonString(DOCUMENT_TEST_JSON_STRING_C); 
+    	etyA.setDocument(Document.parse(DOCUMENT_TEST_JSON_STRING_C)); 
     	
     	documentRepository.insert(etyA); 
     	  	
@@ -60,10 +61,10 @@ class DocumentRepositoryTest extends AbstractTest {
 
     	
     	assertEquals(DocumentReferenceETY.class, retrievedEtyC.getClass()); 
-    	assertEquals(String.class, retrievedEtyC.getJsonString().getClass()); 
+    	assertEquals(Document.class, retrievedEtyC.getDocument().getClass()); 
     	
     	assertEquals(ProcessorOperationEnum.PUBLISH, retrievedEtyC.getOperation());
-    	assertEquals(DOCUMENT_TEST_JSON_STRING_C, retrievedEtyC.getJsonString()); 
+    	assertEquals(Document.parse(DOCUMENT_TEST_JSON_STRING_C), retrievedEtyC.getDocument()); 
     	 	
     }
     
@@ -73,7 +74,7 @@ class DocumentRepositoryTest extends AbstractTest {
     	DocumentReferenceETY etyA = new DocumentReferenceETY(); 
 
     	etyA.setIdentifier(DOCUMENT_TEST_IDENTIFIER_DEL); 
-    	etyA.setJsonString(DOCUMENT_TEST_JSON_STRING_DEL); 
+    	etyA.setDocument(Document.parse(DOCUMENT_TEST_JSON_STRING_DEL)); 
  
     	
     	  	
@@ -93,7 +94,7 @@ class DocumentRepositoryTest extends AbstractTest {
     void findByIdTest() throws Exception {
     	DocumentReferenceETY etyA = new DocumentReferenceETY(); 
 
-    	etyA.setJsonString(DOCUMENT_TEST_JSON_STRING_C); 
+    	etyA.setDocument(Document.parse(DOCUMENT_TEST_JSON_STRING_C)); 
     	
     	DocumentReferenceETY ety = documentRepository.insert(etyA); 
     	  
@@ -101,9 +102,9 @@ class DocumentRepositoryTest extends AbstractTest {
     	
     	
     	assertEquals(DocumentReferenceETY.class, retrievedEty.getClass()); 
-    	assertEquals(String.class, retrievedEty.getJsonString().getClass()); 
+    	assertEquals(Document.class, retrievedEty.getDocument().getClass()); 
     	
-    	assertEquals(DOCUMENT_TEST_JSON_STRING_C, retrievedEty.getJsonString()); 	
+    	assertEquals(DOCUMENT_TEST_JSON_STRING_C, retrievedEty.getDocument()); 	
     	
     }
     
@@ -113,7 +114,7 @@ class DocumentRepositoryTest extends AbstractTest {
     	DocumentReferenceETY etyA = new DocumentReferenceETY(); 
 
     	etyA.setIdentifier(DOCUMENT_TEST_IDENTIFIER_C); 
-    	etyA.setJsonString(DOCUMENT_TEST_JSON_STRING_C); 
+    	etyA.setDocument(Document.parse(DOCUMENT_TEST_JSON_STRING_C)); 
     	    	
     	documentRepository.insert(etyA); 
     	
@@ -125,7 +126,7 @@ class DocumentRepositoryTest extends AbstractTest {
     	assertEquals(true, etyRetrievedList.size() > 0); 
     	
     	assertEquals(DocumentReferenceETY.class, firstElemEtyInList.getClass()); 
-    	assertEquals(String.class, firstElemEtyInList.getJsonString().getClass()); 
+    	assertEquals(Document.class, firstElemEtyInList.getDocument().getClass()); 
     	
     }
 

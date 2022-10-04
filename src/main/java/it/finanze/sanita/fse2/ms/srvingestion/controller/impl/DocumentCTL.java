@@ -81,11 +81,8 @@ public class DocumentCTL extends AbstractCTL implements IDocumentCTL {
 		DocumentReferenceETY ety = documentService.insert(document); 
 		String mongoId = ety.getId();
 		String topic = kafkaTopicCFG.getIngestionDataProcessorPublicationTopic() + "-" + document.getPriorityTypeEnum().getDescription();
-
 		kafkaService.notifyDataProcessor(topic, mongoId, ProcessorOperationEnum.PUBLISH);
-		
 		return new ResponseEntity<>(new DocumentResponseDTO(getLogTraceInfo()), HttpStatus.CREATED); 
-
 	}
 
 	@Override

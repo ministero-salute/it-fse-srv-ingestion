@@ -44,7 +44,7 @@ public class DocumentReferenceETY {
 	/** 
 	 * The bundle
 	 */
-	@Field("bundle")
+	@Field("document")
 	@Size(min = DEFAULT_STRING_MIN_SIZE, max = DEFAULT_STRING_MAX_SIZE)
 	private org.bson.Document document;
 	

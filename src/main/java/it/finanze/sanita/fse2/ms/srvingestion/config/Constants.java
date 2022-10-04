@@ -67,7 +67,7 @@ public final class Constants {
 
 		public static final String DEV = "DEV";
 
-		public static final String TEST = "TEST";
+		public static final String TEST = "test";
 
 		public static final String TEST_PREFIX = "test";
 

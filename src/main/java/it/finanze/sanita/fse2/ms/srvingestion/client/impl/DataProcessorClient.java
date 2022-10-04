@@ -1,13 +1,5 @@
 package it.finanze.sanita.fse2.ms.srvingestion.client.impl;
 
-import it.finanze.sanita.fse2.ms.srvingestion.client.IDataProcessorClient;
-import it.finanze.sanita.fse2.ms.srvingestion.config.DataProcessorCFG;
-import it.finanze.sanita.fse2.ms.srvingestion.dto.DocumentReferenceDTO;
-import it.finanze.sanita.fse2.ms.srvingestion.dto.response.DocumentResponseDTO;
-import it.finanze.sanita.fse2.ms.srvingestion.exceptions.BusinessException;
-import it.finanze.sanita.fse2.ms.srvingestion.exceptions.ConnectionRefusedException;
-import it.finanze.sanita.fse2.ms.srvingestion.utility.ProfileUtility;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -16,6 +8,14 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestTemplate;
+
+import it.finanze.sanita.fse2.ms.srvingestion.client.IDataProcessorClient;
+import it.finanze.sanita.fse2.ms.srvingestion.config.DataProcessorCFG;
+import it.finanze.sanita.fse2.ms.srvingestion.dto.DocumentReferenceDTO;
+import it.finanze.sanita.fse2.ms.srvingestion.dto.response.DocumentResponseDTO;
+import it.finanze.sanita.fse2.ms.srvingestion.exceptions.BusinessException;
+import it.finanze.sanita.fse2.ms.srvingestion.exceptions.ConnectionRefusedException;
+import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Component
@@ -33,14 +33,10 @@ public class DataProcessorClient implements IDataProcessorClient {
     @Autowired
     private DataProcessorCFG dataProcessorCFG; 
     
-    @Autowired
-    private transient ProfileUtility profileUtility;
-    
-    
 	@Override
 	public Boolean sendRequestToDataProcessor(DocumentReferenceDTO reqDTO) {
-        log.info("Calling eds Data Processor ep - START"); 
-        log.info("Operation: " + reqDTO.getOperation().getName()); 
+        log.debug("Calling eds Data Processor ep - START"); 
+        log.debug("Operation: " + reqDTO.getOperation().getName()); 
                 
         HttpHeaders headers = new HttpHeaders();
         headers.set("Content-Type", "application/json");
@@ -54,7 +50,7 @@ public class DataProcessorClient implements IDataProcessorClient {
             response = restTemplate.exchange(url,
                     HttpMethod.POST, entity,
                     DocumentResponseDTO.class);
-            log.info("{} status returned from Data Processor", response.getStatusCode());
+            log.debug("{} status returned from Data Processor", response.getStatusCode());
         } catch(ResourceAccessException cex) {
             log.error("Connect error while call eds ingestion ep :" + cex);
             throw new ConnectionRefusedException(dataProcessorCFG.getEdsDataProcessorHost(),"Connection refused"); 

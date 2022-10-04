@@ -35,7 +35,7 @@ public class SrvQueryClient implements ISrvQueryClient {
 	
 	@Override
 	public Boolean checkExists(String docId) {
-        log.info("Calling eds Srv Query ep - START"); 
+        log.debug("Calling eds Srv Query ep - START"); 
 
         HttpHeaders headers = new HttpHeaders();
         headers.set("Content-Type", "application/json"); 
@@ -48,7 +48,7 @@ public class SrvQueryClient implements ISrvQueryClient {
         
         try {
             response = restTemplate.exchange(url, HttpMethod.GET, entity, ResourceExistResDTO.class);
-            log.info("{} status returned from Srv Query", response.getStatusCode());
+            log.debug("{} status returned from Srv Query", response.getStatusCode());
             final ResourceExistResDTO responseBody = response.getBody();
             return responseBody != null && responseBody.isExist();
         } catch(ResourceAccessException cex) {

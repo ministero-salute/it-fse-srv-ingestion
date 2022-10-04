@@ -1,18 +1,7 @@
 package it.finanze.sanita.fse2.ms.srvingestion.utility;
 
-import java.net.InetAddress;
-import java.util.Arrays;
-import java.util.UUID;
-
 import com.google.gson.Gson;
 
-import it.finanze.sanita.fse2.ms.srvingestion.config.Constants;
-import it.finanze.sanita.fse2.ms.srvingestion.enums.UIDModeEnum;
-import it.finanze.sanita.fse2.ms.srvingestion.exceptions.BusinessException;
-import it.finanze.sanita.fse2.ms.srvingestion.utility.StringUtility;
-import lombok.extern.slf4j.Slf4j;
-
-@Slf4j
 public final class StringUtility {
 
 	/**

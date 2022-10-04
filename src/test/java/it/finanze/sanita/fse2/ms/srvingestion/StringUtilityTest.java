@@ -1,13 +1,11 @@
 package it.finanze.sanita.fse2.ms.srvingestion;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.Test;
 
 import it.finanze.sanita.fse2.ms.srvingestion.base.AbstractTest;
-import it.finanze.sanita.fse2.ms.srvingestion.enums.UIDModeEnum;
 import it.finanze.sanita.fse2.ms.srvingestion.utility.StringUtility;
 
 class StringUtilityTest extends AbstractTest {

@@ -5,13 +5,11 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.when;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
-import org.mockito.BDDMockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -63,7 +61,7 @@ public class ClientTest {
 	@Test
 	@DisplayName("Client Test - Srv Query Success")
 	void srvQueryClientTest() {
-		ResponseEntity<ResourceExistResDTO> dto = new ResponseEntity<ResourceExistResDTO>(HttpStatus.OK); 
+		new ResponseEntity<ResourceExistResDTO>(HttpStatus.OK); 
 		
 		ResourceExistResDTO mockResponse = new ResourceExistResDTO(); 
 		mockResponse.setExist(true); 
@@ -80,7 +78,7 @@ public class ClientTest {
 	@Test
 	@DisplayName("Client Test - Srv Query Connection Refused Exception")
 	void srvQueryClientExceptionTest() {
-		ResponseEntity<ResourceExistResDTO> dto = new ResponseEntity<ResourceExistResDTO>(HttpStatus.OK); 
+		new ResponseEntity<ResourceExistResDTO>(HttpStatus.OK); 
 		
 		ResourceExistResDTO mockResponse = new ResourceExistResDTO(); 
 		mockResponse.setExist(true); 
@@ -94,7 +92,7 @@ public class ClientTest {
 	@Test
 	@DisplayName("Client Test - Srv Query Business Exception")
 	void srvQueryClientBusinessExceptionTest() {
-		ResponseEntity<ResourceExistResDTO> dto = new ResponseEntity<ResourceExistResDTO>(HttpStatus.OK); 
+		new ResponseEntity<ResourceExistResDTO>(HttpStatus.OK); 
 		
 		ResourceExistResDTO mockResponse = new ResourceExistResDTO(); 
 		mockResponse.setExist(true); 
@@ -118,8 +116,6 @@ public class ClientTest {
 		document.setPriorityTypeEnum(TEST_PRIORITY_TYPE); 
 		
 		
-		Boolean mockResponse = true;  
-		
 		when(restTemplate.exchange(anyString(), eq(HttpMethod.POST), any(HttpEntity.class), eq(DocumentResponseDTO.class)))
 			.thenReturn(new ResponseEntity<DocumentResponseDTO>(mockResponseDto, HttpStatus.OK)); 
 
@@ -140,8 +136,6 @@ public class ClientTest {
 		document.setJsonString(TEST_JSON_STRING); 
 		document.setPriorityTypeEnum(TEST_PRIORITY_TYPE); 
 				
-		Boolean mockResponse = true;  		
-		
 		when(restTemplate.exchange(anyString(), eq(HttpMethod.POST), any(HttpEntity.class), eq(DocumentResponseDTO.class))).thenThrow(new ResourceAccessException("Test Error"));
 			
 		assertThrows(ConnectionRefusedException.class, () -> dataProcessorClient.sendRequestToDataProcessor(document)); 
@@ -158,8 +152,6 @@ public class ClientTest {
 		document.setJsonString(TEST_JSON_STRING); 
 		document.setPriorityTypeEnum(TEST_PRIORITY_TYPE); 
 				
-		Boolean mockResponse = true;  	
-		
 		when(restTemplate.exchange(anyString(), eq(HttpMethod.POST), any(HttpEntity.class), eq(DocumentResponseDTO.class))).thenThrow(new BusinessException("Test Error"));
 			
 		assertThrows(BusinessException.class, () -> dataProcessorClient.sendRequestToDataProcessor(document)); 

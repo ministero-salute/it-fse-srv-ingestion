@@ -1,8 +1,5 @@
 package it.finanze.sanita.fse2.ms.srvingestion.service.impl;
 
-import java.util.Date;
-
-import it.finanze.sanita.fse2.ms.srvingestion.enums.*;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.clients.producer.RecordMetadata;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import it.finanze.sanita.fse2.ms.srvingestion.config.Constants;
 import it.finanze.sanita.fse2.ms.srvingestion.config.kafka.KafkaPropertiesCFG;
+import it.finanze.sanita.fse2.ms.srvingestion.enums.ProcessorOperationEnum;
 import it.finanze.sanita.fse2.ms.srvingestion.exceptions.BusinessException;
 import it.finanze.sanita.fse2.ms.srvingestion.exceptions.KafkaException;
 import it.finanze.sanita.fse2.ms.srvingestion.service.IKafkaSRV;
@@ -40,9 +38,6 @@ public class KafkaSRV implements IKafkaSRV {
 	@Autowired
 	private KafkaPropertiesCFG kafkaPropCFG;
 	
-	@Autowired
-	private transient KafkaLoggerSRV kafkaLogger;
-	
 	/**
 	 * Transactional producer.
 	 */
@@ -62,12 +57,10 @@ public class KafkaSRV implements IKafkaSRV {
 		RecordMetadata out = null;
 		ProducerRecord<String, String> producerRecord = new ProducerRecord<>(topic, key.getName(), value);
 		try { 
-			log.info(Constants.Logs.KAFKA_SENDING_MESSAGE); 
-			kafkaLogger.info(Constants.Logs.KAFKA_SENDING_MESSAGE, OperationLogEnum.KAFKA_SENDING_MESSAGE, ResultLogEnum.OK, new Date()); 		
+			log.debug(Constants.Logs.KAFKA_SENDING_MESSAGE); 
 			out = kafkaSend(producerRecord, trans);
 		} catch (Exception e) {
 			log.error(Constants.Logs.KAFKA_SENDING_FAILED, e); 
-			kafkaLogger.error(Constants.Logs.KAFKA_SENDING_FAILED, OperationLogEnum.KAFKA_SENDING_MESSAGE, ResultLogEnum.KO, new Date(), ErrorLogEnum.KO_KAFKA_SENDING_MESSAGE); 		
 			throw new BusinessException(e);
 		}   
 		return out;
@@ -96,7 +89,7 @@ public class KafkaSRV implements IKafkaSRV {
 		if(result != null) {
 			SendResult<String,String> sendResult = (SendResult<String, String>) result;
 			out = sendResult.getRecordMetadata();
-			log.info(Constants.Logs.KAFKA_SEND_SUCCESS); 
+			log.debug(Constants.Logs.KAFKA_SEND_SUCCESS); 
 		}
 
 		return out;

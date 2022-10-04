@@ -1,22 +1,11 @@
 package it.finanze.sanita.fse2.ms.srvingestion.controller.impl;
 
-import it.finanze.sanita.fse2.ms.srvingestion.client.impl.DataProcessorClient;
-import it.finanze.sanita.fse2.ms.srvingestion.client.impl.SrvQueryClient;
-import it.finanze.sanita.fse2.ms.srvingestion.config.Constants;
-import it.finanze.sanita.fse2.ms.srvingestion.config.kafka.KafkaTopicCFG;
-import it.finanze.sanita.fse2.ms.srvingestion.controller.AbstractCTL;
-import it.finanze.sanita.fse2.ms.srvingestion.controller.IDocumentCTL;
-import it.finanze.sanita.fse2.ms.srvingestion.dto.DocumentReferenceDTO;
-import it.finanze.sanita.fse2.ms.srvingestion.dto.response.DocumentResponseDTO;
-import it.finanze.sanita.fse2.ms.srvingestion.enums.*;
-import it.finanze.sanita.fse2.ms.srvingestion.exceptions.UnsupportedOperationException;
-import it.finanze.sanita.fse2.ms.srvingestion.exceptions.*;
-import it.finanze.sanita.fse2.ms.srvingestion.repository.entity.DocumentReferenceETY;
-import it.finanze.sanita.fse2.ms.srvingestion.service.impl.DocumentSRV;
-import it.finanze.sanita.fse2.ms.srvingestion.service.impl.KafkaLoggerSRV;
-import it.finanze.sanita.fse2.ms.srvingestion.service.impl.KafkaSRV;
-import it.finanze.sanita.fse2.ms.srvingestion.utility.StringUtility;
-import lombok.extern.slf4j.Slf4j;
+import java.util.Date;
+import java.util.List;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.validation.constraints.Size;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
@@ -25,10 +14,25 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.validation.constraints.Size;
-import java.util.Date;
-import java.util.List;
+import it.finanze.sanita.fse2.ms.srvingestion.client.impl.DataProcessorClient;
+import it.finanze.sanita.fse2.ms.srvingestion.client.impl.SrvQueryClient;
+import it.finanze.sanita.fse2.ms.srvingestion.config.Constants;
+import it.finanze.sanita.fse2.ms.srvingestion.config.kafka.KafkaTopicCFG;
+import it.finanze.sanita.fse2.ms.srvingestion.controller.AbstractCTL;
+import it.finanze.sanita.fse2.ms.srvingestion.controller.IDocumentCTL;
+import it.finanze.sanita.fse2.ms.srvingestion.dto.DocumentReferenceDTO;
+import it.finanze.sanita.fse2.ms.srvingestion.dto.response.DocumentResponseDTO;
+import it.finanze.sanita.fse2.ms.srvingestion.enums.ProcessorOperationEnum;
+import it.finanze.sanita.fse2.ms.srvingestion.exceptions.DocumentAlreadyExistsException;
+import it.finanze.sanita.fse2.ms.srvingestion.exceptions.DocumentNotFoundException;
+import it.finanze.sanita.fse2.ms.srvingestion.exceptions.EmptyDocumentException;
+import it.finanze.sanita.fse2.ms.srvingestion.exceptions.KafkaException;
+import it.finanze.sanita.fse2.ms.srvingestion.exceptions.OperationException;
+import it.finanze.sanita.fse2.ms.srvingestion.exceptions.UnsupportedOperationException;
+import it.finanze.sanita.fse2.ms.srvingestion.repository.entity.DocumentReferenceETY;
+import it.finanze.sanita.fse2.ms.srvingestion.service.impl.DocumentSRV;
+import it.finanze.sanita.fse2.ms.srvingestion.service.impl.KafkaSRV;
+import lombok.extern.slf4j.Slf4j;
 
 
 /** 
@@ -56,9 +60,6 @@ public class DocumentCTL extends AbstractCTL implements IDocumentCTL {
 	
 	@Autowired
 	private SrvQueryClient srvQueryClient; 
-	
-	@Autowired
-	private KafkaLoggerSRV kafkaLogger;
 
 	@Autowired
 	private transient KafkaTopicCFG kafkaTopicCFG;
@@ -73,8 +74,7 @@ public class DocumentCTL extends AbstractCTL implements IDocumentCTL {
 	public ResponseEntity<DocumentResponseDTO> addDocument(HttpServletRequest request, @RequestBody DocumentReferenceDTO document)
 			throws OperationException, KafkaException, EmptyDocumentException, DocumentAlreadyExistsException {
 		
-		log.info(Constants.Logs.CALLED_API_POST_DOCUMENT); 
-		kafkaLogger.info(Constants.Logs.CALLED_API_POST_DOCUMENT, OperationLogEnum.PUB_CDA2, ResultLogEnum.OK, new Date());
+		log.debug(Constants.Logs.CALLED_API_POST_DOCUMENT); 
 
 		document.setInsertionDate(new Date()); 
 		DocumentReferenceETY ety = documentService.insert(document); 
@@ -111,8 +111,7 @@ public class DocumentCTL extends AbstractCTL implements IDocumentCTL {
 		switch (documentReferenceDTO.getOperation()) {
 			case UPDATE:
 				key = ProcessorOperationEnum.UPDATE;
-				log.info(Constants.Logs.CALLED_API_UPDATE_DOCUMENT);
-				kafkaLogger.info(Constants.Logs.CALLED_API_UPDATE_DOCUMENT, OperationLogEnum.UPDATE_METADATA_CDA2, ResultLogEnum.OK, new Date());
+				log.debug(Constants.Logs.CALLED_API_UPDATE_DOCUMENT);
 
 				// Calls Data processor to process Document
 				if (syncOperation) {
@@ -128,8 +127,7 @@ public class DocumentCTL extends AbstractCTL implements IDocumentCTL {
 				break;
 			case REPLACE:
 				key = ProcessorOperationEnum.REPLACE;
-				log.info(Constants.Logs.CALLED_API_PUT_DOCUMENT);
-				kafkaLogger.info(Constants.Logs.CALLED_API_PUT_DOCUMENT, OperationLogEnum.REPLACE_CDA2, ResultLogEnum.OK, new Date());
+				log.debug(Constants.Logs.CALLED_API_PUT_DOCUMENT);
 				DocumentReferenceETY ety = documentService.insert(documentReferenceDTO);
 				String mongoId = ety.getId(); 
 				String topic = kafkaTopicCFG.getIngestionDataProcessorGenericTopic();
@@ -146,8 +144,7 @@ public class DocumentCTL extends AbstractCTL implements IDocumentCTL {
 
 	@Override
 	public ResponseEntity<DocumentResponseDTO> insertDeleteDocument(HttpServletRequest request, @PathVariable String identifier) throws OperationException, KafkaException, EmptyDocumentException, DocumentNotFoundException {
-		log.info(Constants.Logs.CALLED_API_DELETE_DOCUMENT); 
-		kafkaLogger.info(Constants.Logs.CALLED_API_DELETE_DOCUMENT, OperationLogEnum.DELETE_CDA2, ResultLogEnum.OK, new Date()); 
+		log.debug(Constants.Logs.CALLED_API_DELETE_DOCUMENT); 
 		
 		DocumentReferenceDTO documentReferenceDTO = new DocumentReferenceDTO();
 		documentReferenceDTO.setIdentifier(identifier);
@@ -180,7 +177,6 @@ public class DocumentCTL extends AbstractCTL implements IDocumentCTL {
 			@Size(min = 0, max = 100, message = "identifier does not match the expected size") String id)
 			throws DocumentNotFoundException {
 		log.info(Constants.Logs.CALLED_API_GET_DOCUMENT_BY_IDENTIFIER);  
-		kafkaLogger.info(Constants.Logs.CALLED_API_GET_DOCUMENT_BY_IDENTIFIER, OperationLogEnum.GET_DOCUMENT, ResultLogEnum.OK, new Date()); 
 		
 		DocumentReferenceDTO document = documentService.getDocumentById(id); 
 		return ResponseEntity.status(HttpStatus.OK).body(document);	
@@ -190,7 +186,6 @@ public class DocumentCTL extends AbstractCTL implements IDocumentCTL {
 	public ResponseEntity<List<DocumentReferenceDTO>> getDocuments(HttpServletRequest request) {
 		
 		log.info(Constants.Logs.CALLED_API_GET_DOCUMENTS);  
-		kafkaLogger.info(Constants.Logs.CALLED_API_GET_DOCUMENTS, OperationLogEnum.GET_DOCUMENT, ResultLogEnum.OK, new Date()); 
 		
 		List<DocumentReferenceDTO> response = documentService.getDocuments(); 
 		

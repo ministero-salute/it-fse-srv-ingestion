@@ -98,9 +98,9 @@ public class KafkaSRV implements IKafkaSRV {
 	
 	@Override
 	// transform key in ENUM operation
-	public void notifyDataProcessor(final String topic, final String transactionId, final ProcessorOperationEnum key) throws KafkaException {
+	public void notifyDataProcessor(final String topic, final String mongoId, final ProcessorOperationEnum key) throws KafkaException {
 		try {
-			String message = EncryptDecryptUtility.encrypt(kafkaPropCFG.getCrypto(), transactionId);
+			String message = EncryptDecryptUtility.encrypt(kafkaPropCFG.getCrypto(), mongoId);
 			sendMessage(topic, key, message,true);
 		} catch (Exception e) {
 			log.error(Constants.Logs.KAFKA_SEND_FAILED, e); 

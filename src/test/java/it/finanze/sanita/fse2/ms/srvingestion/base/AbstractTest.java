@@ -5,7 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 
 import it.finanze.sanita.fse2.ms.srvingestion.enums.ProcessorOperationEnum;
-import it.finanze.sanita.fse2.ms.srvingestion.repository.entity.DocumentReferenceETY;
+import it.finanze.sanita.fse2.ms.srvingestion.repository.entity.StagingDocumentETY;
 import it.finanze.sanita.fse2.ms.srvingestion.repository.mongo.impl.DocumentRepo;
 
 
@@ -50,13 +50,13 @@ public abstract class AbstractTest {
 
     protected void populateStagingCollection() {
         
-    	DocumentReferenceETY documentA = new DocumentReferenceETY(); 
+    	StagingDocumentETY documentA = new StagingDocumentETY();
     	documentA.setIdentifier(DOCUMENT_TEST_IDENTIFIER_A);
     	documentA.setOperation(DOCUMENT_TEST_OPERATION);
     	documentA.setDocument(Document.parse(DOCUMENT_TEST_JSON_STRING_A)); 
     	
     	
-    	DocumentReferenceETY documentB = new DocumentReferenceETY(); 
+    	StagingDocumentETY documentB = new StagingDocumentETY();
     	documentB.setIdentifier(DOCUMENT_TEST_IDENTIFIER_B); 
     	documentB.setOperation(DOCUMENT_TEST_OPERATION);
     	documentB.setDocument(Document.parse(DOCUMENT_TEST_JSON_STRING_B)); 

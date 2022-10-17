@@ -29,7 +29,7 @@ import it.finanze.sanita.fse2.ms.srvingestion.exceptions.EmptyDocumentException;
 import it.finanze.sanita.fse2.ms.srvingestion.exceptions.KafkaException;
 import it.finanze.sanita.fse2.ms.srvingestion.exceptions.OperationException;
 import it.finanze.sanita.fse2.ms.srvingestion.exceptions.UnsupportedOperationException;
-import it.finanze.sanita.fse2.ms.srvingestion.repository.entity.DocumentReferenceETY;
+import it.finanze.sanita.fse2.ms.srvingestion.repository.entity.StagingDocumentETY;
 import it.finanze.sanita.fse2.ms.srvingestion.service.impl.DocumentSRV;
 import it.finanze.sanita.fse2.ms.srvingestion.service.impl.KafkaSRV;
 import lombok.extern.slf4j.Slf4j;
@@ -78,7 +78,7 @@ public class DocumentCTL extends AbstractCTL implements IDocumentCTL {
 		log.debug(Constants.Logs.CALLED_API_POST_DOCUMENT); 
 
 		document.setInsertionDate(new Date()); 
-		DocumentReferenceETY ety = documentService.insert(document); 
+		StagingDocumentETY ety = documentService.insert(document);
 		String mongoId = ety.getId();
 		String topic = kafkaTopicCFG.getIngestionDataProcessorPublicationTopic() + "-" + document.getPriorityTypeEnum().getDescription();
 		kafkaService.notifyDataProcessor(topic, mongoId, ProcessorOperationEnum.PUBLISH);
@@ -117,7 +117,7 @@ public class DocumentCTL extends AbstractCTL implements IDocumentCTL {
 					dataProcessorClient.sendRequestToDataProcessor(documentReferenceDTO);
 				} else {
 					// async
-					DocumentReferenceETY ety = documentService.insert(documentReferenceDTO);
+					StagingDocumentETY ety = documentService.insert(documentReferenceDTO);
 					String mongoId = ety.getId();
 					String topic = kafkaTopicCFG.getIngestionDataProcessorGenericTopic();
 					kafkaService.notifyDataProcessor(topic, mongoId, key);
@@ -126,7 +126,7 @@ public class DocumentCTL extends AbstractCTL implements IDocumentCTL {
 			case REPLACE:
 				key = ProcessorOperationEnum.REPLACE;
 				log.debug(Constants.Logs.CALLED_API_PUT_DOCUMENT);
-				DocumentReferenceETY ety = documentService.insert(documentReferenceDTO);
+				StagingDocumentETY ety = documentService.insert(documentReferenceDTO);
 				String mongoId = ety.getId(); 
 				String topic = kafkaTopicCFG.getIngestionDataProcessorGenericTopic();
 				kafkaService.notifyDataProcessor(topic, mongoId, key);
@@ -160,7 +160,7 @@ public class DocumentCTL extends AbstractCTL implements IDocumentCTL {
 			dataProcessorClient.sendRequestToDataProcessor(documentReferenceDTO);
 		} else {
 			// async
-			DocumentReferenceETY ety = documentService.insert(documentReferenceDTO);
+			StagingDocumentETY ety = documentService.insert(documentReferenceDTO);
 			String mongoId = ety.getId();
 			String topic = kafkaTopicCFG.getIngestionDataProcessorGenericTopic();
 			kafkaService.notifyDataProcessor(topic, mongoId, ProcessorOperationEnum.DELETE);

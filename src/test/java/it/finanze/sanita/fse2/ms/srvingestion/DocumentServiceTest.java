@@ -23,7 +23,7 @@ import it.finanze.sanita.fse2.ms.srvingestion.enums.ProcessorOperationEnum;
 import it.finanze.sanita.fse2.ms.srvingestion.exceptions.DocumentNotFoundException;
 import it.finanze.sanita.fse2.ms.srvingestion.exceptions.EmptyDocumentException;
 import it.finanze.sanita.fse2.ms.srvingestion.exceptions.OperationException;
-import it.finanze.sanita.fse2.ms.srvingestion.repository.entity.DocumentReferenceETY;
+import it.finanze.sanita.fse2.ms.srvingestion.repository.entity.StagingDocumentETY;
 import it.finanze.sanita.fse2.ms.srvingestion.service.IDocumentSRV;
 
 @SpringBootTest
@@ -56,14 +56,14 @@ class DocumentServiceTest extends AbstractTest {
     
 	@BeforeAll
 	public void setup() {
-		mongo.dropCollection(DocumentReferenceETY.class);
+		mongo.dropCollection(StagingDocumentETY.class);
 		populateStagingCollection();
 
 	}
 
 	@AfterAll
 	public void teardown() {
-		mongo.dropCollection(DocumentReferenceETY.class);
+		mongo.dropCollection(StagingDocumentETY.class);
 	}
     
     @Test
@@ -74,7 +74,7 @@ class DocumentServiceTest extends AbstractTest {
     	dto.setOperation(DOCUMENT_TEST_OPERATION);
     	dto.setJsonString(DOCUMENT_TEST_JSON_STRING_C); 
     	   	    	
-    	DocumentReferenceETY ety = documentService.insert(dto); 
+    	StagingDocumentETY ety = documentService.insert(dto);
     	String mongoId = ety.getId(); 
     		
     	DocumentReferenceDTO retrievedDto = documentService.getDocumentById(mongoId); 
@@ -107,7 +107,7 @@ class DocumentServiceTest extends AbstractTest {
     	dto.setOperation(DOCUMENT_TEST_OPERATION);
     	dto.setJsonString(DOCUMENT_TEST_JSON_STRING_DEL); 
     	   	    	
-    	DocumentReferenceETY ety = documentService.insert(dto); 
+    	StagingDocumentETY ety = documentService.insert(dto);
     	String mongoId = ety.getId(); 
     		
     	documentService.delete(mongoId); 
@@ -126,7 +126,7 @@ class DocumentServiceTest extends AbstractTest {
     	dtoC.setOperation(DOCUMENT_TEST_OPERATION);
     	dtoC.setJsonString(DOCUMENT_TEST_JSON_STRING_C); 
     	    	
-    	DocumentReferenceETY ety = documentService.insert(dtoC); 
+    	StagingDocumentETY ety = documentService.insert(dtoC);
     	String mongoId = ety.getId();     	
     	
     	DocumentReferenceDTO retrievedDtoC = documentService.getDocumentById(mongoId); 

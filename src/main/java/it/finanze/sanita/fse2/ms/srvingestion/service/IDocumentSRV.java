@@ -6,7 +6,7 @@ import it.finanze.sanita.fse2.ms.srvingestion.dto.DocumentReferenceDTO;
 import it.finanze.sanita.fse2.ms.srvingestion.exceptions.DocumentNotFoundException;
 import it.finanze.sanita.fse2.ms.srvingestion.exceptions.EmptyDocumentException;
 import it.finanze.sanita.fse2.ms.srvingestion.exceptions.OperationException;
-import it.finanze.sanita.fse2.ms.srvingestion.repository.entity.DocumentReferenceETY;
+import it.finanze.sanita.fse2.ms.srvingestion.repository.entity.StagingDocumentETY;
 
 /** 
  * Interface for Document Service 
@@ -22,7 +22,7 @@ public interface IDocumentSRV {
      * @throws OperationException  If a data-layer error occurs
      * @throws EmptyDocumentException  An exception thrown when a document to be inserted is empty 
      */
-	DocumentReferenceETY insert(DocumentReferenceDTO dto) throws OperationException, EmptyDocumentException; 
+	StagingDocumentETY insert(DocumentReferenceDTO dto) throws OperationException, EmptyDocumentException;
 	
     /**
      * Inserts one Document Deletion Request in the the staging database

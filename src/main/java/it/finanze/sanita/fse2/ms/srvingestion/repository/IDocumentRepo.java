@@ -3,7 +3,7 @@ package it.finanze.sanita.fse2.ms.srvingestion.repository;
 import java.util.List;
 
 import it.finanze.sanita.fse2.ms.srvingestion.exceptions.OperationException;
-import it.finanze.sanita.fse2.ms.srvingestion.repository.entity.DocumentReferenceETY;
+import it.finanze.sanita.fse2.ms.srvingestion.repository.entity.StagingDocumentETY;
 
 /** 
  * The interface for the Document Repository 
@@ -18,7 +18,7 @@ public interface IDocumentRepo {
 	 * @return DocumentReferenceETY  The Document Reference Entity created 
 	 * @throws OperationException  Generic MongoDB Exception 
 	 */
-	DocumentReferenceETY insert(DocumentReferenceETY ety) throws OperationException;
+	StagingDocumentETY insert(StagingDocumentETY ety) throws OperationException;
 
 	/**
 	 * Processes a deletion request with given identifier 
@@ -34,7 +34,7 @@ public interface IDocumentRepo {
 	 * @param id  The id of the document to be searched 
 	 * @return DocumentReferenceETY  Document Entity 
 	 */
-	DocumentReferenceETY findById(String id); 
+	StagingDocumentETY findById(String id);
 
 	
 	/**
@@ -42,7 +42,7 @@ public interface IDocumentRepo {
 	 * 
 	 * @return ArrayList  List of Document Reference Entities 
 	 */
-	public List<DocumentReferenceETY> findAll();
+	public List<StagingDocumentETY> findAll();
 
 
 

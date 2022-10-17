@@ -15,7 +15,7 @@ import it.finanze.sanita.fse2.ms.srvingestion.enums.ProcessorOperationEnum;
 import it.finanze.sanita.fse2.ms.srvingestion.exceptions.DocumentNotFoundException;
 import it.finanze.sanita.fse2.ms.srvingestion.exceptions.EmptyDocumentException;
 import it.finanze.sanita.fse2.ms.srvingestion.exceptions.OperationException;
-import it.finanze.sanita.fse2.ms.srvingestion.repository.entity.DocumentReferenceETY;
+import it.finanze.sanita.fse2.ms.srvingestion.repository.entity.StagingDocumentETY;
 import it.finanze.sanita.fse2.ms.srvingestion.repository.mongo.impl.DocumentRepo;
 import it.finanze.sanita.fse2.ms.srvingestion.service.IDocumentSRV;
 
@@ -40,7 +40,7 @@ public class DocumentSRV implements IDocumentSRV, Serializable {
 	
 	
 	@Override
-	public DocumentReferenceETY insert(DocumentReferenceDTO dto) throws OperationException, EmptyDocumentException {
+	public StagingDocumentETY insert(DocumentReferenceDTO dto) throws OperationException, EmptyDocumentException {
 		
 		// If the object does not have an OperationCode, it is a creation
 		if (ObjectUtils.isEmpty(dto.getOperation())) {
@@ -52,7 +52,7 @@ public class DocumentSRV implements IDocumentSRV, Serializable {
 				throw new EmptyDocumentException(Constants.Logs.ERROR_EMPTY_DOCUMENT); 
 		} 
 		
-		DocumentReferenceETY document = parseDtoToEty(dto); 
+		StagingDocumentETY document = parseDtoToEty(dto);
 		return documentRepo.insert(document); 
 	} 
 	
@@ -64,7 +64,7 @@ public class DocumentSRV implements IDocumentSRV, Serializable {
 	
 	@Override
 	public DocumentReferenceDTO getDocumentById(String id) throws DocumentNotFoundException {
-		DocumentReferenceETY ety =  documentRepo.findById(id); 
+		StagingDocumentETY ety =  documentRepo.findById(id);
 		
 		if(ObjectUtils.isEmpty(ety.getId())) {
 			throw new DocumentNotFoundException(Constants.Logs.ERROR_DOCUMENT_NOT_FOUND); 
@@ -76,33 +76,33 @@ public class DocumentSRV implements IDocumentSRV, Serializable {
 	
 	@Override
 	public List<DocumentReferenceDTO> getDocuments() {
-		List<DocumentReferenceETY> etyList = documentRepo.findAll(); 
+		List<StagingDocumentETY> etyList = documentRepo.findAll();
 		return buildDtoFromEty(etyList); 	
 	}
 
 	
 	
-	public DocumentReferenceDTO parseEtyToDto(DocumentReferenceETY documentReferenceETY) {
+	public DocumentReferenceDTO parseEtyToDto(StagingDocumentETY stagingDocumentETY) {
 		DocumentReferenceDTO output = new DocumentReferenceDTO(); 
 		
-		if(!ObjectUtils.isEmpty(documentReferenceETY.getIdentifier())) {
-			output.setIdentifier(documentReferenceETY.getIdentifier());
+		if(!ObjectUtils.isEmpty(stagingDocumentETY.getIdentifier())) {
+			output.setIdentifier(stagingDocumentETY.getIdentifier());
 		} 
-		if(!ObjectUtils.isEmpty(documentReferenceETY.getOperation())) {
-			output.setOperation(documentReferenceETY.getOperation());
+		if(!ObjectUtils.isEmpty(stagingDocumentETY.getOperation())) {
+			output.setOperation(stagingDocumentETY.getOperation());
 		}
-		if(!ObjectUtils.isEmpty(documentReferenceETY.getDocument()) ) {
-			output.setJsonString(documentReferenceETY.getDocument().toJson());
+		if(!ObjectUtils.isEmpty(stagingDocumentETY.getDocument()) ) {
+			output.setJsonString(stagingDocumentETY.getDocument().toJson());
 		}
-		if(!ObjectUtils.isEmpty(documentReferenceETY.getInsertionDate()) ) {
-			output.setInsertionDate(documentReferenceETY.getInsertionDate());
+		if(!ObjectUtils.isEmpty(stagingDocumentETY.getInsertionDate()) ) {
+			output.setInsertionDate(stagingDocumentETY.getInsertionDate());
 		}
 		
 		return output;
 	} 
 	
-	public DocumentReferenceETY parseDtoToEty(DocumentReferenceDTO documentReferenceDTO) {
-		DocumentReferenceETY output = new DocumentReferenceETY(); 
+	public StagingDocumentETY parseDtoToEty(DocumentReferenceDTO documentReferenceDTO) {
+		StagingDocumentETY output = new StagingDocumentETY();
 		
 		if(!ObjectUtils.isEmpty(documentReferenceDTO.getIdentifier())) {
 			output.setIdentifier(documentReferenceDTO.getIdentifier());
@@ -120,10 +120,10 @@ public class DocumentSRV implements IDocumentSRV, Serializable {
 		return output;
 	} 
 	
-	public List<DocumentReferenceDTO> buildDtoFromEty(List<DocumentReferenceETY> documentEtyList) {
+	public List<DocumentReferenceDTO> buildDtoFromEty(List<StagingDocumentETY> documentEtyList) {
 		List<DocumentReferenceDTO> output = new ArrayList<>();
 		
-		for(DocumentReferenceETY document : documentEtyList) {
+		for(StagingDocumentETY document : documentEtyList) {
 			output.add(parseEtyToDto(document));
 		}
 		

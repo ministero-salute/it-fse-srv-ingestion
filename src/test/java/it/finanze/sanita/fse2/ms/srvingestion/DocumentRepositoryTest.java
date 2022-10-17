@@ -18,7 +18,7 @@ import it.finanze.sanita.fse2.ms.srvingestion.base.AbstractTest;
 import it.finanze.sanita.fse2.ms.srvingestion.config.Constants;
 import it.finanze.sanita.fse2.ms.srvingestion.enums.ProcessorOperationEnum;
 import it.finanze.sanita.fse2.ms.srvingestion.exceptions.OperationException;
-import it.finanze.sanita.fse2.ms.srvingestion.repository.entity.DocumentReferenceETY;
+import it.finanze.sanita.fse2.ms.srvingestion.repository.entity.StagingDocumentETY;
 
 @SpringBootTest
 @ComponentScan
@@ -43,31 +43,31 @@ class DocumentRepositoryTest extends AbstractTest {
     
 	@BeforeAll
 	public void setup() {
-		mongo.dropCollection(DocumentReferenceETY.class);
+		mongo.dropCollection(StagingDocumentETY.class);
 		populateStagingCollection();
 
 	}
 
 	@AfterAll
 	public void teardown() {
-		mongo.dropCollection(DocumentReferenceETY.class);
+		mongo.dropCollection(StagingDocumentETY.class);
 	}
     
     
     
     @Test
     void insertTest() throws OperationException {
-    	DocumentReferenceETY etyA = new DocumentReferenceETY(); 
+    	StagingDocumentETY etyA = new StagingDocumentETY();
 
     	etyA.setOperation(ProcessorOperationEnum.PUBLISH);
     	etyA.setDocument(Document.parse(DOCUMENT_TEST_JSON_STRING_C)); 
     	
     	documentRepository.insert(etyA); 
     	  	
-    	DocumentReferenceETY retrievedEtyC = documentRepository.findById(etyA.getId()); 
+    	StagingDocumentETY retrievedEtyC = documentRepository.findById(etyA.getId());
 
     	
-    	assertEquals(DocumentReferenceETY.class, retrievedEtyC.getClass()); 
+    	assertEquals(StagingDocumentETY.class, retrievedEtyC.getClass());
     	assertEquals(Document.class, retrievedEtyC.getDocument().getClass()); 
     	
     	assertEquals(ProcessorOperationEnum.PUBLISH, retrievedEtyC.getOperation());
@@ -78,20 +78,20 @@ class DocumentRepositoryTest extends AbstractTest {
     
     @Test
     void deleteTest() throws OperationException {
-    	DocumentReferenceETY etyA = new DocumentReferenceETY(); 
+    	StagingDocumentETY etyA = new StagingDocumentETY();
 
     	etyA.setIdentifier(DOCUMENT_TEST_IDENTIFIER_DEL); 
     	etyA.setDocument(Document.parse(DOCUMENT_TEST_JSON_STRING_DEL)); 
  
     	
     	  	
-    	DocumentReferenceETY ety = documentRepository.insert(etyA);
+    	StagingDocumentETY ety = documentRepository.insert(etyA);
     	
     	documentRepository.deleteByIdentifier(ety.getId()); 
     	
-    	DocumentReferenceETY retrievedEtyDel = documentRepository.findById(ety.getId()); 
+    	StagingDocumentETY retrievedEtyDel = documentRepository.findById(ety.getId());
 
-    	assertEquals(DocumentReferenceETY.class, retrievedEtyDel.getClass()); 
+    	assertEquals(StagingDocumentETY.class, retrievedEtyDel.getClass());
 
     	 	
     }
@@ -99,16 +99,16 @@ class DocumentRepositoryTest extends AbstractTest {
     
     @Test
     void findByIdTest() throws Exception {
-    	DocumentReferenceETY etyA = new DocumentReferenceETY(); 
+    	StagingDocumentETY etyA = new StagingDocumentETY();
 
     	etyA.setDocument(Document.parse(DOCUMENT_TEST_JSON_STRING_C)); 
     	
-    	DocumentReferenceETY ety = documentRepository.insert(etyA); 
+    	StagingDocumentETY ety = documentRepository.insert(etyA);
     	  
-    	DocumentReferenceETY retrievedEty = documentRepository.findById(ety.getId()); 
+    	StagingDocumentETY retrievedEty = documentRepository.findById(ety.getId());
     	
     	
-    	assertEquals(DocumentReferenceETY.class, retrievedEty.getClass()); 
+    	assertEquals(StagingDocumentETY.class, retrievedEty.getClass());
     	assertEquals(Document.class, retrievedEty.getDocument().getClass()); 
     	
     	assertEquals(DOCUMENT_TEST_JSON_STRING_C, retrievedEty.getDocument().toJson()); 	
@@ -118,7 +118,7 @@ class DocumentRepositoryTest extends AbstractTest {
     
     @Test
     void findAllTest() throws Exception {  	
-    	DocumentReferenceETY etyA = new DocumentReferenceETY(); 
+    	StagingDocumentETY etyA = new StagingDocumentETY();
 
     	etyA.setIdentifier(DOCUMENT_TEST_IDENTIFIER_C); 
     	etyA.setDocument(Document.parse(DOCUMENT_TEST_JSON_STRING_C)); 
@@ -126,13 +126,13 @@ class DocumentRepositoryTest extends AbstractTest {
     	documentRepository.insert(etyA); 
     	
     	
-    	List<DocumentReferenceETY> etyRetrievedList = documentRepository.findAll(); 
-    	DocumentReferenceETY firstElemEtyInList = etyRetrievedList.get(0); 
+    	List<StagingDocumentETY> etyRetrievedList = documentRepository.findAll();
+    	StagingDocumentETY firstElemEtyInList = etyRetrievedList.get(0);
     	
     	assertEquals(ArrayList.class, etyRetrievedList.getClass()); 
     	assertEquals(true, etyRetrievedList.size() > 0); 
     	
-    	assertEquals(DocumentReferenceETY.class, firstElemEtyInList.getClass()); 
+    	assertEquals(StagingDocumentETY.class, firstElemEtyInList.getClass());
     	assertEquals(Document.class, firstElemEtyInList.getDocument().getClass()); 
     	
     } 

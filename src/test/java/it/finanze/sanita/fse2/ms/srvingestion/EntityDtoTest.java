@@ -11,7 +11,7 @@ import org.springframework.test.context.ActiveProfiles;
 
 import it.finanze.sanita.fse2.ms.srvingestion.base.AbstractTest;
 import it.finanze.sanita.fse2.ms.srvingestion.config.Constants;
-import it.finanze.sanita.fse2.ms.srvingestion.repository.entity.DocumentReferenceETY;
+import it.finanze.sanita.fse2.ms.srvingestion.repository.entity.StagingDocumentETY;
 
 
 @SpringBootTest
@@ -24,13 +24,13 @@ class EntityDtoTest extends AbstractTest {
     
     @Test
     void createDocumentEty() {
-    	DocumentReferenceETY documentEty = new DocumentReferenceETY(); 
+    	StagingDocumentETY documentEty = new StagingDocumentETY();
     	
     	documentEty.setIdentifier(DOCUMENT_TEST_IDENTIFIER); 
     	documentEty.setDocument(Document.parse(DOCUMENT_TEST_JSON_STRING)); 
     	    	
     	
-    	assertEquals(DocumentReferenceETY.class, documentEty.getClass()); 
+    	assertEquals(StagingDocumentETY.class, documentEty.getClass());
     	assertEquals(String.class, documentEty.getIdentifier().getClass()); 
     	assertEquals(Document.class, documentEty.getDocument().getClass()); 
 

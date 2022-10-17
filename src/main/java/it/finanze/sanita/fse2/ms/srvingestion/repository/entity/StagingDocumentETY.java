@@ -19,7 +19,7 @@ import lombok.NoArgsConstructor;
 @Document(collection = "#{@ingestionStagingBean}")
 @Data
 @NoArgsConstructor
-public class DocumentReferenceETY {
+public class StagingDocumentETY {
 
 	/** 
 	 * Mongo ID 

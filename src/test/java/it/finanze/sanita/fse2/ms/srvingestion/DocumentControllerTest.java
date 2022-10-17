@@ -38,7 +38,7 @@ import it.finanze.sanita.fse2.ms.srvingestion.controller.impl.DocumentCTL;
 import it.finanze.sanita.fse2.ms.srvingestion.dto.DocumentReferenceDTO;
 import it.finanze.sanita.fse2.ms.srvingestion.enums.PriorityTypeEnum;
 import it.finanze.sanita.fse2.ms.srvingestion.enums.ProcessorOperationEnum;
-import it.finanze.sanita.fse2.ms.srvingestion.repository.entity.DocumentReferenceETY;
+import it.finanze.sanita.fse2.ms.srvingestion.repository.entity.StagingDocumentETY;
 import it.finanze.sanita.fse2.ms.srvingestion.service.IDocumentSRV;
 import it.finanze.sanita.fse2.ms.srvingestion.utility.ProfileUtility;
 
@@ -93,14 +93,14 @@ class DocumentControllerTest extends AbstractTest {
 
 	@BeforeAll
 	public void setup() {
-		mongo.dropCollection(DocumentReferenceETY.class);
+		mongo.dropCollection(StagingDocumentETY.class);
 		populateStagingCollection();
 
 	}
 
 	@AfterAll
 	public void teardown() {
-		mongo.dropCollection(DocumentReferenceETY.class);
+		mongo.dropCollection(StagingDocumentETY.class);
 	}
 
     
@@ -371,7 +371,7 @@ class DocumentControllerTest extends AbstractTest {
     	dtoC.setJsonString(DOCUMENT_TEST_JSON_STRING_C); 
     	   	
     	
-    	DocumentReferenceETY ety = documentService.insert(dtoC); 
+    	StagingDocumentETY ety = documentService.insert(dtoC);
     	String mongoId = ety.getId(); 
     	
 

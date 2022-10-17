@@ -14,7 +14,7 @@ import com.mongodb.MongoException;
 import it.finanze.sanita.fse2.ms.srvingestion.config.Constants;
 import it.finanze.sanita.fse2.ms.srvingestion.exceptions.OperationException;
 import it.finanze.sanita.fse2.ms.srvingestion.repository.IDocumentRepo;
-import it.finanze.sanita.fse2.ms.srvingestion.repository.entity.DocumentReferenceETY;
+import it.finanze.sanita.fse2.ms.srvingestion.repository.entity.StagingDocumentETY;
 import it.finanze.sanita.fse2.ms.srvingestion.utility.ProfileUtility;
 
 import org.springframework.data.mongodb.core.query.Query;
@@ -42,7 +42,7 @@ public class DocumentRepo implements IDocumentRepo, Serializable {
 
 	
 	@Override
-	public DocumentReferenceETY insert(DocumentReferenceETY ety) throws OperationException {
+	public StagingDocumentETY insert(StagingDocumentETY ety) throws OperationException {
 		try {
 			return mongoTemplate.insert(ety, getCollectionName()); 
 		} catch(MongoException ex) {
@@ -57,14 +57,14 @@ public class DocumentRepo implements IDocumentRepo, Serializable {
 	}
 	
 	@Override
-	public DocumentReferenceETY findById(String id) {
-		DocumentReferenceETY ety = mongoTemplate.findById(id, DocumentReferenceETY.class, getCollectionName()); 
-		return ObjectUtils.isEmpty(ety) ? new DocumentReferenceETY() : ety; 
+	public StagingDocumentETY findById(String id) {
+		StagingDocumentETY ety = mongoTemplate.findById(id, StagingDocumentETY.class, getCollectionName());
+		return ObjectUtils.isEmpty(ety) ? new StagingDocumentETY() : ety;
 	} 
 	
 	@Override
-	public List<DocumentReferenceETY> findAll() {
-		return mongoTemplate.findAll(DocumentReferenceETY.class, getCollectionName()); 
+	public List<StagingDocumentETY> findAll() {
+		return mongoTemplate.findAll(StagingDocumentETY.class, getCollectionName());
 	}
 
 	public String getCollectionName() {

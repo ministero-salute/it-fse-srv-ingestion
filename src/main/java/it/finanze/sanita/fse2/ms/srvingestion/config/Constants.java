@@ -19,32 +19,32 @@ public final class Constants {
 		/**
 		 * Base path.
 		 */
-		public static final String BASE = "it.sanita.srvingestion";
+		public static final String BASE = "it.finanze.sanita.fse2.ms.srvingestion";
 
 		/**
 		 * Controller path.
 		 */
-		public static final String CONTROLLER = "it.sanita.srvingestion.controller";
+		public static final String CONTROLLER = "it.finanze.sanita.fse2.ms.srvingestion.controller";
 
 		/**
 		 * Service path.
 		 */
-		public static final String SERVICE = "it.sanita.srvingestion.service";
+		public static final String SERVICE = "it.finanze.sanita.fse2.ms.srvingestion.service";
 
 		/**
 		 * Configuration path.
 		 */
-		public static final String CONFIG = "it.sanita.srvingestion.config";
+		public static final String CONFIG = "it.finanze.sanita.fse2.ms.srvingestion.config";
 
 		/**
 		 * Configuration mongo path.
 		 */
-		public static final String CONFIG_MONGO = "it.sanita.srvingestion.config.mongo";
+		public static final String CONFIG_MONGO = "it.finanze.sanita.fse2.ms.srvingestion.config.mongo";
 
 		/**
 		 * Configuration mongo repository path.
 		 */
-		public static final String REPOSITORY_MONGO = "it.sanita.srvingestion.repository";
+		public static final String REPOSITORY_MONGO = "it.finanze.sanita.fse2.ms.srvingestion.repository";
 
 		/** 
 		 * Collection name 
@@ -57,24 +57,7 @@ public final class Constants {
 		private ComponentScan() {
 		}
 	}
-
-	/** 
-	 * Contains all the constants used in the headers of HTTP calls 
-	 */
-	public static final class Headers {
-
-		/**
-		 * JWT header field.
-		 */
-		public static final String JWT_HEADER = "Authorization";
-
-		/**
-		 * This method is intentionally left blank. 
-		 */
-		private Headers() {
-		}
-
-	}
+ 
 
 	/** 
 	 * Contains the constants for the launch profile of the SpringBoot application. 
@@ -116,29 +99,6 @@ public final class Constants {
 		 */
 		public static final String JWT_TOKEN_AUDIENCE = "eds-ingestion";
 
-		/**
-		 * The JWT Token Type 
-		 */
-		public static final String JWT_TOKEN_TYPE = "JWT";
-
-		/** 
-		 * The JWT Bearer Prefix 
-		 */
-		public static final String BEARER_PREFIX = "Bearer ";
-
-		/** 
-		 * The deleted field
-		 */
-		public static final String DELETED = "deleted";
-
-		/**
-		 * SHA-256 
-		 */
-		public static final String SHA_256 = "SHA-256";
-
-		/** 
-		 * Identifier 
-		 */
 		public static final String IDENTIFIER = "identifier";
 
 		/** 

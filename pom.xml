@@ -8,8 +8,8 @@
 		<relativePath />
 		<!-- lookup parent from repository -->
 	</parent>
-	<groupId>it.finanze.sanita.fse2.ms</groupId>
-	<artifactId>srvingestion</artifactId>
+	<groupId>it.finanze.sanita.fse2</groupId>
+	<artifactId>srvingestion-ms</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>srvingestion</name>
 	<description>EDS Microservice for FHIR Resources ingestion</description>

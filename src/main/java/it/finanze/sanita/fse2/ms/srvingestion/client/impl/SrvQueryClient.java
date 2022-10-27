@@ -58,8 +58,8 @@ public class SrvQueryClient implements ISrvQueryClient {
         
         HttpEntity<?> entity = new HttpEntity<>(docId, headers);
 
-        ResponseEntity<ResourceExistResDTO> response = null;
-        String url = srvQueryConfig.getEdsSrvQueryHost() + "/v1/document/"  + docId;
+        ResponseEntity<ResourceExistResDTO> response;
+        String url = srvQueryConfig.getEdsSrvQueryHost() + "/v1/document/check-exist/"  + docId;
         
         try {
             response = restTemplate.exchange(url, HttpMethod.GET, entity, ResourceExistResDTO.class);

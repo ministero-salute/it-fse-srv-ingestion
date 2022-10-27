@@ -9,9 +9,9 @@
 		<!-- lookup parent from repository -->
 	</parent>
 	<groupId>it.finanze.sanita.fse2</groupId>
-	<artifactId>srvingestion-ms</artifactId>
+	<artifactId>srv-ingestion-ms</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>srvingestion</name>
+	<name>srv-ingestion-ms</name>
 	<description>EDS Microservice for FHIR Resources ingestion</description>
 	<properties>
 		<java.version>1.8</java.version>

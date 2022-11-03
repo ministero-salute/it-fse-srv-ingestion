@@ -79,23 +79,22 @@ public class DocumentCTL extends AbstractCTL implements IDocumentCTL {
 			throws OperationException, KafkaException, EmptyDocumentException, DocumentAlreadyExistsException {
 		
 		log.debug(Constants.Logs.CALLED_API_POST_DOCUMENT); 
-
 		document.setInsertionDate(new Date()); 
 		StagingDocumentETY ety = documentService.insert(document);
 		String mongoId = ety.getId();
-		String topic = kafkaTopicCFG.getIngestionDataProcessorPublicationTopic() + "-" + document.getPriorityTypeEnum().getDescription();
+		String topic = kafkaTopicCFG.getIngestionDataProcessorPublicationTopic() + document.getPriorityTypeEnum().getQueue();
 		kafkaService.notifyDataProcessor(topic, mongoId, ProcessorOperationEnum.PUBLISH);
 		return new ResponseEntity<>(new DocumentResponseDTO(getLogTraceInfo()), HttpStatus.CREATED); 
 	}
 
 	@Override
 	public ResponseEntity<DocumentResponseDTO> insertReplaceDocument(HttpServletRequest request, DocumentReferenceDTO document) throws OperationException, KafkaException, EmptyDocumentException, UnsupportedOperationException, DocumentAlreadyExistsException, DocumentNotFoundException {
-		return this.abstractReplaceUpdateDocument(document);
+		return abstractReplaceUpdateDocument(document);
 	}
 
 	@Override
 	public ResponseEntity<DocumentResponseDTO> insertUpdateDocument(HttpServletRequest request, DocumentReferenceDTO document) throws OperationException, KafkaException, EmptyDocumentException, UnsupportedOperationException, DocumentAlreadyExistsException, DocumentNotFoundException {
-		return this.abstractReplaceUpdateDocument(document);
+		return abstractReplaceUpdateDocument(document);
 	}
 
 	public ResponseEntity<DocumentResponseDTO> abstractReplaceUpdateDocument(DocumentReferenceDTO documentReferenceDTO) throws EmptyDocumentException, OperationException, KafkaException, UnsupportedOperationException, DocumentNotFoundException {

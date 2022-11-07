@@ -89,21 +89,20 @@ public class DocumentCTL extends AbstractCTL implements IDocumentCTL {
 
 	@Override
 	public ResponseEntity<DocumentResponseDTO> insertReplaceDocument(HttpServletRequest request, DocumentReferenceDTO document) throws OperationException, KafkaException, EmptyDocumentException, UnsupportedOperationException, DocumentAlreadyExistsException, DocumentNotFoundException {
-		return abstractReplaceUpdateDocument(document);
+		return genericReplaceUpdateDocument(document);
 	}
 
 	@Override
 	public ResponseEntity<DocumentResponseDTO> insertUpdateDocument(HttpServletRequest request, DocumentReferenceDTO document) throws OperationException, KafkaException, EmptyDocumentException, UnsupportedOperationException, DocumentAlreadyExistsException, DocumentNotFoundException {
-		return abstractReplaceUpdateDocument(document);
+		return genericReplaceUpdateDocument(document);
 	}
 
-	public ResponseEntity<DocumentResponseDTO> abstractReplaceUpdateDocument(DocumentReferenceDTO documentReferenceDTO) throws EmptyDocumentException, OperationException, KafkaException, UnsupportedOperationException, DocumentNotFoundException {
+	private ResponseEntity<DocumentResponseDTO> genericReplaceUpdateDocument(DocumentReferenceDTO documentReferenceDTO) throws EmptyDocumentException, OperationException, KafkaException, UnsupportedOperationException, DocumentNotFoundException {
 		documentReferenceDTO.setInsertionDate(new Date());
 
 		ProcessorOperationEnum key;
 
-		// TODO: remove mock
-		if (!srvQueryReadMockEnabled && !srvQueryClient.checkExists(documentReferenceDTO.getIdentifier())) {
+		if (!srvQueryClient.checkExists(documentReferenceDTO.getIdentifier())) {
 			throw new DocumentNotFoundException("Error: document not found!");
 		}
 

@@ -102,7 +102,7 @@ public class DocumentCTL extends AbstractCTL implements IDocumentCTL {
 
 		ProcessorOperationEnum key;
 
-		if (!srvQueryClient.checkExists(documentReferenceDTO.getIdentifier())) {
+		if (!srvQueryReadMockEnabled && !srvQueryClient.checkExists(documentReferenceDTO.getIdentifier())) {
 			throw new DocumentNotFoundException("Error: document not found!");
 		}
 
@@ -151,7 +151,6 @@ public class DocumentCTL extends AbstractCTL implements IDocumentCTL {
 		documentReferenceDTO.setJsonString(null);
 		documentReferenceDTO.setInsertionDate(new Date());
 
-		//TODO: remove mock
 		if (!srvQueryReadMockEnabled && !srvQueryClient.checkExists(documentReferenceDTO.getIdentifier())) {
 			throw new DocumentNotFoundException("Error: document not found!");
 		}

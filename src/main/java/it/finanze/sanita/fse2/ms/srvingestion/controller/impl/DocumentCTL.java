@@ -106,12 +106,12 @@ public class DocumentCTL extends AbstractCTL implements IDocumentCTL {
 			throw new DocumentNotFoundException("Error: document not found!");
 		}
 
-
-		switch (documentReferenceDTO.getOperation()) {
+		if (!srvQueryReadMockEnabled) {
+			switch (documentReferenceDTO.getOperation()) {
 			case UPDATE:
 				key = ProcessorOperationEnum.UPDATE;
 				log.debug(Constants.Logs.CALLED_API_UPDATE_DOCUMENT);
-
+				
 				// Calls Data processor to process Document
 				if (syncOperation) {
 					// sync
@@ -135,6 +135,7 @@ public class DocumentCTL extends AbstractCTL implements IDocumentCTL {
 			default:
 				// throw bad request
 				throw new UnsupportedOperationException("Unsupported operation");
+			}
 		}
 
 		return new ResponseEntity<>(new DocumentResponseDTO(getLogTraceInfo()), HttpStatus.OK);

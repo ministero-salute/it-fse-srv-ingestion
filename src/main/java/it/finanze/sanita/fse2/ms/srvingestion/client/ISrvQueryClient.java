@@ -19,6 +19,6 @@ public interface ISrvQueryClient extends Serializable {
 	 * @param docId  The ID of the document whose existence needs to be checked by the SRV Query Microservice 
 	 * @return boolean  A boolean that represents whether the document has been found by the Srv Query Microservice 
 	 */
-    Boolean checkExists(String docId);
+	boolean checkExists(String docId);
 
 }

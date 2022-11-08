@@ -49,7 +49,7 @@ public class SrvQueryClient implements ISrvQueryClient {
      * Checks whether the document exists by calling the Srv Query Microservice 
      */
 	@Override
-	public Boolean checkExists(String docId) {
+	public boolean checkExists(String docId) {
         log.debug("Calling eds Srv Query ep - START"); 
 
         HttpHeaders headers = new HttpHeaders();

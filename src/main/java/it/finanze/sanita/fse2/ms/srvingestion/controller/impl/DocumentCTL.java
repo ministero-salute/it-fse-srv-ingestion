@@ -63,16 +63,13 @@ public class DocumentCTL extends AbstractCTL implements IDocumentCTL {
 	private DataProcessorClient dataProcessorClient; 
 	
 	@Autowired
-	private SrvQueryClient srvQueryClient; 
+	private SrvQueryClient srvQueryClient;
 
 	@Autowired
 	private transient KafkaTopicCFG kafkaTopicCFG;
 
-	@Value("${eds.dataprocessor.operation.sync}")
-	private boolean syncOperation;
-
 	@Value("${eds.srvquery.read.mock}")
-	private Boolean srvQueryReadMockEnabled;
+	private boolean srvQueryReadMockEnabled;
 
 	@Override
 	public ResponseEntity<DocumentResponseDTO> addDocument(HttpServletRequest request, @RequestBody DocumentReferenceDTO document)
@@ -100,42 +97,28 @@ public class DocumentCTL extends AbstractCTL implements IDocumentCTL {
 	private ResponseEntity<DocumentResponseDTO> genericReplaceUpdateDocument(DocumentReferenceDTO documentReferenceDTO) throws EmptyDocumentException, OperationException, KafkaException, UnsupportedOperationException, DocumentNotFoundException {
 		documentReferenceDTO.setInsertionDate(new Date());
 
-		ProcessorOperationEnum key;
-
-		if (!srvQueryReadMockEnabled && !srvQueryClient.checkExists(documentReferenceDTO.getIdentifier())) {
+		if (!srvQueryReadMockEnabled && Boolean.FALSE.equals(srvQueryClient.checkExists(documentReferenceDTO.getIdentifier()))) {
 			throw new DocumentNotFoundException("Error: document not found!");
 		}
 
-		if (!srvQueryReadMockEnabled) {
-			switch (documentReferenceDTO.getOperation()) {
+		switch (documentReferenceDTO.getOperation()) {
 			case UPDATE:
-				key = ProcessorOperationEnum.UPDATE;
 				log.debug(Constants.Logs.CALLED_API_UPDATE_DOCUMENT);
-				
 				// Calls Data processor to process Document
-				if (syncOperation) {
-					// sync
+				if (!srvQueryReadMockEnabled) {
 					dataProcessorClient.sendRequestToDataProcessor(documentReferenceDTO);
-				} else {
-					// async
-					StagingDocumentETY ety = documentService.insert(documentReferenceDTO);
-					String mongoId = ety.getId();
-					String topic = kafkaTopicCFG.getIngestionDataProcessorGenericTopic();
-					kafkaService.notifyDataProcessor(topic, mongoId, key);
 				}
 				break;
 			case REPLACE:
-				key = ProcessorOperationEnum.REPLACE;
 				log.debug(Constants.Logs.CALLED_API_PUT_DOCUMENT);
 				StagingDocumentETY ety = documentService.insert(documentReferenceDTO);
 				String mongoId = ety.getId(); 
 				String topic = kafkaTopicCFG.getIngestionDataProcessorGenericTopic();
-				kafkaService.notifyDataProcessor(topic, mongoId, key);
+				kafkaService.notifyDataProcessor(topic, mongoId, ProcessorOperationEnum.REPLACE);
 				break;
 			default:
 				// throw bad request
 				throw new UnsupportedOperationException("Unsupported operation");
-			}
 		}
 
 		return new ResponseEntity<>(new DocumentResponseDTO(getLogTraceInfo()), HttpStatus.OK);
@@ -152,23 +135,12 @@ public class DocumentCTL extends AbstractCTL implements IDocumentCTL {
 		documentReferenceDTO.setJsonString(null);
 		documentReferenceDTO.setInsertionDate(new Date());
 
-		if (!srvQueryReadMockEnabled && !srvQueryClient.checkExists(documentReferenceDTO.getIdentifier())) {
+		if (!srvQueryReadMockEnabled && Boolean.FALSE.equals(srvQueryClient.checkExists(documentReferenceDTO.getIdentifier()))) {
 			throw new DocumentNotFoundException("Error: document not found!");
 		}
 
-		if (syncOperation) {
-			// sync
-			dataProcessorClient.sendRequestToDataProcessor(documentReferenceDTO);
-		} else {
-			// async
-			StagingDocumentETY ety = documentService.insert(documentReferenceDTO);
-			String mongoId = ety.getId();
-			String topic = kafkaTopicCFG.getIngestionDataProcessorGenericTopic();
-			kafkaService.notifyDataProcessor(topic, mongoId, ProcessorOperationEnum.DELETE);
-		}
-
-		return new ResponseEntity<>(new DocumentResponseDTO(getLogTraceInfo()), HttpStatus.OK); 
-
+		dataProcessorClient.sendRequestToDataProcessor(documentReferenceDTO);
+		return new ResponseEntity<>(new DocumentResponseDTO(getLogTraceInfo()), HttpStatus.OK);
 	}
 
 	@Override

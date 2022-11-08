@@ -1,0 +1,8 @@
+Legenda: 
+R - Removed
+A - Add
+
+
+08/11/2022
+R:
+eds.dataprocessor.operation.sync

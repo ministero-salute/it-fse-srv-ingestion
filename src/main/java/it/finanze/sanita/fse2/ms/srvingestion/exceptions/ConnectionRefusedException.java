@@ -5,7 +5,6 @@ package it.finanze.sanita.fse2.ms.srvingestion.exceptions;
 
 
 /**
- * @author vincenzoingenito
  * 
  * Connection refused error exception.
  *

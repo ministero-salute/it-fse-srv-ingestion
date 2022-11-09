@@ -12,7 +12,6 @@ import it.finanze.sanita.fse2.ms.srvingestion.config.kafka.KafkaProducerProperti
 import lombok.Data;
 
 /**
- *	@author vincenzoingenito
  *
  *	Kafka producer properties configuration.
  */

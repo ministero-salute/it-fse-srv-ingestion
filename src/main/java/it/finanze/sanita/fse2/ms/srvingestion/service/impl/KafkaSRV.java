@@ -23,7 +23,6 @@ import lombok.extern.slf4j.Slf4j;
 /**
  * Kafka management service implementation. 
  * 
- * @author vincenzoingenito
  *
  */
 @Service

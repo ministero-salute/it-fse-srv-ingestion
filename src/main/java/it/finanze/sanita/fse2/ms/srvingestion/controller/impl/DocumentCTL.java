@@ -41,7 +41,6 @@ import lombok.extern.slf4j.Slf4j;
 /** 
  * Document Controller 
  * 
- * @author Guido Rocco
  */
 @RestController
 @Slf4j

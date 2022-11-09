@@ -9,7 +9,6 @@ import lombok.extern.slf4j.Slf4j;
 /**
  * JSON Utility Class 
  * 
- * @author AndreaPerquoti
  *
  */
 @Slf4j

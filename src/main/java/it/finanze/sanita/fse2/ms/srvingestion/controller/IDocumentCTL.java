@@ -45,7 +45,6 @@ import it.finanze.sanita.fse2.ms.srvingestion.exceptions.UnsupportedOperationExc
 /**
  * Ingestion Controller.
  * 
- * @author Guido Rocco
  */
 @RequestMapping(path = "/v1")
 @Tag(name = "Document Ingestion Controller")

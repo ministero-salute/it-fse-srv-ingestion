@@ -10,7 +10,6 @@ import it.finanze.sanita.fse2.ms.srvingestion.config.kafka.KafkaTopicCFG;
 import lombok.Data;
 
 /**
- *	@author vincenzoingenito
  *
  *	Kafka topic configuration.
  */

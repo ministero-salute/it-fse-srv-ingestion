@@ -5,7 +5,7 @@ package it.finanze.sanita.fse2.ms.srvingestion.service;
 
 import java.util.List;
 
-import it.finanze.sanita.fse2.ms.srvingestion.dto.DocumentReferenceDTO;
+import it.finanze.sanita.fse2.ms.srvingestion.dto.DocumentDTO;
 import it.finanze.sanita.fse2.ms.srvingestion.exceptions.DocumentNotFoundException;
 import it.finanze.sanita.fse2.ms.srvingestion.exceptions.EmptyDocumentException;
 import it.finanze.sanita.fse2.ms.srvingestion.exceptions.OperationException;
@@ -25,7 +25,7 @@ public interface IDocumentSRV {
      * @throws OperationException  If a data-layer error occurs
      * @throws EmptyDocumentException  An exception thrown when a document to be inserted is empty 
      */
-	StagingDocumentETY insert(DocumentReferenceDTO dto) throws OperationException, EmptyDocumentException;
+	StagingDocumentETY insert(DocumentDTO dto, String wii)throws OperationException, EmptyDocumentException;
 	
     /**
      * Inserts one Document Deletion Request in the the staging database
@@ -42,7 +42,7 @@ public interface IDocumentSRV {
      * @return DocumentReferenceDTO  The retrieved document 
      * @throws DocumentNotFoundException  An exception thrown when the document is not found on MongoDB 
      */
-	DocumentReferenceDTO getDocumentById(String id) throws DocumentNotFoundException;
+	DocumentDTO getDocumentById(String id) throws DocumentNotFoundException;
 
 	
     /**
@@ -50,7 +50,7 @@ public interface IDocumentSRV {
      * 
      * @return List  The list of all documents retrieved from MongoDB 
      */
-	List<DocumentReferenceDTO> getDocuments();
+	List<DocumentDTO> getDocuments();
 
 
 

@@ -38,7 +38,7 @@ import it.finanze.sanita.fse2.ms.srvingestion.client.impl.DataProcessorClient;
 import it.finanze.sanita.fse2.ms.srvingestion.client.impl.SrvQueryClient;
 import it.finanze.sanita.fse2.ms.srvingestion.config.Constants;
 import it.finanze.sanita.fse2.ms.srvingestion.controller.impl.DocumentCTL;
-import it.finanze.sanita.fse2.ms.srvingestion.dto.DocumentReferenceDTO;
+import it.finanze.sanita.fse2.ms.srvingestion.dto.DocumentDTO;
 import it.finanze.sanita.fse2.ms.srvingestion.enums.PriorityTypeEnum;
 import it.finanze.sanita.fse2.ms.srvingestion.enums.ProcessorOperationEnum;
 import it.finanze.sanita.fse2.ms.srvingestion.repository.entity.StagingDocumentETY;
@@ -121,8 +121,8 @@ class DocumentControllerTest extends AbstractTest {
 	
 	@Test
 	void addDocumentTest() throws Exception {
-    	DocumentReferenceDTO dtoC = new DocumentReferenceDTO(); 
-    	List<DocumentReferenceDTO> dtoList= new ArrayList<DocumentReferenceDTO>(); 
+    	DocumentDTO dtoC = new DocumentDTO(); 
+    	List<DocumentDTO> dtoList= new ArrayList<DocumentDTO>(); 
         ObjectMapper objectMapper = new ObjectMapper(); 
 
 		dtoC.setOperation(ProcessorOperationEnum.PUBLISH);
@@ -144,8 +144,8 @@ class DocumentControllerTest extends AbstractTest {
 	
 	@Test
 	void addEmptyDocumentTest() throws Exception {
-    	DocumentReferenceDTO dtoC = new DocumentReferenceDTO(); 
-    	List<DocumentReferenceDTO> dtoList= new ArrayList<DocumentReferenceDTO>(); 
+    	DocumentDTO dtoC = new DocumentDTO(); 
+    	List<DocumentDTO> dtoList= new ArrayList<DocumentDTO>(); 
         ObjectMapper objectMapper = new ObjectMapper(); 
 
 		dtoC.setOperation(ProcessorOperationEnum.PUBLISH);
@@ -165,8 +165,8 @@ class DocumentControllerTest extends AbstractTest {
 
 	@Test
 	void insertUpdateDocumentTest() throws Exception {
-    	DocumentReferenceDTO dtoC = new DocumentReferenceDTO(); 
-    	List<DocumentReferenceDTO> dtoList= new ArrayList<DocumentReferenceDTO>(); 
+    	DocumentDTO dtoC = new DocumentDTO(); 
+    	List<DocumentDTO> dtoList= new ArrayList<DocumentDTO>(); 
         ObjectMapper objectMapper = new ObjectMapper(); 
 
     	dtoC.setIdentifier(DOCUMENT_TEST_IDENTIFIER_PUT); 
@@ -176,7 +176,7 @@ class DocumentControllerTest extends AbstractTest {
     	dtoList.add(dtoC);
 
 		given(srvQueryClient.checkExists(anyString())).willReturn(true);
-		given(dataProcessorClient.sendRequestToDataProcessor(any(DocumentReferenceDTO.class))).willReturn(true);
+		given(dataProcessorClient.sendRequestToDataProcessor(any(DocumentDTO.class))).willReturn(true);
 
 		MockHttpServletRequestBuilder builder =
 	            MockMvcRequestBuilders.put(getBaseUrl() + "/document").content(objectMapper.writeValueAsString(dtoC)); 
@@ -191,8 +191,8 @@ class DocumentControllerTest extends AbstractTest {
 	
 	@Test
 	void insertUpdateDocumentWithUnsupportedOperationTest() throws Exception {
-    	DocumentReferenceDTO dtoC = new DocumentReferenceDTO(); 
-    	List<DocumentReferenceDTO> dtoList= new ArrayList<DocumentReferenceDTO>(); 
+    	DocumentDTO dtoC = new DocumentDTO(); 
+    	List<DocumentDTO> dtoList= new ArrayList<DocumentDTO>(); 
         ObjectMapper objectMapper = new ObjectMapper(); 
 
     	dtoC.setIdentifier(DOCUMENT_TEST_IDENTIFIER_PUT); 
@@ -216,8 +216,8 @@ class DocumentControllerTest extends AbstractTest {
 
 	@Test
 	void insertUpdateDocumentWithDocumentNotFoundTest() throws Exception {
-		DocumentReferenceDTO dtoC = new DocumentReferenceDTO();
-		List<DocumentReferenceDTO> dtoList= new ArrayList<DocumentReferenceDTO>();
+		DocumentDTO dtoC = new DocumentDTO();
+		List<DocumentDTO> dtoList= new ArrayList<DocumentDTO>();
 		ObjectMapper objectMapper = new ObjectMapper();
 
 		dtoC.setIdentifier(DOCUMENT_TEST_IDENTIFIER_PUT);
@@ -241,8 +241,8 @@ class DocumentControllerTest extends AbstractTest {
 
 	@Test
 	void insertReplaceDocumentTest() throws Exception {
-    	DocumentReferenceDTO dtoC = new DocumentReferenceDTO(); 
-    	List<DocumentReferenceDTO> dtoList= new ArrayList<DocumentReferenceDTO>(); 
+    	DocumentDTO dtoC = new DocumentDTO(); 
+    	List<DocumentDTO> dtoList= new ArrayList<DocumentDTO>(); 
         ObjectMapper objectMapper = new ObjectMapper(); 
 
     	dtoC.setIdentifier(DOCUMENT_TEST_IDENTIFIER_REPLACE); 
@@ -266,8 +266,8 @@ class DocumentControllerTest extends AbstractTest {
 
 	@Test
 	void insertReplaceWithDocumentNotFoundTest() throws Exception {
-		DocumentReferenceDTO dtoC = new DocumentReferenceDTO();
-		List<DocumentReferenceDTO> dtoList= new ArrayList<DocumentReferenceDTO>();
+		DocumentDTO dtoC = new DocumentDTO();
+		List<DocumentDTO> dtoList= new ArrayList<DocumentDTO>();
 		ObjectMapper objectMapper = new ObjectMapper();
 
 		dtoC.setIdentifier(DOCUMENT_TEST_IDENTIFIER_REPLACE);
@@ -291,8 +291,8 @@ class DocumentControllerTest extends AbstractTest {
 
 	@Test
 	void insertUpdateDocumentEmptyBundleTest() throws Exception {
-    	DocumentReferenceDTO dtoC = new DocumentReferenceDTO(); 
-    	List<DocumentReferenceDTO> dtoList= new ArrayList<DocumentReferenceDTO>(); 
+    	DocumentDTO dtoC = new DocumentDTO(); 
+    	List<DocumentDTO> dtoList= new ArrayList<DocumentDTO>(); 
 
     	dtoC.setIdentifier(DOCUMENT_TEST_IDENTIFIER_PUT); 
     	dtoC.setOperation(DOCUMENT_TEST_OPERATION_PUT); 
@@ -311,8 +311,8 @@ class DocumentControllerTest extends AbstractTest {
 
 	@Test
 	void insertUpdateDocumentErrorTest() throws Exception {
-    	DocumentReferenceDTO dtoC = new DocumentReferenceDTO(); 
-    	List<DocumentReferenceDTO> dtoList= new ArrayList<DocumentReferenceDTO>(); 
+    	DocumentDTO dtoC = new DocumentDTO(); 
+    	List<DocumentDTO> dtoList= new ArrayList<DocumentDTO>(); 
 
     	dtoC.setIdentifier(DOCUMENT_TEST_IDENTIFIER_PUT); 
     	dtoC.setOperation(ProcessorOperationEnum.PUBLISH);
@@ -335,7 +335,7 @@ class DocumentControllerTest extends AbstractTest {
 	            MockMvcRequestBuilders.delete(getBaseUrl() + "/document/identifier/" + DOCUMENT_TEST_IDENTIFIER_DELETE);
 
 		given(srvQueryClient.checkExists(anyString())).willReturn(true);
-		given(dataProcessorClient.sendRequestToDataProcessor(any(DocumentReferenceDTO.class))).willReturn(true);
+		given(dataProcessorClient.sendRequestToDataProcessor(any(DocumentDTO.class))).willReturn(true);
 
 		mvc.perform(builder
 	            .contentType(MediaType.APPLICATION_JSON_VALUE))
@@ -368,13 +368,14 @@ class DocumentControllerTest extends AbstractTest {
 	
 	@Test
 	void getDocumentsByIdTest() throws Exception {
-    	DocumentReferenceDTO dtoC = new DocumentReferenceDTO(); 
+    	DocumentDTO dtoC = new DocumentDTO(); 
 
     	dtoC.setIdentifier(DOCUMENT_TEST_IDENTIFIER_C); 
     	dtoC.setJsonString(DOCUMENT_TEST_JSON_STRING_C); 
     	   	
+    	String wii = "WII";
     	
-    	StagingDocumentETY ety = documentService.insert(dtoC);
+    	StagingDocumentETY ety = documentService.insert(dtoC,wii);
     	String mongoId = ety.getId(); 
     	
 

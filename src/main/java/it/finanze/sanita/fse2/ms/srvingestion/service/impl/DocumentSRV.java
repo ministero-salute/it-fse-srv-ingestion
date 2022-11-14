@@ -13,7 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
 
 import it.finanze.sanita.fse2.ms.srvingestion.config.Constants;
-import it.finanze.sanita.fse2.ms.srvingestion.dto.DocumentReferenceDTO;
+import it.finanze.sanita.fse2.ms.srvingestion.dto.DocumentDTO;
 import it.finanze.sanita.fse2.ms.srvingestion.enums.ProcessorOperationEnum;
 import it.finanze.sanita.fse2.ms.srvingestion.exceptions.DocumentNotFoundException;
 import it.finanze.sanita.fse2.ms.srvingestion.exceptions.EmptyDocumentException;
@@ -43,7 +43,7 @@ public class DocumentSRV implements IDocumentSRV, Serializable {
 	
 	
 	@Override
-	public StagingDocumentETY insert(DocumentReferenceDTO dto) throws OperationException, EmptyDocumentException {
+	public StagingDocumentETY insert(final DocumentDTO dto, final String wii) throws OperationException, EmptyDocumentException {
 		
 		// If the object does not have an OperationCode, it is a creation
 		if (ObjectUtils.isEmpty(dto.getOperation())) {
@@ -56,6 +56,7 @@ public class DocumentSRV implements IDocumentSRV, Serializable {
 		} 
 		
 		StagingDocumentETY document = parseDtoToEty(dto);
+		document.setWorkflowInstanceId(wii);
 		return documentRepo.insert(document); 
 	} 
 	
@@ -66,7 +67,7 @@ public class DocumentSRV implements IDocumentSRV, Serializable {
 	
 	
 	@Override
-	public DocumentReferenceDTO getDocumentById(String id) throws DocumentNotFoundException {
+	public DocumentDTO getDocumentById(String id) throws DocumentNotFoundException {
 		StagingDocumentETY ety =  documentRepo.findById(id);
 		
 		if(ObjectUtils.isEmpty(ety.getId())) {
@@ -78,15 +79,15 @@ public class DocumentSRV implements IDocumentSRV, Serializable {
 	
 	
 	@Override
-	public List<DocumentReferenceDTO> getDocuments() {
+	public List<DocumentDTO> getDocuments() {
 		List<StagingDocumentETY> etyList = documentRepo.findAll();
 		return buildDtoFromEty(etyList); 	
 	}
 
 	
 	
-	public DocumentReferenceDTO parseEtyToDto(StagingDocumentETY stagingDocumentETY) {
-		DocumentReferenceDTO output = new DocumentReferenceDTO(); 
+	public DocumentDTO parseEtyToDto(StagingDocumentETY stagingDocumentETY) {
+		DocumentDTO output = new DocumentDTO(); 
 		
 		if(!ObjectUtils.isEmpty(stagingDocumentETY.getIdentifier())) {
 			output.setIdentifier(stagingDocumentETY.getIdentifier());
@@ -104,7 +105,7 @@ public class DocumentSRV implements IDocumentSRV, Serializable {
 		return output;
 	} 
 	
-	public StagingDocumentETY parseDtoToEty(DocumentReferenceDTO documentReferenceDTO) {
+	public StagingDocumentETY parseDtoToEty(DocumentDTO documentReferenceDTO) {
 		StagingDocumentETY output = new StagingDocumentETY();
 		
 		if(!ObjectUtils.isEmpty(documentReferenceDTO.getIdentifier())) {
@@ -123,8 +124,8 @@ public class DocumentSRV implements IDocumentSRV, Serializable {
 		return output;
 	} 
 	
-	public List<DocumentReferenceDTO> buildDtoFromEty(List<StagingDocumentETY> documentEtyList) {
-		List<DocumentReferenceDTO> output = new ArrayList<>();
+	public List<DocumentDTO> buildDtoFromEty(List<StagingDocumentETY> documentEtyList) {
+		List<DocumentDTO> output = new ArrayList<>();
 		
 		for(StagingDocumentETY document : documentEtyList) {
 			output.add(parseEtyToDto(document));

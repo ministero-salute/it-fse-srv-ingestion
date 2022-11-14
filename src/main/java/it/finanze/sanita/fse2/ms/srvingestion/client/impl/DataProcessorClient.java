@@ -14,7 +14,7 @@ import org.springframework.web.client.RestTemplate;
 
 import it.finanze.sanita.fse2.ms.srvingestion.client.IDataProcessorClient;
 import it.finanze.sanita.fse2.ms.srvingestion.config.DataProcessorCFG;
-import it.finanze.sanita.fse2.ms.srvingestion.dto.DocumentReferenceDTO;
+import it.finanze.sanita.fse2.ms.srvingestion.dto.DocumentDTO;
 import it.finanze.sanita.fse2.ms.srvingestion.dto.response.DocumentResponseDTO;
 import it.finanze.sanita.fse2.ms.srvingestion.exceptions.BusinessException;
 import it.finanze.sanita.fse2.ms.srvingestion.exceptions.ConnectionRefusedException;
@@ -47,7 +47,7 @@ public class DataProcessorClient implements IDataProcessorClient {
     private DataProcessorCFG dataProcessorCFG; 
     
 	@Override
-	public Boolean sendRequestToDataProcessor(DocumentReferenceDTO reqDTO) {
+	public Boolean sendRequestToDataProcessor(DocumentDTO reqDTO) {
         log.debug("Calling eds Data Processor ep - START"); 
         log.debug("Operation: " + reqDTO.getOperation().getName()); 
                 

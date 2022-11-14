@@ -57,4 +57,10 @@ public class StagingDocumentETY {
 	@Field("insertion_date")
 	private Date insertionDate;
 	
+	/** 
+	 * Workflow instance id. 
+	 */
+	@Field("workflow_instance_id")
+	private String workflowInstanceId;
+	
 }

@@ -20,13 +20,13 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 /**
- * Document Reference DTO class 
+ * Document DTO class 
  *
  */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class DocumentReferenceDTO {
+public class DocumentDTO {
 
 	/** 
 	 * The doc identifier 

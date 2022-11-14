@@ -23,7 +23,7 @@ import it.finanze.sanita.fse2.ms.srvingestion.config.Constants;
 import it.finanze.sanita.fse2.ms.srvingestion.config.kafka.KafkaTopicCFG;
 import it.finanze.sanita.fse2.ms.srvingestion.controller.AbstractCTL;
 import it.finanze.sanita.fse2.ms.srvingestion.controller.IDocumentCTL;
-import it.finanze.sanita.fse2.ms.srvingestion.dto.DocumentReferenceDTO;
+import it.finanze.sanita.fse2.ms.srvingestion.dto.DocumentDTO;
 import it.finanze.sanita.fse2.ms.srvingestion.dto.response.DocumentResponseDTO;
 import it.finanze.sanita.fse2.ms.srvingestion.enums.ProcessorOperationEnum;
 import it.finanze.sanita.fse2.ms.srvingestion.exceptions.DocumentAlreadyExistsException;
@@ -71,12 +71,10 @@ public class DocumentCTL extends AbstractCTL implements IDocumentCTL {
 	private boolean srvQueryReadMockEnabled;
 
 	@Override
-	public ResponseEntity<DocumentResponseDTO> addDocument(HttpServletRequest request, @RequestBody DocumentReferenceDTO document)
-			throws OperationException, KafkaException, EmptyDocumentException, DocumentAlreadyExistsException {
-		
+	public ResponseEntity<DocumentResponseDTO> addDocument(HttpServletRequest request,DocumentDTO document, String wii) throws OperationException, KafkaException, EmptyDocumentException, DocumentAlreadyExistsException {
 		log.debug(Constants.Logs.CALLED_API_POST_DOCUMENT); 
 		document.setInsertionDate(new Date()); 
-		StagingDocumentETY ety = documentService.insert(document);
+		StagingDocumentETY ety = documentService.insert(document,wii);
 		String mongoId = ety.getId();
 		String topic = kafkaTopicCFG.getIngestionDataProcessorPublicationTopic() + document.getPriorityTypeEnum().getQueue();
 		kafkaService.notifyDataProcessor(topic, mongoId, ProcessorOperationEnum.PUBLISH);
@@ -84,16 +82,16 @@ public class DocumentCTL extends AbstractCTL implements IDocumentCTL {
 	}
 
 	@Override
-	public ResponseEntity<DocumentResponseDTO> insertReplaceDocument(HttpServletRequest request, DocumentReferenceDTO document) throws OperationException, KafkaException, EmptyDocumentException, UnsupportedOperationException, DocumentAlreadyExistsException, DocumentNotFoundException {
-		return genericReplaceUpdateDocument(document);
+	public ResponseEntity<DocumentResponseDTO> insertReplaceDocument(HttpServletRequest request, DocumentDTO document) throws OperationException, KafkaException, EmptyDocumentException, UnsupportedOperationException, DocumentAlreadyExistsException, DocumentNotFoundException {
+		return genericReplaceUpdateDocument(document,null);
 	}
 
 	@Override
-	public ResponseEntity<DocumentResponseDTO> insertUpdateDocument(HttpServletRequest request, DocumentReferenceDTO document) throws OperationException, KafkaException, EmptyDocumentException, UnsupportedOperationException, DocumentAlreadyExistsException, DocumentNotFoundException {
-		return genericReplaceUpdateDocument(document);
+	public ResponseEntity<DocumentResponseDTO> insertUpdateDocument(HttpServletRequest request, DocumentDTO document) throws OperationException, KafkaException, EmptyDocumentException, UnsupportedOperationException, DocumentAlreadyExistsException, DocumentNotFoundException {
+		return genericReplaceUpdateDocument(document,null);
 	}
 
-	private ResponseEntity<DocumentResponseDTO> genericReplaceUpdateDocument(DocumentReferenceDTO documentReferenceDTO) throws EmptyDocumentException, OperationException, KafkaException, UnsupportedOperationException, DocumentNotFoundException {
+	private ResponseEntity<DocumentResponseDTO> genericReplaceUpdateDocument(final DocumentDTO documentReferenceDTO, final String wii) throws EmptyDocumentException, OperationException, KafkaException, UnsupportedOperationException, DocumentNotFoundException {
 		documentReferenceDTO.setInsertionDate(new Date());
 
 		if (!srvQueryReadMockEnabled && Boolean.FALSE.equals(srvQueryClient.checkExists(documentReferenceDTO.getIdentifier()))) {
@@ -110,7 +108,7 @@ public class DocumentCTL extends AbstractCTL implements IDocumentCTL {
 				break;
 			case REPLACE:
 				log.debug(Constants.Logs.CALLED_API_PUT_DOCUMENT);
-				StagingDocumentETY ety = documentService.insert(documentReferenceDTO);
+				StagingDocumentETY ety = documentService.insert(documentReferenceDTO,wii);
 				String mongoId = ety.getId(); 
 				String topic = kafkaTopicCFG.getIngestionDataProcessorGenericTopic();
 				kafkaService.notifyDataProcessor(topic, mongoId, ProcessorOperationEnum.REPLACE);
@@ -128,7 +126,7 @@ public class DocumentCTL extends AbstractCTL implements IDocumentCTL {
 	public ResponseEntity<DocumentResponseDTO> insertDeleteDocument(HttpServletRequest request, @PathVariable String identifier) throws OperationException, KafkaException, EmptyDocumentException, DocumentNotFoundException {
 		log.debug(Constants.Logs.CALLED_API_DELETE_DOCUMENT); 
 		
-		DocumentReferenceDTO documentReferenceDTO = new DocumentReferenceDTO();
+		DocumentDTO documentReferenceDTO = new DocumentDTO();
 		documentReferenceDTO.setIdentifier(identifier);
 		documentReferenceDTO.setOperation(ProcessorOperationEnum.DELETE);
 		documentReferenceDTO.setJsonString(null);
@@ -143,21 +141,21 @@ public class DocumentCTL extends AbstractCTL implements IDocumentCTL {
 	}
 
 	@Override
-	public ResponseEntity<DocumentReferenceDTO> getDocumentById(HttpServletRequest request,
+	public ResponseEntity<DocumentDTO> getDocumentById(HttpServletRequest request,
 			@Size(min = 0, max = 100, message = "identifier does not match the expected size") String id)
 			throws DocumentNotFoundException {
 		log.info(Constants.Logs.CALLED_API_GET_DOCUMENT_BY_IDENTIFIER);  
 		
-		DocumentReferenceDTO document = documentService.getDocumentById(id); 
+		DocumentDTO document = documentService.getDocumentById(id); 
 		return ResponseEntity.status(HttpStatus.OK).body(document);	
 	}
 
 	@Override
-	public ResponseEntity<List<DocumentReferenceDTO>> getDocuments(HttpServletRequest request) {
+	public ResponseEntity<List<DocumentDTO>> getDocuments(HttpServletRequest request) {
 		
 		log.info(Constants.Logs.CALLED_API_GET_DOCUMENTS);  
 		
-		List<DocumentReferenceDTO> response = documentService.getDocuments(); 
+		List<DocumentDTO> response = documentService.getDocuments(); 
 		
 		return ResponseEntity.status(HttpStatus.OK).body(response);	
 	}

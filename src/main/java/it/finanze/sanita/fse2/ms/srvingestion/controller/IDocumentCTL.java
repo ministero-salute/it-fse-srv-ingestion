@@ -30,7 +30,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import it.finanze.sanita.fse2.ms.srvingestion.dto.DocumentReferenceDTO;
+import it.finanze.sanita.fse2.ms.srvingestion.dto.DocumentDTO;
 import it.finanze.sanita.fse2.ms.srvingestion.dto.response.DocumentResponseDTO;
 import it.finanze.sanita.fse2.ms.srvingestion.dto.response.error.base.ErrorResponseDTO;
 import it.finanze.sanita.fse2.ms.srvingestion.exceptions.DocumentAlreadyExistsException;
@@ -65,14 +65,15 @@ public interface IDocumentCTL extends Serializable {
 	 * @throws EmptyDocumentException  An exception thrown when the document content is empty 
 	 * @throws DocumentAlreadyExistsException  An exception thrown when the document already exists on MongoDB 
 	 */
-    @PostMapping(value = "/document", produces = {
+    @PostMapping(value = "/document/workflowinstanceid/{wii}", produces = {
 			MediaType.APPLICATION_JSON_VALUE }, consumes = { MediaType.APPLICATION_JSON_VALUE })
     @Operation(summary = "Add a document to the staging MongoDB", description = "Servizio che consente di aggiungere un documento alla base dati di staging.")
     @ApiResponse(content = @Content(mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(implementation = DocumentResponseDTO.class)))
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "Creazione Documento avvenuta con successo", content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = DocumentResponseDTO.class))),
             @ApiResponse(responseCode = "500", description = "Internal Server Error", content = @Content(mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(implementation = ErrorResponseDTO.class))) })
-    ResponseEntity<DocumentResponseDTO> addDocument(HttpServletRequest request, @RequestBody DocumentReferenceDTO document) throws IOException, OperationException, KafkaException, EmptyDocumentException, DocumentAlreadyExistsException;
+    ResponseEntity<DocumentResponseDTO> addDocument(HttpServletRequest request, @RequestBody DocumentDTO document,
+   		 @PathVariable @Size(min = DEFAULT_STRING_MIN_SIZE, max = DEFAULT_STRING_MAX_SIZE, message = "identifier does not match the expected size") String identifier) throws IOException, OperationException, KafkaException, EmptyDocumentException, DocumentAlreadyExistsException;
 
     /**
      * Function to process a Replace Request for a document, from the Gateway onto the EDS. 
@@ -97,7 +98,7 @@ public interface IDocumentCTL extends Serializable {
             @ApiResponse(responseCode = "200", description = "Creazione Document Reference per replace avvenuta con successo", content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = DocumentResponseDTO.class))),
             @ApiResponse(responseCode = "404", description = "Dictionary non trovato sul database", content = @Content(mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(implementation = DocumentResponseDTO.class))),
             @ApiResponse(responseCode = "500", description = "Internal Server Error", content = @Content(mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(implementation = ErrorResponseDTO.class))) })
-    ResponseEntity<DocumentResponseDTO> insertReplaceDocument(HttpServletRequest request, @RequestBody DocumentReferenceDTO body) throws OperationException, KafkaException, EmptyDocumentException, UnsupportedOperationException, DocumentAlreadyExistsException, DocumentNotFoundException;
+    ResponseEntity<DocumentResponseDTO> insertReplaceDocument(HttpServletRequest request, @RequestBody DocumentDTO body) throws OperationException, KafkaException, EmptyDocumentException, UnsupportedOperationException, DocumentAlreadyExistsException, DocumentNotFoundException;
 
     /** 
      * Function to process an Update Request for a document, from the Gateway onto the EDS. 
@@ -122,7 +123,7 @@ public interface IDocumentCTL extends Serializable {
             @ApiResponse(responseCode = "200", description = "Creazione Document Reference per update avvenuta con successo", content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = DocumentResponseDTO.class))),
             @ApiResponse(responseCode = "404", description = "Dictionary non trovato sul database", content = @Content(mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(implementation = DocumentResponseDTO.class))),
             @ApiResponse(responseCode = "500", description = "Internal Server Error", content = @Content(mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(implementation = ErrorResponseDTO.class))) })
-    ResponseEntity<DocumentResponseDTO> insertUpdateDocument(HttpServletRequest request, @RequestBody DocumentReferenceDTO body) throws OperationException, KafkaException, EmptyDocumentException, UnsupportedOperationException, DocumentAlreadyExistsException, DocumentNotFoundException;
+    ResponseEntity<DocumentResponseDTO> insertUpdateDocument(HttpServletRequest request, @RequestBody DocumentDTO body) throws OperationException, KafkaException, EmptyDocumentException, UnsupportedOperationException, DocumentAlreadyExistsException, DocumentNotFoundException;
     
     /**
      * Function to process a Delete Request for a document, given its identifier. 
@@ -161,7 +162,7 @@ public interface IDocumentCTL extends Serializable {
             @ApiResponse(responseCode = "200", description = "Ricerca Documento avvenuta con successo", content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = DocumentResponseDTO.class))),
             @ApiResponse(responseCode = "404", description = "Schematron non trovato sul database", content = @Content(mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(implementation = ErrorResponseDTO.class))),
             @ApiResponse(responseCode = "500", description = "Internal Server Error", content = @Content(mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(implementation = ErrorResponseDTO.class))) })
-    ResponseEntity<DocumentReferenceDTO> getDocumentById(HttpServletRequest request, @PathVariable @Size(min = DEFAULT_STRING_MIN_SIZE, max = DEFAULT_STRING_MAX_SIZE, message = "identifier does not match the expected size") String id) throws DocumentNotFoundException; 
+    ResponseEntity<DocumentDTO> getDocumentById(HttpServletRequest request, @PathVariable @Size(min = DEFAULT_STRING_MIN_SIZE, max = DEFAULT_STRING_MAX_SIZE, message = "identifier does not match the expected size") String id) throws DocumentNotFoundException; 
     
     /**
      * Function to retrieve the list of all documents from the staging database. 
@@ -172,10 +173,10 @@ public interface IDocumentCTL extends Serializable {
     @GetMapping(value = "/document", produces = {
  			MediaType.APPLICATION_JSON_VALUE })
      @Operation(summary = "Returns the list of all documents from the staging database", description = "Servizio che consente di ritornare la lista dei documenti dal database di staging.")
-     @ApiResponse(content = @Content(mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(implementation = DocumentReferenceDTO.class)))
+     @ApiResponse(content = @Content(mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(implementation = DocumentDTO.class)))
      @ApiResponses(value = {
-             @ApiResponse(responseCode = "200", description = "Richiesta Documents avvenuta con successo", content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = DocumentReferenceDTO.class))),
+             @ApiResponse(responseCode = "200", description = "Richiesta Documents avvenuta con successo", content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = DocumentDTO.class))),
              @ApiResponse(responseCode = "500", description = "Internal Server Error", content = @Content(mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(implementation = ErrorResponseDTO.class))) })
-    ResponseEntity<List<DocumentReferenceDTO>> getDocuments(HttpServletRequest request); 
+    ResponseEntity<List<DocumentDTO>> getDocuments(HttpServletRequest request); 
     
 }

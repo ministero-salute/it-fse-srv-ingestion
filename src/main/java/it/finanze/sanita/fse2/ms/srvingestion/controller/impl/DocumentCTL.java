@@ -94,7 +94,8 @@ public class DocumentCTL extends AbstractCTL implements IDocumentCTL {
 	private ResponseEntity<DocumentResponseDTO> genericReplaceUpdateDocument(final DocumentDTO documentReferenceDTO, final String wii) throws EmptyDocumentException, OperationException, KafkaException, UnsupportedOperationException, DocumentNotFoundException {
 		documentReferenceDTO.setInsertionDate(new Date());
 
-		if (!srvQueryReadMockEnabled && Boolean.FALSE.equals(srvQueryClient.checkExists(documentReferenceDTO.getIdentifier()))) {
+		boolean exist = srvQueryClient.checkExists(documentReferenceDTO.getIdentifier());
+		if (Boolean.FALSE.equals(exist)) {
 			throw new DocumentNotFoundException("Error: document not found!");
 		}
 
@@ -102,9 +103,7 @@ public class DocumentCTL extends AbstractCTL implements IDocumentCTL {
 			case UPDATE:
 				log.debug(Constants.Logs.CALLED_API_UPDATE_DOCUMENT);
 				// Calls Data processor to process Document
-				if (!srvQueryReadMockEnabled) {
-					dataProcessorClient.sendRequestToDataProcessor(documentReferenceDTO);
-				}
+				dataProcessorClient.sendRequestToDataProcessor(documentReferenceDTO);
 				break;
 			case REPLACE:
 				log.debug(Constants.Logs.CALLED_API_PUT_DOCUMENT);

@@ -12,12 +12,10 @@ import org.springframework.kafka.support.SendResult;
 import org.springframework.stereotype.Service;
 
 import it.finanze.sanita.fse2.ms.srvingestion.config.Constants;
-import it.finanze.sanita.fse2.ms.srvingestion.config.kafka.KafkaPropertiesCFG;
 import it.finanze.sanita.fse2.ms.srvingestion.enums.ProcessorOperationEnum;
 import it.finanze.sanita.fse2.ms.srvingestion.exceptions.BusinessException;
 import it.finanze.sanita.fse2.ms.srvingestion.exceptions.KafkaException;
 import it.finanze.sanita.fse2.ms.srvingestion.service.IKafkaSRV;
-import it.finanze.sanita.fse2.ms.srvingestion.utility.EncryptDecryptUtility;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -35,11 +33,7 @@ public class KafkaSRV implements IKafkaSRV {
 	 * Serial Version UID 
 	 */
 	private static final long serialVersionUID = -1952431076996493492L; 
-	
-
-	@Autowired
-	private KafkaPropertiesCFG kafkaPropCFG;
-	
+ 
 	/**
 	 * Transactional producer.
 	 */
@@ -99,10 +93,9 @@ public class KafkaSRV implements IKafkaSRV {
  
 	
 	@Override
-	// transform key in ENUM operation
 	public void notifyDataProcessor(final String topic, final String mongoId, final ProcessorOperationEnum key) throws KafkaException {
 		try {
-			String message = EncryptDecryptUtility.encrypt(kafkaPropCFG.getCrypto(), mongoId);
+			String message = mongoId;
 			sendMessage(topic, key, message,true);
 		} catch (Exception e) {
 			log.error(Constants.Logs.KAFKA_SEND_FAILED, e); 

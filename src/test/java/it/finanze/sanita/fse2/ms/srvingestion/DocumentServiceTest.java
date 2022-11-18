@@ -158,14 +158,14 @@ class DocumentServiceTest extends AbstractTest {
     @Test
     void getDocumentTest() {
     	List<DocumentDTO> dtoRetrievedList = documentService.getDocuments(); 
-    	DocumentDTO firstElemEtyInList = dtoRetrievedList.get(0); 
+    	DocumentDTO secondElemEtyInList = dtoRetrievedList.get(1); 
     	
     	assertEquals(ArrayList.class, dtoRetrievedList.getClass()); 
     	assertEquals(true, dtoRetrievedList.size() > 0); 
     	
-    	assertEquals(DocumentDTO.class, firstElemEtyInList.getClass()); 
-    	assertEquals(ProcessorOperationEnum.class, firstElemEtyInList.getOperation().getClass()); 
-    	assertEquals(String.class, firstElemEtyInList.getJsonString().getClass()); 
+    	assertEquals(DocumentDTO.class, secondElemEtyInList.getClass()); 
+    	assertEquals(ProcessorOperationEnum.class, secondElemEtyInList.getOperation().getClass()); 
+    	assertEquals(String.class, secondElemEtyInList.getJsonString().getClass()); 
     	
     }
     

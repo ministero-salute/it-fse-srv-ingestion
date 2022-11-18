@@ -129,13 +129,15 @@ class DocumentControllerTest extends AbstractTest {
 		dtoC.setPriorityTypeEnum(PriorityTypeEnum.HIGH);
     	dtoC.setIdentifier(DOCUMENT_TEST_IDENTIFIER_C); 
     	dtoC.setJsonString(DOCUMENT_TEST_JSON_STRING_C); 
-    	   	
-    	dtoList.add(dtoC); 
+    	
+    	  
+    	dtoList.add(dtoC);
+    	
+		given(srvQueryClient.checkExists(dtoC.getIdentifier())).willReturn(true);
 
 	    MockHttpServletRequestBuilder builder =
 	            MockMvcRequestBuilders.post(getBaseUrl() + "/document").content(objectMapper.writeValueAsString(dtoC)); 
     	   	
-	    
 	    mvc.perform(builder
 	            .contentType(MediaType.APPLICATION_JSON_VALUE))
 	            .andExpect(status().is2xxSuccessful()); 
@@ -347,10 +349,9 @@ class DocumentControllerTest extends AbstractTest {
 	void insertDeleteDocumentNotFoundTest() throws Exception {
 
 		MockHttpServletRequestBuilder builder =
-				MockMvcRequestBuilders.delete(getBaseUrl() + "/document/identifier/" + DOCUMENT_TEST_IDENTIFIER_DELETE);
+				MockMvcRequestBuilders.delete(getBaseUrl() + "/document/identifier/" + "");
 
-		given(srvQueryClient.checkExists(anyString())).willReturn(false);
-
+		given(srvQueryClient.checkExists(anyString())).willReturn(true);
 
 		mvc.perform(builder
 						.contentType(MediaType.APPLICATION_JSON_VALUE))

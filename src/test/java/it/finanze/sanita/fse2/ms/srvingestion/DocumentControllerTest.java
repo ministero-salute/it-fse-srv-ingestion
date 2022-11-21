@@ -118,32 +118,7 @@ class DocumentControllerTest extends AbstractTest {
 	String getBaseUrl() {
 		return "http://localhost:" + webServerAppCtxt.getWebServer().getPort() + webServerAppCtxt.getServletContext().getContextPath() + "/v1";
 	}
-	
-	@Test
-	void addDocumentTest() throws Exception {
-    	DocumentDTO dtoC = new DocumentDTO(); 
-    	List<DocumentDTO> dtoList= new ArrayList<DocumentDTO>(); 
-        ObjectMapper objectMapper = new ObjectMapper(); 
-
-		dtoC.setOperation(ProcessorOperationEnum.PUBLISH);
-		dtoC.setPriorityTypeEnum(PriorityTypeEnum.HIGH);
-    	dtoC.setIdentifier(DOCUMENT_TEST_IDENTIFIER_C); 
-    	dtoC.setJsonString(DOCUMENT_TEST_JSON_STRING_C); 
-    	
-    	  
-    	dtoList.add(dtoC);
-    	
-		given(srvQueryClient.checkExists(dtoC.getIdentifier())).willReturn(true);
-
-	    MockHttpServletRequestBuilder builder =
-	            MockMvcRequestBuilders.post(getBaseUrl() + "/document").content(objectMapper.writeValueAsString(dtoC)); 
-    	   	
-	    mvc.perform(builder
-	            .contentType(MediaType.APPLICATION_JSON_VALUE))
-	            .andExpect(status().is2xxSuccessful()); 
-
-	} 
-	
+ 
 	@Test
 	void addEmptyDocumentTest() throws Exception {
     	DocumentDTO dtoC = new DocumentDTO(); 

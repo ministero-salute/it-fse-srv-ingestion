@@ -20,20 +20,6 @@ public final class Constants {
 		 */
 		public static final String BASE = "it.finanze.sanita.fse2.ms.srvingestion";
 
-		/**
-		 * Controller path.
-		 */
-		public static final String CONTROLLER = "it.finanze.sanita.fse2.ms.srvingestion.controller";
-
-		/**
-		 * Service path.
-		 */
-		public static final String SERVICE = "it.finanze.sanita.fse2.ms.srvingestion.service";
-
-		/**
-		 * Configuration path.
-		 */
-		public static final String CONFIG = "it.finanze.sanita.fse2.ms.srvingestion.config";
 
 		/**
 		 * Configuration mongo path.
@@ -45,10 +31,6 @@ public final class Constants {
 		 */
 		public static final String REPOSITORY_MONGO = "it.finanze.sanita.fse2.ms.srvingestion.repository";
 
-		/** 
-		 * Collection name 
-		 */
-		public static final String COLLECTION_NAME = "ingestion-staging";
 
 		/** 
 		 * This method is intentionally left blank 
@@ -106,11 +88,13 @@ public final class Constants {
 		private App() {
 		}
 
-		public static final class Collections {
-			public static final String INGESTION_STAGING = "ingestion-staging";
-			
-			private Collections() {
-			}
+		
+	}
+	
+	public static final class Collections {
+		public static final String INGESTION_STAGING = "ingestion-staging";
+		
+		private Collections() {
 		}
 	}
 

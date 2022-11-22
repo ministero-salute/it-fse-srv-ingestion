@@ -38,16 +38,11 @@ public class DocumentRepo implements IDocumentRepo, Serializable {
 	@Autowired
 	private transient MongoTemplate mongoTemplate; 
 	
-	@Autowired
-	private transient ProfileUtility profileUtility; 
-		
-	String collection = Constants.ComponentScan.COLLECTION_NAME; 
-
 	
 	@Override
 	public StagingDocumentETY insert(StagingDocumentETY ety) throws OperationException {
 		try {
-			return mongoTemplate.insert(ety, getCollectionName()); 
+			return mongoTemplate.insert(ety); 
 		} catch(MongoException ex) {
 			throw new OperationException(Constants.Logs.ERROR_MONGO_INSERT, ex); 
 		}
@@ -56,23 +51,19 @@ public class DocumentRepo implements IDocumentRepo, Serializable {
 	@Override
 	public void deleteByIdentifier(String identifier) {
 		Query query = Query.query(Criteria.where(Constants.App.IDENTIFIER).is(identifier)); 
-		mongoTemplate.remove(query, getCollectionName()); 	
+		mongoTemplate.remove(query); 	
 	}
 	
 	@Override
 	public StagingDocumentETY findById(String id) {
-		StagingDocumentETY ety = mongoTemplate.findById(id, StagingDocumentETY.class, getCollectionName());
+		StagingDocumentETY ety = mongoTemplate.findById(id, StagingDocumentETY.class);
 		return ObjectUtils.isEmpty(ety) ? new StagingDocumentETY() : ety;
 	} 
 	
 	@Override
 	public List<StagingDocumentETY> findAll() {
-		return mongoTemplate.findAll(StagingDocumentETY.class, getCollectionName());
+		return mongoTemplate.findAll(StagingDocumentETY.class);
 	}
-
-	public String getCollectionName() {
-		return profileUtility.isTestProfile() ?  Constants.Profile.TEST_PREFIX + '_' + Constants.ComponentScan.COLLECTION_NAME : Constants.ComponentScan.COLLECTION_NAME;
-	}
-	
+ 
 
 }

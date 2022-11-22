@@ -18,9 +18,9 @@ public class CollectionNaming {
     @Bean("ingestionStagingBean")
     public String getIngestionStagingCollection() {
         if (profileUtility.isTestProfile()) {
-            return Constants.Profile.TEST_PREFIX + Constants.App.Collections.INGESTION_STAGING;
+            return Constants.Profile.TEST_PREFIX + Constants.Collections.INGESTION_STAGING;
         }
-        return Constants.App.Collections.INGESTION_STAGING;
+        return Constants.Collections.INGESTION_STAGING;
     }
     
     

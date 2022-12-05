@@ -3,8 +3,6 @@
  */
 package it.finanze.sanita.fse2.ms.srvingestion;
 
-import org.springframework.boot.test.context.SpringBootTest;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.HashMap;
@@ -12,7 +10,7 @@ import java.util.Map;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.context.annotation.ComponentScan;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 
 import it.finanze.sanita.fse2.ms.srvingestion.config.Constants;
@@ -22,7 +20,6 @@ import it.finanze.sanita.fse2.ms.srvingestion.utility.JsonUtility;
 
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@ComponentScan(basePackages = {Constants.ComponentScan.BASE})
 @ActiveProfiles(Constants.Profile.TEST)
 class JsonUtilityTest {
     @Test

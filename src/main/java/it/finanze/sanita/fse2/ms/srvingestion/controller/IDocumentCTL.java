@@ -90,7 +90,7 @@ public interface IDocumentCTL extends Serializable {
      * @throws DocumentAlreadyExistsException  An exception thrown when the document already exists on MongoDB 
      * @throws DocumentNotFoundException An exception thrown when the document is not found on MongoDB 
      */
-    @PutMapping(value = "/document", produces = {
+    @PutMapping(value = "/document/workflowinstanceid/{wii}", produces = {
             MediaType.APPLICATION_JSON_VALUE }, consumes = { MediaType.APPLICATION_JSON_VALUE })
     @Operation(summary = "Add a Document Reference for update to MongoDB", description = "Servizio che consente di inserire un record per replace sul MongoDB di staging.")
     @ApiResponse(content = @Content(mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(implementation = DocumentResponseDTO.class)))
@@ -98,7 +98,8 @@ public interface IDocumentCTL extends Serializable {
             @ApiResponse(responseCode = "200", description = "Creazione Document Reference per replace avvenuta con successo", content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = DocumentResponseDTO.class))),
             @ApiResponse(responseCode = "404", description = "Dictionary non trovato sul database", content = @Content(mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(implementation = DocumentResponseDTO.class))),
             @ApiResponse(responseCode = "500", description = "Internal Server Error", content = @Content(mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(implementation = ErrorResponseDTO.class))) })
-    ResponseEntity<DocumentResponseDTO> insertReplaceDocument(HttpServletRequest request, @RequestBody DocumentDTO body) throws OperationException, KafkaException, EmptyDocumentException, UnsupportedOperationException, DocumentAlreadyExistsException, DocumentNotFoundException;
+    ResponseEntity<DocumentResponseDTO> insertReplaceDocument(@RequestBody DocumentDTO body,
+    		 @PathVariable @Size(min = DEFAULT_STRING_MIN_SIZE, max = DEFAULT_STRING_MAX_SIZE, message = "identifier does not match the expected size") String wii,HttpServletRequest request) throws OperationException, KafkaException, EmptyDocumentException, UnsupportedOperationException, DocumentAlreadyExistsException, DocumentNotFoundException;
 
     /** 
      * Function to process an Update Request for a document, from the Gateway onto the EDS. 

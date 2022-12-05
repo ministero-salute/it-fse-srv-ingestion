@@ -19,15 +19,6 @@ import lombok.EqualsAndHashCode;
 @EqualsAndHashCode(callSuper = true)
 public class DocumentExistsResponseDTO extends ResponseDTO { 
 
-	/**
-	 * Serial Version UID 
-	 */
-	private static final long serialVersionUID = 21641554325694264L; 
-	
-	
-	@Size(min = DEFAULT_STRING_MIN_SIZE, max = DEFAULT_STRING_MAX_SIZE)
-	private String transactionId; 
-	
 	/** 
 	 * True if the document exists on the FHIR server 
 	 */
@@ -38,9 +29,9 @@ public class DocumentExistsResponseDTO extends ResponseDTO {
 		super();
 	}
 
-	public DocumentExistsResponseDTO(final LogTraceInfoDTO traceInfo, Boolean _result) {
+	public DocumentExistsResponseDTO(final LogTraceInfoDTO traceInfo, Boolean inResult) {
 		super(traceInfo);
-		result = _result; 
+		result = inResult; 
 	}
 	
 }

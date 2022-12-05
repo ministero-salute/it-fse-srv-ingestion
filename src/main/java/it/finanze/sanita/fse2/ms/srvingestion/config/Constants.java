@@ -4,41 +4,10 @@
 package it.finanze.sanita.fse2.ms.srvingestion.config;
 
 /**
- * 
- *
  * Constants application.
  */
 public final class Constants {
 
-	/**
-	 * Path scan.
-	 */
-	public static final class ComponentScan {
-
-		/**
-		 * Base path.
-		 */
-		public static final String BASE = "it.finanze.sanita.fse2.ms.srvingestion";
-
-
-		/**
-		 * Configuration mongo path.
-		 */
-		public static final String CONFIG_MONGO = "it.finanze.sanita.fse2.ms.srvingestion.config.mongo";
-
-		/**
-		 * Configuration mongo repository path.
-		 */
-		public static final String REPOSITORY_MONGO = "it.finanze.sanita.fse2.ms.srvingestion.repository";
-
-
-		/** 
-		 * This method is intentionally left blank 
-		 */
-		private ComponentScan() {
-		}
-	}
- 
 
 	/** 
 	 * Contains the constants for the launch profile of the SpringBoot application. 
@@ -75,10 +44,6 @@ public final class Constants {
 	 */
 	public static final class App {
 
-		/** 
-		 * The JWT Token Audience 
-		 */
-		public static final String JWT_TOKEN_AUDIENCE = "eds-ingestion";
 
 		public static final String IDENTIFIER = "identifier";
 

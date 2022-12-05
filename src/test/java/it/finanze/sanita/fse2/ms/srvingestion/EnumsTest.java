@@ -7,18 +7,16 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.annotation.ComponentScan;
 import org.springframework.test.context.ActiveProfiles;
 
-import it.finanze.sanita.fse2.ms.srvingestion.enums.UIDModeEnum;
-import it.finanze.sanita.fse2.ms.srvingestion.enums.OperationLogEnum;
-import it.finanze.sanita.fse2.ms.srvingestion.enums.ErrorLogEnum;
 import it.finanze.sanita.fse2.ms.srvingestion.config.Constants;
+import it.finanze.sanita.fse2.ms.srvingestion.enums.ErrorLogEnum;
+import it.finanze.sanita.fse2.ms.srvingestion.enums.OperationLogEnum;
+import it.finanze.sanita.fse2.ms.srvingestion.enums.UIDModeEnum;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@ComponentScan(basePackages = {Constants.ComponentScan.BASE})
 @ActiveProfiles(Constants.Profile.TEST)
-public class EnumsTest {
+class EnumsTest {
 
 	@Test
     @DisplayName("test UIDModeEnum")

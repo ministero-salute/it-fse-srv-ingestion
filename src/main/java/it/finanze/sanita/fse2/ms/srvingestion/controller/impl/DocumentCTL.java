@@ -14,7 +14,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import it.finanze.sanita.fse2.ms.srvingestion.client.impl.DataProcessorClient;
@@ -40,7 +39,6 @@ import lombok.extern.slf4j.Slf4j;
 
 /** 
  * Document Controller 
- * 
  */
 @RestController
 @Slf4j
@@ -82,8 +80,8 @@ public class DocumentCTL extends AbstractCTL implements IDocumentCTL {
 	}
 
 	@Override
-	public ResponseEntity<DocumentResponseDTO> insertReplaceDocument(HttpServletRequest request, DocumentDTO document) throws OperationException, KafkaException, EmptyDocumentException, UnsupportedOperationException, DocumentAlreadyExistsException, DocumentNotFoundException {
-		return genericReplaceUpdateDocument(document,null);
+	public ResponseEntity<DocumentResponseDTO> insertReplaceDocument(DocumentDTO document, String wii, HttpServletRequest request) throws OperationException, KafkaException, EmptyDocumentException, UnsupportedOperationException, DocumentAlreadyExistsException, DocumentNotFoundException {
+		return genericReplaceUpdateDocument(document,wii);
 	}
 
 	@Override

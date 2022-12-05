@@ -19,11 +19,6 @@ import lombok.Setter;
 @Builder
 public class KafkaDataProcessorDTO implements AbstractDTO {
 
-	/**
-	 * Serial version uid.
-	 */
-	private static final long serialVersionUID = 7080680277816570116L;
-	
 	/** 
 	 * The Event Type 
 	 */

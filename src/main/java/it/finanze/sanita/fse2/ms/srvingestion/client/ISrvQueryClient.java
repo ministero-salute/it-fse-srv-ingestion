@@ -3,14 +3,11 @@
  */
 package it.finanze.sanita.fse2.ms.srvingestion.client;
 
-import java.io.Serializable;
-
-
 /**
  * The interface for the Srv Query Client 
  *
  */
-public interface ISrvQueryClient extends Serializable {
+public interface ISrvQueryClient{
 
 	/**
 	 * Function used to call the Srv Query Microservice to check the existence of a given document 

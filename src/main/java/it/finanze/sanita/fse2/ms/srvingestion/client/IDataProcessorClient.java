@@ -3,15 +3,13 @@
  */
 package it.finanze.sanita.fse2.ms.srvingestion.client;
 
-import java.io.Serializable;
-
 import it.finanze.sanita.fse2.ms.srvingestion.dto.DocumentDTO;
 
 /**
  * Interface for Data Processor Client
  *
  */
-public interface IDataProcessorClient extends Serializable {
+public interface IDataProcessorClient {
 
 	/**
 	 * Function used to send a Document to the Data Processor for processing (synchronous flow). 

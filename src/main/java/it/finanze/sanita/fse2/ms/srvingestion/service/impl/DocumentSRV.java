@@ -3,7 +3,6 @@
  */
 package it.finanze.sanita.fse2.ms.srvingestion.service.impl;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,13 +26,8 @@ import it.finanze.sanita.fse2.ms.srvingestion.service.IDocumentSRV;
  *
  */
 @Service
-public class DocumentSRV implements IDocumentSRV, Serializable {
+public class DocumentSRV implements IDocumentSRV {
 	
-	
-	/**
-	 * Serial Version UID 
-	 */
-	private static final long serialVersionUID = -2451872011643635887L; 
 	
 	/** 
 	 * Document Repository 

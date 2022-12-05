@@ -28,12 +28,6 @@ import lombok.extern.slf4j.Slf4j;
 public class SrvQueryClient implements ISrvQueryClient {
 	
 	/**
-	 * Serial Version UID 
-	 */
-	private static final long serialVersionUID = 6601225503534618633L; 
-
-	
-	/**
 	 * The Rest Template 
 	 */
     @Autowired

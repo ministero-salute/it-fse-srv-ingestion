@@ -22,23 +22,16 @@ import lombok.extern.slf4j.Slf4j;
 
 /**
  * The Data Processor Client 
- *
  */
 @Slf4j
 @Component
 public class DataProcessorClient implements IDataProcessorClient {
 
 	/**
-	 * Serial Version UID 
-	 */
-	private static final long serialVersionUID = 3728786139875056695L;
-
-	
-	/**
 	 * Rest Template
 	 */
     @Autowired
-    private transient RestTemplate restTemplate;
+    private RestTemplate restTemplate;
 
     /**
      * The Data Processor Configuration 

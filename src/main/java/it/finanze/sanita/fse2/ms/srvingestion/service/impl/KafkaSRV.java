@@ -20,14 +20,10 @@ import lombok.extern.slf4j.Slf4j;
 
 /**
  * Kafka management service implementation. 
- * 
- *
  */
 @Service
 @Slf4j
 public class KafkaSRV implements IKafkaSRV {
-
-
 
 	/**
 	 * Serial Version UID 

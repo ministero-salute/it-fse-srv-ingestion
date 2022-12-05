@@ -20,13 +20,11 @@ import org.springframework.kafka.core.ProducerFactory;
 import lombok.extern.slf4j.Slf4j;
 
 /**
- *
  *	Kafka producer configuration.
  */
 @Configuration
 @Slf4j
 public class KafkaProducerCFG {
-
 	
 	/**
 	 *	Kafka properties.

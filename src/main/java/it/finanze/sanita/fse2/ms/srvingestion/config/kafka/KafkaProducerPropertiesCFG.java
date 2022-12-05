@@ -3,12 +3,9 @@
  */
 package it.finanze.sanita.fse2.ms.srvingestion.config.kafka;
 
-import java.io.Serializable;
-
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-import it.finanze.sanita.fse2.ms.srvingestion.config.kafka.KafkaProducerPropertiesCFG;
 import lombok.Data;
 
 /**
@@ -17,16 +14,8 @@ import lombok.Data;
  */
 @Data
 @Component
-public class KafkaProducerPropertiesCFG implements Serializable {
-  
+public class KafkaProducerPropertiesCFG {
 
-
-	/**
-	 * Serial Version UID 
-	 */
-	private static final long serialVersionUID = 7457755090139691634L;
-
-	
 	/**
 	 * Boostrap server.
 	 */

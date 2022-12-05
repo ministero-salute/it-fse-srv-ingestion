@@ -3,13 +3,13 @@
  */
 package it.finanze.sanita.fse2.ms.srvingestion.repository.mongo.impl;
 
-import java.io.Serializable;
 import java.util.List;
 
 import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Repository;
 
 import com.mongodb.MongoException;
@@ -18,25 +18,16 @@ import it.finanze.sanita.fse2.ms.srvingestion.config.Constants;
 import it.finanze.sanita.fse2.ms.srvingestion.exceptions.OperationException;
 import it.finanze.sanita.fse2.ms.srvingestion.repository.IDocumentRepo;
 import it.finanze.sanita.fse2.ms.srvingestion.repository.entity.StagingDocumentETY;
-import it.finanze.sanita.fse2.ms.srvingestion.utility.ProfileUtility;
-
-import org.springframework.data.mongodb.core.query.Query;
 
 /** 
  * The implementation of the Document Repo 
- *
  */
 @Repository
-public class DocumentRepo implements IDocumentRepo, Serializable {
-
-	/**
-	 * Serial version UID 
-	 */
-	private static final long serialVersionUID = -8230326857671732231L;
+public class DocumentRepo implements IDocumentRepo {
 
 	
 	@Autowired
-	private transient MongoTemplate mongoTemplate; 
+	private MongoTemplate mongoTemplate; 
 	
 	
 	@Override

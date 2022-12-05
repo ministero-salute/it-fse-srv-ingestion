@@ -5,9 +5,7 @@ package it.finanze.sanita.fse2.ms.srvingestion.exceptions;
 
 
 /**
- * 
  * Connection refused error exception.
- *
  */
 public class ConnectionRefusedException extends RuntimeException {
 

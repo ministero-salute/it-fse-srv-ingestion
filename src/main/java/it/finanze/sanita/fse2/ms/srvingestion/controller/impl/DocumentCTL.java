@@ -65,9 +65,6 @@ public class DocumentCTL extends AbstractCTL implements IDocumentCTL {
 	@Autowired
 	private transient KafkaTopicCFG kafkaTopicCFG;
 
-	@Value("${eds.srvquery.read.mock}")
-	private boolean srvQueryReadMockEnabled;
-
 	@Override
 	public ResponseEntity<DocumentResponseDTO> addDocument(HttpServletRequest request,DocumentDTO document, String wii) throws OperationException, KafkaException, EmptyDocumentException, DocumentAlreadyExistsException {
 		log.debug(Constants.Logs.CALLED_API_POST_DOCUMENT); 
@@ -129,7 +126,7 @@ public class DocumentCTL extends AbstractCTL implements IDocumentCTL {
 		documentReferenceDTO.setJsonString(null);
 		documentReferenceDTO.setInsertionDate(new Date());
 
-		if (!srvQueryReadMockEnabled && Boolean.FALSE.equals(srvQueryClient.checkExists(documentReferenceDTO.getIdentifier()))) {
+		if (Boolean.FALSE.equals(srvQueryClient.checkExists(documentReferenceDTO.getIdentifier()))) {
 			throw new DocumentNotFoundException("Error: document not found!");
 		}
 

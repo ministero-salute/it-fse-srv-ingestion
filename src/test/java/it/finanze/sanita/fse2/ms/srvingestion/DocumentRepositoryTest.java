@@ -78,28 +78,6 @@ class DocumentRepositoryTest extends AbstractTest {
     	 	
     }
     
-    
-    @Test
-    void deleteTest() throws OperationException {
-    	StagingDocumentETY etyA = new StagingDocumentETY();
-
-    	etyA.setIdentifier(DOCUMENT_TEST_IDENTIFIER_DEL); 
-    	etyA.setDocument(Document.parse(DOCUMENT_TEST_JSON_STRING_DEL)); 
- 
-    	
-    	  	
-    	StagingDocumentETY ety = documentRepository.insert(etyA);
-    	
-    	documentRepository.deleteByIdentifier(ety.getId()); 
-    	
-    	StagingDocumentETY retrievedEtyDel = documentRepository.findById(ety.getId());
-
-    	assertEquals(StagingDocumentETY.class, retrievedEtyDel.getClass());
-
-    	 	
-    }
-    
-    
     @Test
     void findByIdTest() throws Exception {
     	StagingDocumentETY etyA = new StagingDocumentETY();

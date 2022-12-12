@@ -22,14 +22,6 @@ public interface IDocumentRepo {
 	 * @throws OperationException  Generic MongoDB Exception 
 	 */
 	StagingDocumentETY insert(StagingDocumentETY ety) throws OperationException;
-
-	/**
-	 * Processes a deletion request with given identifier 
-	 * 
-	 * @param identifier The identifier of the document that needs to be deleted 
-	 */
-	void deleteByIdentifier(String identifier); 
-	
 	
 	/**
 	 * Returns a document from the staging database given its identifier. 
@@ -38,7 +30,6 @@ public interface IDocumentRepo {
 	 * @return DocumentReferenceETY  Document Entity 
 	 */
 	StagingDocumentETY findById(String id);
-
 	
 	/**
 	 * Returns all the documents from the staging database.
@@ -47,9 +38,4 @@ public interface IDocumentRepo {
 	 */
 	public List<StagingDocumentETY> findAll();
 
-
-
-
-
-	
 }

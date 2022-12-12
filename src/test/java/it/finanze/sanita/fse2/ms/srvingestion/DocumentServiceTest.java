@@ -38,7 +38,6 @@ class DocumentServiceTest extends AbstractTest {
 	
 	@Autowired
 	public IDocumentSRV documentService; 
-	
 		
     public static final String DOCUMENT_TEST_IDENTIFIER_A = "testIdentifierRepoA"; 
     public static final String DOCUMENT_TEST_JSON_STRING_A = "{\"jsonString\": \"testA\"}"; 
@@ -105,26 +104,6 @@ class DocumentServiceTest extends AbstractTest {
     	   	    	
     	assertThrows(EmptyDocumentException.class, () -> documentService.insert(dto,wii)); 
     } 
-    
-    @Test
-    void deleteTest() throws OperationException, EmptyDocumentException {
-    	DocumentDTO dto = new DocumentDTO(); 
-
-    	dto.setIdentifier(DOCUMENT_TEST_IDENTIFIER_DEL); 
-    	dto.setOperation(DOCUMENT_TEST_OPERATION);
-    	dto.setJsonString(DOCUMENT_TEST_JSON_STRING_DEL); 
-    	   	    	
-    	String wii = "WII";
-    	StagingDocumentETY ety = documentService.insert(dto,wii);
-    	String mongoId = ety.getId(); 
-    		
-    	documentService.delete(mongoId); 
-    	
-    		
-    	assertThrows(Exception.class, () -> documentService.getDocumentById(DOCUMENT_TEST_IDENTIFIER_DEL)); 
-    	
-    	
-    }
     
     @Test
     void getDocumentByIdTest() throws OperationException, DocumentNotFoundException, EmptyDocumentException {

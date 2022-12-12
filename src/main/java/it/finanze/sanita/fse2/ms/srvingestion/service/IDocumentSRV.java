@@ -26,15 +26,7 @@ public interface IDocumentSRV {
      * @throws EmptyDocumentException  An exception thrown when a document to be inserted is empty 
      */
 	StagingDocumentETY insert(DocumentDTO dto, String wii)throws OperationException, EmptyDocumentException;
-	
-    /**
-     * Inserts one Document Deletion Request in the the staging database
-     * 
-     * @param identifier  The identifier of the document to delete 
-     */
-	void delete(String identifier); 
-	
-	
+
     /**
      * Retrieves a document from the staging database given its Mongo ID
      * 
@@ -44,14 +36,11 @@ public interface IDocumentSRV {
      */
 	DocumentDTO getDocumentById(String id) throws DocumentNotFoundException;
 
-	
     /**
      * Retrieves the list of all documents from the staging database
      * 
      * @return List  The list of all documents retrieved from MongoDB 
      */
 	List<DocumentDTO> getDocuments();
-
-
 
 }

@@ -55,12 +55,6 @@ public class DocumentSRV implements IDocumentSRV {
 	} 
 	
 	@Override
-	public void delete(String identifier) {
-		documentRepo.deleteByIdentifier(identifier);
-	} 
-	
-	
-	@Override
 	public DocumentDTO getDocumentById(String id) throws DocumentNotFoundException {
 		StagingDocumentETY ety =  documentRepo.findById(id);
 		

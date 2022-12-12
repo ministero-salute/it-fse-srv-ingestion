@@ -101,15 +101,8 @@ class DocumentControllerTest extends AbstractTest {
 
 	}
 
-	@AfterAll
-	public void teardown() {
-		mongo.dropCollection(StagingDocumentETY.class);
-	}
-
-    
     @Test
 	void livenessCheckCtlTest() throws Exception {
-
 		mvc.perform(get("http://localhost:" + webServerAppCtxt.getWebServer().getPort() + webServerAppCtxt.getServletContext().getContextPath() + "/status").contentType(MediaType.APPLICATION_JSON_VALUE)).andExpectAll(
 	            status().is2xxSuccessful()
 	        );
@@ -155,15 +148,11 @@ class DocumentControllerTest extends AbstractTest {
 		given(srvQueryClient.checkExists(anyString())).willReturn(true);
 		given(dataProcessorClient.sendRequestToDataProcessor(any(DocumentDTO.class))).willReturn(true);
 
-		MockHttpServletRequestBuilder builder =
-	            MockMvcRequestBuilders.put(getBaseUrl() + "/document").content(objectMapper.writeValueAsString(dtoC)); 
+		MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.put(getBaseUrl() + "/document/workflowinstanceid/{wii}", "mock_wii").content(objectMapper.writeValueAsString(dtoC)); 
     	   	
-	    
 	    mvc.perform(builder
 	            .contentType(MediaType.APPLICATION_JSON_VALUE))
 	            .andExpect(status().is2xxSuccessful()); 
-	    
-	    
 	} 
 	
 	@Test
@@ -183,12 +172,9 @@ class DocumentControllerTest extends AbstractTest {
 		MockHttpServletRequestBuilder builder =
 	            MockMvcRequestBuilders.put(getBaseUrl() + "/document").content(objectMapper.writeValueAsString(dtoC)); 
     	   	
-	    
 	    mvc.perform(builder
 	            .contentType(MediaType.APPLICATION_JSON_VALUE))
 	            .andExpect(status().is4xxClientError()); 
-	    
-	    
 	}
 
 	@Test

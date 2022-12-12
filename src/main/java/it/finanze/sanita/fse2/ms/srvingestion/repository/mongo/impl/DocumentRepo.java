@@ -8,8 +8,6 @@ import java.util.List;
 import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
-import org.springframework.data.mongodb.core.query.Criteria;
-import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Repository;
 
 import com.mongodb.MongoException;
@@ -37,12 +35,6 @@ public class DocumentRepo implements IDocumentRepo {
 		} catch(MongoException ex) {
 			throw new OperationException(Constants.Logs.ERROR_MONGO_INSERT, ex); 
 		}
-	} 
-	
-	@Override
-	public void deleteByIdentifier(String identifier) {
-		Query query = Query.query(Criteria.where(Constants.App.IDENTIFIER).is(identifier)); 
-		mongoTemplate.remove(query); 	
 	}
 	
 	@Override
@@ -55,6 +47,5 @@ public class DocumentRepo implements IDocumentRepo {
 	public List<StagingDocumentETY> findAll() {
 		return mongoTemplate.findAll(StagingDocumentETY.class);
 	}
- 
 
 }

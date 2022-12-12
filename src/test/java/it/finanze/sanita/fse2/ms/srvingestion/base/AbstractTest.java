@@ -16,7 +16,6 @@ public abstract class AbstractTest {
 
     @Autowired
     protected DocumentRepo documentRepository; 
-    
 
     /**
      * This is a test collection initialized on MongoDB 
@@ -26,8 +25,6 @@ public abstract class AbstractTest {
 
     public static final String DOCUMENT_TEST_IDENTIFIER_B = "testIdentifierB"; 
     public static final String DOCUMENT_TEST_JSON_STRING_B = "{\"jsonString\": \"testB\"}"; 
-
-    
     
     /**
      * This collection does not exist
@@ -41,15 +38,10 @@ public abstract class AbstractTest {
 
     public static final ProcessorOperationEnum DOCUMENT_TEST_OPERATION = ProcessorOperationEnum.PUBLISH;
 
-
-
     @Autowired
     public MongoTemplate mongo;
     
-
-    protected AbstractTest() {		
-
-    }
+    protected AbstractTest() {}
 
     protected void populateStagingCollection() {
         
@@ -63,13 +55,9 @@ public abstract class AbstractTest {
     	documentB.setIdentifier(DOCUMENT_TEST_IDENTIFIER_B); 
     	documentB.setOperation(DOCUMENT_TEST_OPERATION);
     	documentB.setDocument(Document.parse(DOCUMENT_TEST_JSON_STRING_B)); 
-   
     	
         mongo.insert(documentA);
         mongo.insert(documentB);
-
-    
     }
     
-
 }

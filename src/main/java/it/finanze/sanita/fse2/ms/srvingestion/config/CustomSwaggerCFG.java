@@ -65,12 +65,6 @@ public class CustomSwaggerCFG {
     private String contactUrl;
 
 	/** 
-	 * Contact Mail  
-	 */
-    @Value("${docs.info.contact.mail}")
-    private String contactMail;
-
-	/** 
 	 * Port 
 	 */
     @Value("${server.port}")

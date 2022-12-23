@@ -10,7 +10,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.validation.constraints.Size;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -24,6 +23,7 @@ import it.finanze.sanita.fse2.ms.srvingestion.controller.AbstractCTL;
 import it.finanze.sanita.fse2.ms.srvingestion.controller.IDocumentCTL;
 import it.finanze.sanita.fse2.ms.srvingestion.dto.DocumentDTO;
 import it.finanze.sanita.fse2.ms.srvingestion.dto.response.DocumentResponseDTO;
+import it.finanze.sanita.fse2.ms.srvingestion.dto.response.LogTraceInfoDTO;
 import it.finanze.sanita.fse2.ms.srvingestion.enums.ProcessorOperationEnum;
 import it.finanze.sanita.fse2.ms.srvingestion.exceptions.DocumentAlreadyExistsException;
 import it.finanze.sanita.fse2.ms.srvingestion.exceptions.DocumentNotFoundException;
@@ -67,26 +67,62 @@ public class DocumentCTL extends AbstractCTL implements IDocumentCTL {
 
 	@Override
 	public ResponseEntity<DocumentResponseDTO> addDocument(HttpServletRequest request,DocumentDTO document, String wii) throws OperationException, KafkaException, EmptyDocumentException, DocumentAlreadyExistsException {
-		log.debug(Constants.Logs.CALLED_API_POST_DOCUMENT); 
+		log.debug(Constants.Logs.CALLED_API_POST_DOCUMENT);
+		final LogTraceInfoDTO traceInfoDTO = getLogTraceInfo();
+		
+		log.info("[START] {}() with arguments {}={}, {}={}", "create",
+    			"traceId", traceInfoDTO.getTraceID(),
+    			"wif", wii
+    			);
+		
 		document.setInsertionDate(new Date()); 
 		StagingDocumentETY ety = documentService.insert(document,wii);
 		String mongoId = ety.getId();
 		String topic = kafkaTopicCFG.getIngestionDataProcessorPublicationTopic() + document.getPriorityTypeEnum().getQueue();
 		kafkaService.notifyDataProcessor(topic, mongoId, ProcessorOperationEnum.PUBLISH);
+		
+		log.info("[EXIT] {}() with arguments {}={}, {}={}", "create",
+    			"traceId", traceInfoDTO.getTraceID(),
+    			"wif", wii
+    			);
+		
 		return new ResponseEntity<>(new DocumentResponseDTO(getLogTraceInfo()), HttpStatus.CREATED); 
 	}
 
 	@Override
 	public ResponseEntity<DocumentResponseDTO> insertReplaceDocument(DocumentDTO document, String wii, HttpServletRequest request) throws OperationException, KafkaException, EmptyDocumentException, UnsupportedOperationException, DocumentAlreadyExistsException, DocumentNotFoundException {
+		final LogTraceInfoDTO traceInfoDTO = getLogTraceInfo();
+		
+		log.info("[START] {}() with arguments {}={}, {}={}", "replace",
+    			"traceId", traceInfoDTO.getTraceID(),
+    			"wif", wii
+    			);
+		
+		log.info("[EXIT] {}() with arguments {}={}, {}={}", "replace",
+    			"traceId", traceInfoDTO.getTraceID(),
+    			"wif", wii
+    			);
+		
 		return genericReplaceUpdateDocument(document,wii);
 	}
 
 	@Override
 	public ResponseEntity<DocumentResponseDTO> insertUpdateDocument(HttpServletRequest request, DocumentDTO document) throws OperationException, KafkaException, EmptyDocumentException, UnsupportedOperationException, DocumentAlreadyExistsException, DocumentNotFoundException {
+		final LogTraceInfoDTO traceInfoDTO = getLogTraceInfo();
+		
+		log.info("[START] {}() with arguments {}={}", "update",
+    			"traceId", traceInfoDTO.getTraceID()
+    			);
+		
+		log.info("[EXIT] {}() with arguments {}={}", "update",
+    			"traceId", traceInfoDTO.getTraceID()
+    			);
+		
 		return genericReplaceUpdateDocument(document,null);
 	}
 
 	private ResponseEntity<DocumentResponseDTO> genericReplaceUpdateDocument(final DocumentDTO documentReferenceDTO, final String wii) throws EmptyDocumentException, OperationException, KafkaException, UnsupportedOperationException, DocumentNotFoundException {
+		final LogTraceInfoDTO traceInfoDTO = getLogTraceInfo();
 		documentReferenceDTO.setInsertionDate(new Date());
 
 		boolean exist = srvQueryClient.checkExists(documentReferenceDTO.getIdentifier());
@@ -97,15 +133,31 @@ public class DocumentCTL extends AbstractCTL implements IDocumentCTL {
 		switch (documentReferenceDTO.getOperation()) {
 			case UPDATE:
 				log.debug(Constants.Logs.CALLED_API_UPDATE_DOCUMENT);
+				log.info("[START] {}() with arguments {}={}, {}={}", "generic-update",
+		    			"traceId", traceInfoDTO.getTraceID(),
+		    			"wif", wii
+		    			);
 				// Calls Data processor to process Document
 				dataProcessorClient.sendRequestToDataProcessor(documentReferenceDTO);
+				log.info("[EXIT] {}() with arguments {}={}, {}={}", "generic-update",
+		    			"traceId", traceInfoDTO.getTraceID(),
+		    			"wif", wii
+		    			);
 				break;
 			case REPLACE:
 				log.debug(Constants.Logs.CALLED_API_PUT_DOCUMENT);
+				log.info("[START] {}() with arguments {}={}, {}={}", "generic-replace",
+		    			"traceId", traceInfoDTO.getTraceID(),
+		    			"wif", wii
+		    			);
 				StagingDocumentETY ety = documentService.insert(documentReferenceDTO,wii);
 				String mongoId = ety.getId(); 
 				String topic = kafkaTopicCFG.getIngestionDataProcessorGenericTopic();
 				kafkaService.notifyDataProcessor(topic, mongoId, ProcessorOperationEnum.REPLACE);
+				log.info("[EXIT] {}() with arguments {}={}, {}={}", "generic-replace",
+		    			"traceId", traceInfoDTO.getTraceID(),
+		    			"wif", wii
+		    			);
 				break;
 			default:
 				// throw bad request
@@ -118,7 +170,12 @@ public class DocumentCTL extends AbstractCTL implements IDocumentCTL {
 
 	@Override
 	public ResponseEntity<DocumentResponseDTO> insertDeleteDocument(HttpServletRequest request, @PathVariable String identifier) throws OperationException, KafkaException, EmptyDocumentException, DocumentNotFoundException {
-		log.debug(Constants.Logs.CALLED_API_DELETE_DOCUMENT); 
+		log.debug(Constants.Logs.CALLED_API_DELETE_DOCUMENT);
+		final LogTraceInfoDTO traceInfoDTO = getLogTraceInfo();
+		
+		log.info("[START] {}() with arguments {}={}", "delete",
+    			"traceId", traceInfoDTO.getTraceID()
+    			);
 		
 		DocumentDTO documentReferenceDTO = new DocumentDTO();
 		documentReferenceDTO.setIdentifier(identifier);
@@ -131,6 +188,11 @@ public class DocumentCTL extends AbstractCTL implements IDocumentCTL {
 		}
 
 		dataProcessorClient.sendRequestToDataProcessor(documentReferenceDTO);
+		
+		log.info("[EXIT] {}() with arguments {}={}", "delete",
+    			"traceId", traceInfoDTO.getTraceID()
+    			);
+		
 		return new ResponseEntity<>(new DocumentResponseDTO(getLogTraceInfo()), HttpStatus.OK);
 	}
 

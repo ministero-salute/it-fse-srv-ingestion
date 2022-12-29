@@ -10,10 +10,7 @@ import static org.mockito.ArgumentMatchers.anyString;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestInstance;
+import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.ComponentScan;
@@ -56,7 +53,7 @@ class DocumentServiceTest extends AbstractTest {
     public static final ProcessorOperationEnum DOCUMENT_TEST_OPERATION = ProcessorOperationEnum.PUBLISH;
     
     
-	@BeforeAll
+	@BeforeEach
 	public void setup() {
 		mongo.dropCollection(StagingDocumentETY.class);
 		populateStagingCollection();
@@ -90,20 +87,7 @@ class DocumentServiceTest extends AbstractTest {
     	
     	assertEquals(DOCUMENT_TEST_IDENTIFIER_C, retrievedDto.getIdentifier()); 
     	assertEquals(DOCUMENT_TEST_JSON_STRING_C, retrievedDto.getJsonString()); 
-    } 
-    
-    @Test
-    void insertEmptyBundle() throws OperationException, DocumentNotFoundException, EmptyDocumentException {
-    	DocumentDTO dto = new DocumentDTO(); 
-
-    	dto.setIdentifier(DOCUMENT_TEST_IDENTIFIER_C); 
-    	dto.setOperation(DOCUMENT_TEST_OPERATION);
-    	dto.setJsonString(anyString()); 
-    	
-    	String wii = "WII";
-    	   	    	
-    	assertThrows(EmptyDocumentException.class, () -> documentService.insert(dto,wii)); 
-    } 
+    }
     
     @Test
     void getDocumentByIdTest() throws OperationException, DocumentNotFoundException, EmptyDocumentException {

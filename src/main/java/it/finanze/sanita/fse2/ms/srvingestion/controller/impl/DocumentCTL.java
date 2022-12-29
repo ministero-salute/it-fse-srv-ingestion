@@ -51,16 +51,16 @@ public class DocumentCTL extends AbstractCTL implements IDocumentCTL {
 	
 	
 	@Autowired
-	private DocumentSRV documentService; 
+	private transient DocumentSRV documentService;
 	
 	@Autowired
 	private KafkaSRV kafkaService; 
 	
 	@Autowired
-	private DataProcessorClient dataProcessorClient; 
+	private transient DataProcessorClient dataProcessorClient;
 	
 	@Autowired
-	private SrvQueryClient srvQueryClient;
+	private transient SrvQueryClient srvQueryClient;
 
 	@Autowired
 	private transient KafkaTopicCFG kafkaTopicCFG;

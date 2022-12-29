@@ -49,7 +49,7 @@ public class KafkaPropertiesCFG {
 	 * Trustore password.
 	 */
 	@Value("${kafka.properties.ssl.truststore.password}")
-	private transient char[] trustorePassword;
+	private char[] trustorePassword;
 	 
 	/**
 	 * Enable Ssl flag.

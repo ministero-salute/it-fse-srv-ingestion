@@ -9,10 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.bson.Document;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestInstance;
+import org.junit.jupiter.api.*;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.test.context.ActiveProfiles;
@@ -44,7 +41,7 @@ class DocumentRepositoryTest extends AbstractTest {
     
 	
     
-	@BeforeAll
+	@BeforeEach
 	public void setup() {
 		mongo.dropCollection(StagingDocumentETY.class);
 		populateStagingCollection();

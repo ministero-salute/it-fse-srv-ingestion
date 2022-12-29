@@ -31,7 +31,7 @@ public class SrvQueryClient implements ISrvQueryClient {
 	 * The Rest Template 
 	 */
     @Autowired
-    private transient RestTemplate restTemplate; 
+    private RestTemplate restTemplate;
 
     /** 
      * The Srv Query Configuration 

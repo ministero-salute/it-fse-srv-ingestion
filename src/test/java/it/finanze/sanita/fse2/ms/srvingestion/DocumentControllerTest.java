@@ -3,36 +3,8 @@
  */
 package it.finanze.sanita.fse2.ms.srvingestion;
 
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.BDDMockito.given;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
-import java.util.ArrayList;
-import java.util.List;
-
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestInstance;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext;
-import org.springframework.http.MediaType;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
-
 import brave.Tracer;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import it.finanze.sanita.fse2.ms.srvingestion.base.AbstractTest;
 import it.finanze.sanita.fse2.ms.srvingestion.client.impl.DataProcessorClient;
 import it.finanze.sanita.fse2.ms.srvingestion.client.impl.SrvQueryClient;
@@ -41,9 +13,39 @@ import it.finanze.sanita.fse2.ms.srvingestion.controller.impl.DocumentCTL;
 import it.finanze.sanita.fse2.ms.srvingestion.dto.DocumentDTO;
 import it.finanze.sanita.fse2.ms.srvingestion.enums.PriorityTypeEnum;
 import it.finanze.sanita.fse2.ms.srvingestion.enums.ProcessorOperationEnum;
+import it.finanze.sanita.fse2.ms.srvingestion.exceptions.ConnectionRefusedException;
+import it.finanze.sanita.fse2.ms.srvingestion.exceptions.EmptyDocumentException;
+import it.finanze.sanita.fse2.ms.srvingestion.exceptions.OperationException;
 import it.finanze.sanita.fse2.ms.srvingestion.repository.entity.StagingDocumentETY;
 import it.finanze.sanita.fse2.ms.srvingestion.service.IDocumentSRV;
 import it.finanze.sanita.fse2.ms.srvingestion.utility.ProfileUtility;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
+import org.mockito.Mockito;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.boot.test.mock.mockito.SpyBean;
+import org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext;
+import org.springframework.http.MediaType;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.BDDMockito.given;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 
 
@@ -65,7 +67,7 @@ class DocumentControllerTest extends AbstractTest {
 	@Autowired
 	DocumentCTL documentCTL; 
 
-	@Autowired
+	@SpyBean
 	IDocumentSRV documentService;
 
 	@MockBean
@@ -94,7 +96,7 @@ class DocumentControllerTest extends AbstractTest {
     
     static final ProcessorOperationEnum DOCUMENT_TEST_OPERATION_DELETE = ProcessorOperationEnum.DELETE; 
 
-	@BeforeAll
+	@BeforeEach
 	public void setup() {
 		mongo.dropCollection(StagingDocumentETY.class);
 		populateStagingCollection();
@@ -358,5 +360,95 @@ class DocumentControllerTest extends AbstractTest {
 	@Test
 	void genericExceptionTest() {
 		assertThrows(Exception.class, () -> { throw new Exception("Test Exception"); }); 
+	}
+
+	@Test
+	void insertReplaceDocumentDatabaseErrorTest() throws Exception {
+		DocumentDTO dtoC = new DocumentDTO();
+		List<DocumentDTO> dtoList= new ArrayList<>();
+		ObjectMapper objectMapper = new ObjectMapper();
+
+		dtoC.setIdentifier(DOCUMENT_TEST_IDENTIFIER_PUT);
+		dtoC.setOperation(DOCUMENT_TEST_OPERATION_REPLACE);
+		dtoC.setJsonString(DOCUMENT_TEST_JSON_STRING_PUT);
+
+		dtoList.add(dtoC);
+
+		given(srvQueryClient.checkExists(anyString())).willReturn(true);
+		given(dataProcessorClient.sendRequestToDataProcessor(any(DocumentDTO.class))).willReturn(true);
+
+		Mockito.doThrow(OperationException.class).when(documentService).insert(any(), anyString());
+
+		MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.put(getBaseUrl() + "/document/workflowinstanceid/{wii}", "mock_wii").content(objectMapper.writeValueAsString(dtoC));
+
+		mvc.perform(builder.contentType(MediaType.APPLICATION_JSON_VALUE))
+				.andExpect(status().isInternalServerError());
+	}
+
+	@Test
+	void insertReplaceEmptyDocumentErrorTest() throws Exception {
+		DocumentDTO dtoC = new DocumentDTO();
+		List<DocumentDTO> dtoList= new ArrayList<>();
+		ObjectMapper objectMapper = new ObjectMapper();
+
+		dtoC.setIdentifier(DOCUMENT_TEST_IDENTIFIER_PUT);
+		dtoC.setOperation(DOCUMENT_TEST_OPERATION_REPLACE);
+		dtoC.setJsonString(DOCUMENT_TEST_JSON_STRING_PUT);
+
+		dtoList.add(dtoC);
+
+		given(srvQueryClient.checkExists(anyString())).willReturn(true);
+		given(dataProcessorClient.sendRequestToDataProcessor(any(DocumentDTO.class))).willReturn(true);
+
+		Mockito.doThrow(EmptyDocumentException.class).when(documentService).insert(any(), anyString());
+
+		MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.put(getBaseUrl() + "/document/workflowinstanceid/{wii}", "mock_wii").content(objectMapper.writeValueAsString(dtoC));
+
+		mvc.perform(builder.contentType(MediaType.APPLICATION_JSON_VALUE))
+				.andExpect(status().isNotFound());
+	}
+
+	@Test
+	void insertReplaceConnectionRefusedErrorTest() throws Exception {
+		DocumentDTO dtoC = new DocumentDTO();
+		List<DocumentDTO> dtoList= new ArrayList<>();
+		ObjectMapper objectMapper = new ObjectMapper();
+
+		dtoC.setIdentifier(DOCUMENT_TEST_IDENTIFIER_PUT);
+		dtoC.setOperation(DOCUMENT_TEST_OPERATION_REPLACE);
+		dtoC.setJsonString(DOCUMENT_TEST_JSON_STRING_PUT);
+
+		dtoList.add(dtoC);
+
+		given(srvQueryClient.checkExists(anyString())).willThrow(ConnectionRefusedException.class);
+		given(dataProcessorClient.sendRequestToDataProcessor(any(DocumentDTO.class))).willThrow(ConnectionRefusedException.class);
+
+		MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.put(getBaseUrl() + "/document/workflowinstanceid/{wii}", "mock_wii").content(objectMapper.writeValueAsString(dtoC));
+
+		mvc.perform(builder.contentType(MediaType.APPLICATION_JSON_VALUE))
+				.andExpect(status().isBadGateway());
+	}
+
+	@Test
+	void insertReplaceUnsupportedOperationErrorTest() throws Exception {
+		DocumentDTO dtoC = new DocumentDTO();
+		List<DocumentDTO> dtoList= new ArrayList<>();
+		ObjectMapper objectMapper = new ObjectMapper();
+
+		dtoC.setIdentifier(DOCUMENT_TEST_IDENTIFIER_PUT);
+		dtoC.setOperation(DOCUMENT_TEST_OPERATION_DELETE);
+		dtoC.setJsonString(DOCUMENT_TEST_JSON_STRING_PUT);
+
+		dtoList.add(dtoC);
+
+		given(srvQueryClient.checkExists(anyString())).willReturn(true);
+		given(dataProcessorClient.sendRequestToDataProcessor(any(DocumentDTO.class))).willReturn(true);
+
+		Mockito.doThrow(EmptyDocumentException.class).when(documentService).insert(any(), anyString());
+
+		MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.put(getBaseUrl() + "/document/workflowinstanceid/{wii}", "mock_wii").content(objectMapper.writeValueAsString(dtoC));
+
+		mvc.perform(builder.contentType(MediaType.APPLICATION_JSON_VALUE))
+				.andExpect(status().isBadRequest());
 	}
 }

@@ -32,4 +32,17 @@ public class ProfileUtility {
         return false;
     }
     
+    /**
+     * Returns true if we are in test environment 
+     * 
+     * @return boolean  True if we are running with test profile 
+     */
+    public boolean isDevProfile() {
+    	
+        if (environment != null && environment.getActiveProfiles().length > 0) {
+            return environment.getActiveProfiles()[0].contains(Constants.Profile.DEV);
+        }
+        return false;
+    }
+    
 } 

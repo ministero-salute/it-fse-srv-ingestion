@@ -3,19 +3,24 @@
  */
 package it.finanze.sanita.fse2.ms.srvingestion.config.kafka;
 
+import java.util.Properties;
+
+import org.apache.kafka.clients.admin.AdminClient;
+import org.apache.kafka.clients.admin.AdminClientConfig;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
 
+import it.finanze.sanita.fse2.ms.srvingestion.utility.ProfileUtility;
 import lombok.Data;
-
-import java.io.Serializable;
 
 /**
  *	Kafka properties configuration.
  */
 @Data
 @Component
-public class KafkaPropertiesCFG implements Serializable {
+public class KafkaPropertiesCFG {
 
 	/**
 	 *  Boostrap server.
@@ -59,5 +64,21 @@ public class KafkaPropertiesCFG implements Serializable {
 	@Value("${kafka.enablessl}")
 	private boolean enableSSL;
 	
+	@Autowired
+	private ProfileUtility profileUtility;
+	
+	@Bean
+	public AdminClient client() {
+		Properties configProperties = new Properties();
+		configProperties.put(AdminClientConfig.BOOTSTRAP_SERVERS_CONFIG, producerBootstrapServers);
+		if(!profileUtility.isDevProfile() && !profileUtility.isTestProfile()) {
+			configProperties.put("security.protocol", protocol);
+			configProperties.put("sasl.mechanism", mechanism);
+			configProperties.put("sasl.jaas.config", configJaas);
+			configProperties.put("ssl.truststore.location", trustoreLocation);  
+			configProperties.put("ssl.truststore.password", String.valueOf(trustorePassword)); 
+		}
+		return AdminClient.create(configProperties);
+	}
 } 
 

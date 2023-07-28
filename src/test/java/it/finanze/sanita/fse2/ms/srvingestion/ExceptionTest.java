@@ -17,6 +17,9 @@ import org.junit.jupiter.api.Test;
 
 import it.finanze.sanita.fse2.ms.srvingestion.base.AbstractTest;
 import it.finanze.sanita.fse2.ms.srvingestion.exceptions.BusinessException;
+import it.finanze.sanita.fse2.ms.srvingestion.exceptions.DocumentAlreadyExistsException;
+import it.finanze.sanita.fse2.ms.srvingestion.exceptions.EmptyDocumentException;
+import it.finanze.sanita.fse2.ms.srvingestion.exceptions.KafkaException;
 
 
 class ExceptionTest extends AbstractTest {
@@ -36,7 +39,33 @@ class ExceptionTest extends AbstractTest {
 		
 		assertEquals(BusinessException.class, exc.getClass()); 
 		
+	}
+
+	@Test
+	void documentAlreadyExistsExceptionTest() {
+		DocumentAlreadyExistsException exc = new DocumentAlreadyExistsException("Error"); 
+		
+		assertEquals(DocumentAlreadyExistsException.class, exc.getClass()); 
+		assertEquals("Error", exc.getMessage()); 
+		
 	} 
 
+	@Test
+	void emptyDocumentExceptionTest() {
+		EmptyDocumentException exc = new EmptyDocumentException("Error"); 
+		
+		assertEquals(EmptyDocumentException.class, exc.getClass()); 
+		assertEquals("Error", exc.getMessage()); 
+		
+	} 
 	
+	@Test
+	void kafkaExceptionTest() {
+		KafkaException exc = new KafkaException("Error", new RuntimeException()); 
+		
+		assertEquals(KafkaException.class, exc.getClass()); 
+		assertEquals("Error", exc.getMessage()); 
+		
+	}
+
 } 

@@ -18,13 +18,13 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 
 import it.finanze.sanita.fse2.ms.srvingestion.enums.ProcessorOperationEnum;
 import it.finanze.sanita.fse2.ms.srvingestion.repository.entity.StagingDocumentETY;
-import it.finanze.sanita.fse2.ms.srvingestion.repository.mongo.impl.DocumentRepo;
+import it.finanze.sanita.fse2.ms.srvingestion.repository.mongo.impl.DocumentStagingRepo;
 
 
 public abstract class AbstractTest {
 
     @Autowired
-    protected DocumentRepo documentRepository; 
+    protected DocumentStagingRepo documentRepository; 
 
     /**
      * This is a test collection initialized on MongoDB 

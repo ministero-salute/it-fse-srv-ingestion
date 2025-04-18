@@ -11,22 +11,26 @@
  */
 package it.finanze.sanita.fse2.ms.srvingestion.service.impl;
 
-import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
-import org.bson.Document;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
 
+import it.finanze.sanita.fse2.ms.srvingestion.client.impl.DataProcessorClient;
+import it.finanze.sanita.fse2.ms.srvingestion.client.impl.SrvQueryClient;
 import it.finanze.sanita.fse2.ms.srvingestion.config.Constants;
 import it.finanze.sanita.fse2.ms.srvingestion.dto.DocumentDTO;
+import it.finanze.sanita.fse2.ms.srvingestion.dto.converter.DocumentConverter;
 import it.finanze.sanita.fse2.ms.srvingestion.enums.ProcessorOperationEnum;
+import it.finanze.sanita.fse2.ms.srvingestion.exceptions.BusinessException;
+import it.finanze.sanita.fse2.ms.srvingestion.exceptions.ConnectionRefusedException;
 import it.finanze.sanita.fse2.ms.srvingestion.exceptions.DocumentNotFoundException;
 import it.finanze.sanita.fse2.ms.srvingestion.exceptions.EmptyDocumentException;
 import it.finanze.sanita.fse2.ms.srvingestion.exceptions.OperationException;
 import it.finanze.sanita.fse2.ms.srvingestion.repository.entity.StagingDocumentETY;
-import it.finanze.sanita.fse2.ms.srvingestion.repository.mongo.impl.DocumentRepo;
+import it.finanze.sanita.fse2.ms.srvingestion.repository.mongo.impl.DocumentStagingRepo;
 import it.finanze.sanita.fse2.ms.srvingestion.service.IDocumentSRV;
 
 /** 
@@ -37,97 +41,99 @@ import it.finanze.sanita.fse2.ms.srvingestion.service.IDocumentSRV;
 public class DocumentSRV implements IDocumentSRV {
 	
 	
-	/** 
-	 * Document Repository 
-	 */
 	@Autowired
-	private DocumentRepo documentRepo; 
+	private DocumentStagingRepo documentStagingRepo; 
 	
+	@Autowired
+	private transient SrvQueryClient srvQueryClient;
+	
+	@Autowired
+	private transient DataProcessorClient dataProcessorClient;
+
+	@Autowired
+	DocumentConverter documentConverter;
 	
 	@Override
 	public StagingDocumentETY insert(final DocumentDTO dto, final String wii) throws OperationException, EmptyDocumentException {
-		
-		// If the object does not have an OperationCode, it is a creation
-		if (ObjectUtils.isEmpty(dto.getOperation())) {
-			dto.setOperation(ProcessorOperationEnum.PUBLISH);
-		} 
-		
-		if ((dto.getOperation().equals(ProcessorOperationEnum.PUBLISH)
-				|| dto.getOperation().equals(ProcessorOperationEnum.UPDATE)) && ObjectUtils.isEmpty(dto.getJsonString())) {
+				
+		if (ObjectUtils.isEmpty(dto.getJsonString())) {
 				throw new EmptyDocumentException(Constants.Logs.ERROR_EMPTY_DOCUMENT); 
 		} 
-		
-		StagingDocumentETY document = parseDtoToEty(dto);
+		StagingDocumentETY document = documentConverter.toEntity(dto);
 		document.setWorkflowInstanceId(wii);
-		return documentRepo.insert(document); 
+		document.setOperation(ProcessorOperationEnum.PUBLISH);
+		return documentStagingRepo.insert(document); 
 	} 
 	
 	@Override
+	public StagingDocumentETY replace(final DocumentDTO dto, final String wii) throws OperationException, EmptyDocumentException, DocumentNotFoundException  {
+		
+		boolean exist = srvQueryClient.checkExists(dto.getIdentifier());
+		if (Boolean.FALSE.equals(exist)) {
+			throw new DocumentNotFoundException("Error: document not found!");
+		}
+
+		if (ObjectUtils.isEmpty(dto.getJsonString())) {
+			throw new EmptyDocumentException(Constants.Logs.ERROR_EMPTY_DOCUMENT); 
+		} 
+		
+		StagingDocumentETY document = documentConverter.toEntity(dto);
+		document.setWorkflowInstanceId(wii);
+		document.setOperation(ProcessorOperationEnum.REPLACE);
+		return documentStagingRepo.insert(document); 
+	}
+	
+	@Override
+	public Boolean update(final DocumentDTO dto) throws EmptyDocumentException, DocumentNotFoundException, ConnectionRefusedException, BusinessException {
+		
+		boolean exist = srvQueryClient.checkExists(dto.getIdentifier());
+		if (Boolean.FALSE.equals(exist)) {
+			throw new DocumentNotFoundException("Error: document not found!");
+		}
+
+		if (ObjectUtils.isEmpty(dto.getJsonString())) {
+			throw new EmptyDocumentException(Constants.Logs.ERROR_EMPTY_DOCUMENT); 
+		} 
+	
+		dto.setOperation(ProcessorOperationEnum.UPDATE);
+		return dataProcessorClient.sendRequestToDataProcessor(dto);
+
+	}
+	
+	@Override
+	public Boolean delete(final String id) throws DocumentNotFoundException, ConnectionRefusedException, BusinessException {
+		
+		boolean exist = srvQueryClient.checkExists(id);
+		if (Boolean.FALSE.equals(exist)) {
+			throw new DocumentNotFoundException("Error: document not found!");
+		}
+
+		DocumentDTO dto = new DocumentDTO();
+		dto.setIdentifier(id);
+		dto.setOperation(ProcessorOperationEnum.DELETE);
+		dto.setJsonString(null);
+		dto.setInsertionDate(new Date());
+		return dataProcessorClient.sendRequestToDataProcessor(dto);
+
+	}
+
+	
+	@Override
 	public DocumentDTO getDocumentById(String id) throws DocumentNotFoundException {
-		StagingDocumentETY ety =  documentRepo.findById(id);
+		StagingDocumentETY ety =  documentStagingRepo.findById(id);
 		
 		if(ObjectUtils.isEmpty(ety.getId())) {
 			throw new DocumentNotFoundException(Constants.Logs.ERROR_DOCUMENT_NOT_FOUND); 
 		} 
 		
-		return parseEtyToDto(ety); 
+		return documentConverter.toDto(ety); 
 	} 
 	
 	
 	@Override
 	public List<DocumentDTO> getDocuments() {
-		List<StagingDocumentETY> etyList = documentRepo.findAll();
-		return buildDtoFromEty(etyList); 	
-	}
-
-	
-	
-	public DocumentDTO parseEtyToDto(StagingDocumentETY stagingDocumentETY) {
-		DocumentDTO output = new DocumentDTO(); 
-		
-		if(!ObjectUtils.isEmpty(stagingDocumentETY.getIdentifier())) {
-			output.setIdentifier(stagingDocumentETY.getIdentifier());
-		} 
-		if(!ObjectUtils.isEmpty(stagingDocumentETY.getOperation())) {
-			output.setOperation(stagingDocumentETY.getOperation());
-		}
-		if(!ObjectUtils.isEmpty(stagingDocumentETY.getDocument()) ) {
-			output.setJsonString(stagingDocumentETY.getDocument().toJson());
-		}
-		if(!ObjectUtils.isEmpty(stagingDocumentETY.getInsertionDate()) ) {
-			output.setInsertionDate(stagingDocumentETY.getInsertionDate());
-		}
-		
-		return output;
-	} 
-	
-	public StagingDocumentETY parseDtoToEty(DocumentDTO documentReferenceDTO) {
-		StagingDocumentETY output = new StagingDocumentETY();
-		
-		if(!ObjectUtils.isEmpty(documentReferenceDTO.getIdentifier())) {
-			output.setIdentifier(documentReferenceDTO.getIdentifier());
-		} 
-		if(!ObjectUtils.isEmpty(documentReferenceDTO.getOperation())) {
-			output.setOperation(documentReferenceDTO.getOperation());
-		} 
-		if(!ObjectUtils.isEmpty(documentReferenceDTO.getJsonString())) {
-			output.setDocument(Document.parse(documentReferenceDTO.getJsonString()));
-		}
-		if(!ObjectUtils.isEmpty(documentReferenceDTO.getInsertionDate())) {
-			output.setInsertionDate(documentReferenceDTO.getInsertionDate());
-		}
-			
-		return output;
-	} 
-	
-	public List<DocumentDTO> buildDtoFromEty(List<StagingDocumentETY> documentEtyList) {
-		List<DocumentDTO> output = new ArrayList<>();
-		
-		for(StagingDocumentETY document : documentEtyList) {
-			output.add(parseEtyToDto(document));
-		}
-		
-		return output;
+		List<StagingDocumentETY> etyList = documentStagingRepo.findAll();
+		return documentConverter.toDtoList(etyList); 	
 	}
 	
 

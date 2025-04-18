@@ -71,4 +71,10 @@ public class StagingDocumentETY {
 	@Field("workflow_instance_id")
 	private String workflowInstanceId;
 	
+	/** 
+	 * Document Organization ID. 
+	 */
+	@Field("rde")
+	private String rde;
+	
 }

@@ -68,5 +68,12 @@ public class DocumentDTO {
 	 */
 	@JsonProperty("insertionDate")
 	private Date insertionDate; 
+
+	/**
+	 * The Insertion Date
+	 */
+	@JsonProperty("rde")
+	private String rde;
+
 	
 }

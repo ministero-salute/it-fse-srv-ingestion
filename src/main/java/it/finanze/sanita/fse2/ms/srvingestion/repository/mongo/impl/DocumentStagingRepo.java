@@ -22,14 +22,14 @@ import com.mongodb.MongoException;
 
 import it.finanze.sanita.fse2.ms.srvingestion.config.Constants;
 import it.finanze.sanita.fse2.ms.srvingestion.exceptions.OperationException;
-import it.finanze.sanita.fse2.ms.srvingestion.repository.IDocumentRepo;
+import it.finanze.sanita.fse2.ms.srvingestion.repository.IDocumentStagingRepo;
 import it.finanze.sanita.fse2.ms.srvingestion.repository.entity.StagingDocumentETY;
 
 /** 
  * The implementation of the Document Repo 
  */
 @Repository
-public class DocumentRepo implements IDocumentRepo {
+public class DocumentStagingRepo implements IDocumentStagingRepo {
 
 	
 	@Autowired

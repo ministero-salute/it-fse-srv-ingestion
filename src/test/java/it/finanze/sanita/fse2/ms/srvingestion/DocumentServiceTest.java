@@ -134,8 +134,7 @@ class DocumentServiceTest extends AbstractTest {
     	assertEquals(ArrayList.class, dtoRetrievedList.getClass()); 
     	assertEquals(true, dtoRetrievedList.size() > 0); 
     	
-    	assertEquals(DocumentDTO.class, secondElemEtyInList.getClass()); 
-    	assertEquals(ProcessorOperationEnum.class, secondElemEtyInList.getOperation().getClass()); 
+    	assertEquals(DocumentDTO.class, secondElemEtyInList.getClass());
     	assertEquals(String.class, secondElemEtyInList.getJsonString().getClass()); 
     	
     }

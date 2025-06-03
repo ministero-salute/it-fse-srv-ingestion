@@ -14,6 +14,8 @@ package it.finanze.sanita.fse2.ms.srvingestion.controller.handler;
 import static it.finanze.sanita.fse2.ms.srvingestion.dto.response.error.ErrorBuilderDTO.*;
 
 
+import io.opentelemetry.api.trace.SpanBuilder;
+import io.opentelemetry.api.trace.Tracer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -22,7 +24,6 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
-import brave.Tracer;
 import it.finanze.sanita.fse2.ms.srvingestion.config.Constants;
 import it.finanze.sanita.fse2.ms.srvingestion.dto.response.error.base.ErrorResponseDTO;
 import it.finanze.sanita.fse2.ms.srvingestion.dto.response.LogTraceInfoDTO;
@@ -194,16 +195,14 @@ public class ExceptionCTL extends ResponseEntityExceptionHandler {
      * Generate a new {@link LogTraceInfoDTO} instance
      * @return LogTraceInfoDTO The new instance
      */
-    private LogTraceInfoDTO getLogTraceInfo() {
-        // Create instance
+    protected LogTraceInfoDTO getLogTraceInfo() {
         LogTraceInfoDTO out = new LogTraceInfoDTO(null, null);
-        // Verify if context is available
-        if (tracer.currentSpan() != null) {
+        SpanBuilder spanbuilder = tracer.spanBuilder("it-fse-srv-ingestion");
+        if (spanbuilder != null) {
             out = new LogTraceInfoDTO(
-                tracer.currentSpan().context().spanIdString(),
-                tracer.currentSpan().context().traceIdString());
+                    spanbuilder.startSpan().getSpanContext().getSpanId(),
+                    spanbuilder.startSpan().getSpanContext().getTraceId());
         }
-        // Return the log trace
         return out;
     }
 }

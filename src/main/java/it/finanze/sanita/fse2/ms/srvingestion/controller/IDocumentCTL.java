@@ -18,9 +18,9 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.util.List;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.validation.constraints.Size;
 
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -81,7 +81,7 @@ public interface IDocumentCTL extends Serializable {
             @ApiResponse(responseCode = "201", description = "Creazione Documento avvenuta con successo", content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = DocumentResponseDTO.class))),
             @ApiResponse(responseCode = "500", description = "Internal Server Error", content = @Content(mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(implementation = ErrorResponseDTO.class))) })
     ResponseEntity<DocumentResponseDTO> addDocument(HttpServletRequest request, @RequestBody DocumentDTO document,
-   		 @PathVariable @Size(min = DEFAULT_STRING_MIN_SIZE, max = DEFAULT_STRING_MAX_SIZE, message = "identifier does not match the expected size") String identifier) throws IOException, OperationException, KafkaException, EmptyDocumentException, DocumentAlreadyExistsException;
+                                                    @PathVariable @Size(min = DEFAULT_STRING_MIN_SIZE, max = DEFAULT_STRING_MAX_SIZE, message = "identifier does not match the expected size") String identifier) throws IOException, OperationException, KafkaException, EmptyDocumentException, DocumentAlreadyExistsException;
 
     /**
      * Function to process a Replace Request for a document, from the Gateway onto the EDS. 
@@ -186,6 +186,6 @@ public interface IDocumentCTL extends Serializable {
      @ApiResponses(value = {
              @ApiResponse(responseCode = "200", description = "Richiesta Documents avvenuta con successo", content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = DocumentDTO.class))),
              @ApiResponse(responseCode = "500", description = "Internal Server Error", content = @Content(mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(implementation = ErrorResponseDTO.class))) })
-    ResponseEntity<List<DocumentDTO>> getDocuments(HttpServletRequest request); 
+    ResponseEntity<List<DocumentDTO>> getDocuments(HttpServletRequest request);
     
 }

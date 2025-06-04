@@ -11,13 +11,14 @@
  */
 package it.finanze.sanita.fse2.ms.srvingestion.dto.response.error;
 
-import static it.finanze.sanita.fse2.ms.srvingestion.dto.response.error.ErrorInstance.*;
-import static org.apache.http.HttpStatus.*;
+import org.apache.hc.core5.http.HttpStatus;
 
+import it.finanze.sanita.fse2.ms.srvingestion.dto.response.LogTraceInfoDTO;
+import it.finanze.sanita.fse2.ms.srvingestion.dto.response.error.ErrorInstance.Resource;
+import it.finanze.sanita.fse2.ms.srvingestion.dto.response.error.ErrorInstance.Server;
+import it.finanze.sanita.fse2.ms.srvingestion.dto.response.error.base.ErrorResponseDTO;
 import it.finanze.sanita.fse2.ms.srvingestion.exceptions.ConnectionRefusedException;
 import it.finanze.sanita.fse2.ms.srvingestion.exceptions.DocumentAlreadyExistsException;
-import it.finanze.sanita.fse2.ms.srvingestion.dto.response.LogTraceInfoDTO;
-import it.finanze.sanita.fse2.ms.srvingestion.dto.response.error.base.ErrorResponseDTO;
 import it.finanze.sanita.fse2.ms.srvingestion.exceptions.DocumentNotFoundException;
 import it.finanze.sanita.fse2.ms.srvingestion.exceptions.EmptyDocumentException;
 import it.finanze.sanita.fse2.ms.srvingestion.exceptions.OperationException;
@@ -68,7 +69,7 @@ public final class ErrorBuilderDTO {
             ErrorType.SERVER.getType(),
             ErrorType.SERVER.getTitle(),
             ex.getMessage(),
-            SC_INTERNAL_SERVER_ERROR,
+            HttpStatus.SC_INTERNAL_SERVER_ERROR,
             ErrorType.SERVER.toInstance(Server.INTERNAL)
         );
     }
@@ -85,7 +86,7 @@ public final class ErrorBuilderDTO {
             ErrorType.SERVER.getType(),
             ErrorType.SERVER.getTitle(),
             ex.getMessage(),
-            SC_INTERNAL_SERVER_ERROR,
+            HttpStatus.SC_INTERNAL_SERVER_ERROR,
             ErrorType.SERVER.toInstance(Server.INTERNAL)
         );
     } 
@@ -102,7 +103,7 @@ public final class ErrorBuilderDTO {
             ErrorType.CLIENT.getType(),
             ErrorType.CLIENT.getTitle(),
             ex.getMessage(),
-            SC_BAD_REQUEST,
+            HttpStatus.SC_BAD_REQUEST,
             ErrorType.CLIENT.toInstance(ErrorInstance.Client.UNSUPPORTED)
         );
     } 
@@ -119,7 +120,7 @@ public final class ErrorBuilderDTO {
             ErrorType.RESOURCE.getType(),
             ErrorType.RESOURCE.getTitle(),
             ex.getMessage(),
-            SC_NOT_FOUND,
+            HttpStatus.SC_NOT_FOUND,
             ErrorType.RESOURCE.toInstance(Resource.NOT_FOUND)
         );
     } 
@@ -136,7 +137,7 @@ public final class ErrorBuilderDTO {
             ErrorType.RESOURCE.getType(),
             ErrorType.RESOURCE.getTitle(),
             ex.getMessage(),
-            SC_BAD_REQUEST,
+            HttpStatus.SC_BAD_REQUEST,
             ErrorType.RESOURCE.toInstance(Resource.DOCUMENT_ALREADY_EXISTS)
         );
     } 
@@ -153,7 +154,7 @@ public final class ErrorBuilderDTO {
             ErrorType.SERVER.getType(),
             ErrorType.SERVER.getTitle(),
             ex.getMessage(),
-            SC_BAD_GATEWAY,
+            HttpStatus.SC_BAD_GATEWAY,
             ErrorType.SERVER.toInstance(Server.CONNECTION_REFUSED)
         );
     } 
@@ -170,7 +171,7 @@ public final class ErrorBuilderDTO {
             ErrorType.RESOURCE.getType(),
             ErrorType.RESOURCE.getTitle(),
             ex.getMessage(),
-            SC_NOT_FOUND,
+            HttpStatus.SC_NOT_FOUND,
             ErrorType.RESOURCE.toInstance(Resource.EMPTY)
         );
     }

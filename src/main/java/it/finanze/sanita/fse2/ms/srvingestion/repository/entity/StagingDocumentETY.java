@@ -16,13 +16,12 @@ import static it.finanze.sanita.fse2.ms.srvingestion.utility.ValidationUtility.D
 
 import java.util.Date;
 
-import javax.validation.constraints.Size;
-
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 
 import it.finanze.sanita.fse2.ms.srvingestion.enums.ProcessorOperationEnum;
+import jakarta.validation.constraints.Size;
 import lombok.Data;
 import lombok.NoArgsConstructor; 
 

@@ -18,9 +18,6 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.util.List;
 
-import javax.validation.constraints.Size;
-
-import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -29,8 +26,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestBody; 
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -46,7 +43,9 @@ import it.finanze.sanita.fse2.ms.srvingestion.exceptions.DocumentNotFoundExcepti
 import it.finanze.sanita.fse2.ms.srvingestion.exceptions.EmptyDocumentException;
 import it.finanze.sanita.fse2.ms.srvingestion.exceptions.KafkaException;
 import it.finanze.sanita.fse2.ms.srvingestion.exceptions.OperationException;
-import it.finanze.sanita.fse2.ms.srvingestion.exceptions.UnsupportedOperationException; 
+import it.finanze.sanita.fse2.ms.srvingestion.exceptions.UnsupportedOperationException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.constraints.Size; 
 
 
 

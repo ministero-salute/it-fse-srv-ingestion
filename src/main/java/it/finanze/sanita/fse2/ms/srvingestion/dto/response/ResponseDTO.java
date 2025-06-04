@@ -11,9 +11,8 @@
  */
 package it.finanze.sanita.fse2.ms.srvingestion.dto.response;
 
-import javax.validation.constraints.Size;
-
 import it.finanze.sanita.fse2.ms.srvingestion.dto.AbstractDTO;
+import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
 

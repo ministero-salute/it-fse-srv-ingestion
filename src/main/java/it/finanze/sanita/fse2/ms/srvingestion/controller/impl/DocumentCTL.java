@@ -74,7 +74,7 @@ public class DocumentCTL extends AbstractCTL implements IDocumentCTL {
 		documentDTO.setInsertionDate(new Date()); 
 		StagingDocumentETY ety = documentService.insert(documentDTO, wii);
 		String mongoId = ety.getId();
-		String topic = kafkaTopicCFG.getIngestionDataProcessorPublicationTopic() + documentDTO.getPriorityTypeEnum().getQueue();
+		String topic = kafkaTopicCFG.getIngestionDataProcessorPublicationTopic();
 		kafkaService.notifyDataProcessor(topic, mongoId, ProcessorOperationEnum.PUBLISH);
 		
 		log.info("[EXIT] {}() with arguments {}={}, {}={}", "create", "traceId", traceInfoDTO.getTraceID(),	"wif", wii);

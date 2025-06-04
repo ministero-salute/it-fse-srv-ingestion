@@ -19,7 +19,6 @@ import java.util.Date;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import it.finanze.sanita.fse2.ms.srvingestion.enums.PriorityTypeEnum;
 import it.finanze.sanita.fse2.ms.srvingestion.enums.ProcessorOperationEnum;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
@@ -55,12 +54,6 @@ public class DocumentDTO {
 	@JsonProperty("jsonString")
 	@Size(min = DEFAULT_STRING_MIN_SIZE, max = DEFAULT_STRING_MAX_SIZE)
 	private String jsonString;
-
-	/** 
-	 * The Priority Type (HIGH, MEDIUM or LOW) 
-	 */
-	@JsonProperty("priorityType")
-	private PriorityTypeEnum priorityTypeEnum;
 	
 	/** 
 	 * The Insertion Date 

@@ -18,7 +18,6 @@ import it.finanze.sanita.fse2.ms.srvingestion.client.impl.SrvQueryClient;
 import it.finanze.sanita.fse2.ms.srvingestion.config.Constants;
 import it.finanze.sanita.fse2.ms.srvingestion.controller.impl.DocumentCTL;
 import it.finanze.sanita.fse2.ms.srvingestion.dto.DocumentDTO;
-import it.finanze.sanita.fse2.ms.srvingestion.enums.PriorityTypeEnum;
 import it.finanze.sanita.fse2.ms.srvingestion.enums.ProcessorOperationEnum;
 import it.finanze.sanita.fse2.ms.srvingestion.exceptions.ConnectionRefusedException;
 import it.finanze.sanita.fse2.ms.srvingestion.exceptions.EmptyDocumentException;
@@ -127,7 +126,6 @@ class DocumentControllerTest extends AbstractTest {
         ObjectMapper objectMapper = new ObjectMapper(); 
 
 		dtoC.setOperation(ProcessorOperationEnum.PUBLISH);
-		dtoC.setPriorityTypeEnum(PriorityTypeEnum.HIGH);
     	dtoC.setIdentifier(DOCUMENT_TEST_IDENTIFIER_C); 
     	dtoC.setJsonString(null); 
     	   	
@@ -149,9 +147,7 @@ class DocumentControllerTest extends AbstractTest {
 
     	dtoC.setIdentifier(DOCUMENT_TEST_IDENTIFIER_PUT);
     	dtoC.setOperation(DOCUMENT_TEST_OPERATION_PUT);
-    	dtoC.setJsonString(DOCUMENT_TEST_JSON_STRING_PUT);
-		dtoC.setPriorityTypeEnum(PriorityTypeEnum.HIGH);
-
+		dtoC.setJsonString(DOCUMENT_TEST_JSON_STRING_PUT);
     	dtoList.add(dtoC);
 
 		given(srvQueryClient.checkExists(anyString())).willReturn(true);

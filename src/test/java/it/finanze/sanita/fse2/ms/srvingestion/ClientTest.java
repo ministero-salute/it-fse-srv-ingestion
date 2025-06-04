@@ -40,7 +40,6 @@ import it.finanze.sanita.fse2.ms.srvingestion.config.Constants;
 import it.finanze.sanita.fse2.ms.srvingestion.dto.DocumentDTO;
 import it.finanze.sanita.fse2.ms.srvingestion.dto.response.DocumentResponseDTO;
 import it.finanze.sanita.fse2.ms.srvingestion.dto.response.ResourceExistResDTO;
-import it.finanze.sanita.fse2.ms.srvingestion.enums.PriorityTypeEnum;
 import it.finanze.sanita.fse2.ms.srvingestion.enums.ProcessorOperationEnum;
 import it.finanze.sanita.fse2.ms.srvingestion.exceptions.BusinessException;
 import it.finanze.sanita.fse2.ms.srvingestion.exceptions.ConnectionRefusedException;
@@ -65,8 +64,7 @@ public class ClientTest {
 	private String TEST_DOC_ID = "testDocId"; 
 	private String TEST_IDENTIFIER = "testIdentifier"; 
 	private ProcessorOperationEnum TEST_OPERATION = ProcessorOperationEnum.PUBLISH; 
-	private String TEST_JSON_STRING = "{\"test\": \"testString\"}"; 
-	private PriorityTypeEnum TEST_PRIORITY_TYPE = PriorityTypeEnum.HIGH; 
+	private String TEST_JSON_STRING = "{\"test\": \"testString\"}";
 	
 	
 	@Test
@@ -123,8 +121,7 @@ public class ClientTest {
 		DocumentDTO document = new DocumentDTO(); 
 		document.setIdentifier(TEST_IDENTIFIER); 
 		document.setOperation(TEST_OPERATION); 
-		document.setJsonString(TEST_JSON_STRING); 
-		document.setPriorityTypeEnum(TEST_PRIORITY_TYPE); 
+		document.setJsonString(TEST_JSON_STRING);
 		
 		
 		when(restTemplate.exchange(anyString(), eq(HttpMethod.POST), any(HttpEntity.class), eq(DocumentResponseDTO.class)))
@@ -144,8 +141,7 @@ public class ClientTest {
 		DocumentDTO document = new DocumentDTO(); 
 		document.setIdentifier(TEST_IDENTIFIER); 
 		document.setOperation(TEST_OPERATION); 
-		document.setJsonString(TEST_JSON_STRING); 
-		document.setPriorityTypeEnum(TEST_PRIORITY_TYPE); 
+		document.setJsonString(TEST_JSON_STRING);
 				
 		when(restTemplate.exchange(anyString(), eq(HttpMethod.POST), any(HttpEntity.class), eq(DocumentResponseDTO.class))).thenThrow(new ResourceAccessException("Test Error"));
 			
@@ -160,8 +156,7 @@ public class ClientTest {
 		DocumentDTO document = new DocumentDTO(); 
 		document.setIdentifier(TEST_IDENTIFIER); 
 		document.setOperation(TEST_OPERATION); 
-		document.setJsonString(TEST_JSON_STRING); 
-		document.setPriorityTypeEnum(TEST_PRIORITY_TYPE); 
+		document.setJsonString(TEST_JSON_STRING);
 				
 		when(restTemplate.exchange(anyString(), eq(HttpMethod.POST), any(HttpEntity.class), eq(DocumentResponseDTO.class))).thenThrow(new BusinessException("Test Error"));
 			

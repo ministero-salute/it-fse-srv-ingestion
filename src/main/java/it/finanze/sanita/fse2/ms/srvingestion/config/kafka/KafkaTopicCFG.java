@@ -28,13 +28,13 @@ public class KafkaTopicCFG {
 	/**
 	 * Topic data processor.
 	 */
-	@Value("${kafka.dataprocessor.publication.topic}")
+	@Value("${kafka.ingestion.publication.topic}")
 	private String ingestionDataProcessorPublicationTopic;
 
 	/**
 	 * Topic data processor.
 	 */
-	@Value("${kafka.dataprocessor.generic.topic}")
+	@Value("${kafka.ingestion.generic.topic}")
 	private String ingestionDataProcessorGenericTopic;
 	
 	/**

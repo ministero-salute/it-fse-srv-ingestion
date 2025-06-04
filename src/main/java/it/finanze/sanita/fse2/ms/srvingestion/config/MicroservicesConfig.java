@@ -17,16 +17,23 @@ import org.springframework.stereotype.Component;
 import lombok.Data;
 
 /** 
- * The Srv Query Configuration Class 
+ * The Microservices Configuration Class 
  */
 @Data
 @Component
-public class SrvQueryCFG {
+public class MicroservicesConfig {
 
 	/**
-	 *  EDS Srv Query Config
+	 *  Udp Srv Query Config
 	 */
-	@Value("${eds-srvquery.url.host}")
-	private String edsSrvQueryHost;
+	@Value("${udp-srvquery.url.host}")
+	private String udpSrvQueryHost;
+	
+	/**
+	 *  Udp Data Processor Host 
+	 */
+	@Value("${udp-dataprocessor.url.host}")
+	private String udpDataProcessorHost;
+	
 	
 }

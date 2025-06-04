@@ -72,7 +72,7 @@ public interface IDocumentCTL extends Serializable {
 	 * @throws EmptyDocumentException  An exception thrown when the document content is empty 
 	 * @throws DocumentAlreadyExistsException  An exception thrown when the document already exists on MongoDB 
 	 */
-    @PostMapping(value = "/document/workflowinstanceid/{wii}", produces = {
+    @PostMapping(value = "/document/udp/workflowinstanceid/{wii}", produces = {
 			MediaType.APPLICATION_JSON_VALUE }, consumes = { MediaType.APPLICATION_JSON_VALUE })
     @Operation(summary = "Add a document to the staging MongoDB", description = "Servizio che consente di aggiungere un documento alla base dati di staging.")
     @ApiResponse(content = @Content(mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(implementation = DocumentResponseDTO.class)))
@@ -80,7 +80,7 @@ public interface IDocumentCTL extends Serializable {
             @ApiResponse(responseCode = "201", description = "Creazione Documento avvenuta con successo", content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = DocumentResponseDTO.class))),
             @ApiResponse(responseCode = "500", description = "Internal Server Error", content = @Content(mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(implementation = ErrorResponseDTO.class))) })
     ResponseEntity<DocumentResponseDTO> addDocument(HttpServletRequest request, @RequestBody DocumentDTO document,
-                                                    @PathVariable @Size(min = DEFAULT_STRING_MIN_SIZE, max = DEFAULT_STRING_MAX_SIZE, message = "identifier does not match the expected size") String identifier) throws IOException, OperationException, KafkaException, EmptyDocumentException, DocumentAlreadyExistsException;
+                                                    @PathVariable @Size(min = DEFAULT_STRING_MIN_SIZE, message = "identifier does not match the expected size") String identifier) throws IOException, OperationException, KafkaException, EmptyDocumentException, DocumentAlreadyExistsException;
 
     /**
      * Function to process a Replace Request for a document, from the Gateway onto the EDS. 

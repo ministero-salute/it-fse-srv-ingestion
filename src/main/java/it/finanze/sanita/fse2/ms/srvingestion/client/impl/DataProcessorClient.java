@@ -21,7 +21,7 @@ import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestTemplate;
 
 import it.finanze.sanita.fse2.ms.srvingestion.client.IDataProcessorClient;
-import it.finanze.sanita.fse2.ms.srvingestion.config.DataProcessorCFG;
+import it.finanze.sanita.fse2.ms.srvingestion.config.MicroservicesConfig;
 import it.finanze.sanita.fse2.ms.srvingestion.dto.DocumentDTO;
 import it.finanze.sanita.fse2.ms.srvingestion.dto.response.DocumentResponseDTO;
 import it.finanze.sanita.fse2.ms.srvingestion.exceptions.BusinessException;
@@ -45,7 +45,7 @@ public class DataProcessorClient implements IDataProcessorClient {
      * The Data Processor Configuration 
      */
     @Autowired
-    private DataProcessorCFG dataProcessorCFG; 
+    private MicroservicesConfig microservicesCfg; 
     
 	@Override
 	public Boolean sendRequestToDataProcessor(DocumentDTO reqDTO) {
@@ -58,7 +58,7 @@ public class DataProcessorClient implements IDataProcessorClient {
         HttpEntity<?> entity = new HttpEntity<>(reqDTO, headers);
 
         ResponseEntity<DocumentResponseDTO> response = null;
-        String url = dataProcessorCFG.getEdsDataProcessorHost() + "/v1/process";
+        String url = microservicesCfg.getUdpDataProcessorHost() + "/v1/process";
         
         try {
             response = restTemplate.exchange(url,
@@ -67,7 +67,7 @@ public class DataProcessorClient implements IDataProcessorClient {
             log.debug("{} status returned from Data Processor", response.getStatusCode());
         } catch(ResourceAccessException cex) {
             log.error("Connect error while call eds ingestion ep :" + cex);
-            throw new ConnectionRefusedException(dataProcessorCFG.getEdsDataProcessorHost(),"Connection refused"); 
+            throw new ConnectionRefusedException(microservicesCfg.getUdpDataProcessorHost(),"Connection refused"); 
         } catch(Exception ex) {
             log.error("Generic error while call eds ingestion ep :" + ex);
             throw new BusinessException("Generic error while call eds ingestion ep :" + ex);

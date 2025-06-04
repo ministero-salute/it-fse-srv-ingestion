@@ -21,7 +21,7 @@ import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestTemplate;
 
 import it.finanze.sanita.fse2.ms.srvingestion.client.ISrvQueryClient;
-import it.finanze.sanita.fse2.ms.srvingestion.config.SrvQueryCFG;
+import it.finanze.sanita.fse2.ms.srvingestion.config.MicroservicesConfig;
 import it.finanze.sanita.fse2.ms.srvingestion.dto.response.ResourceExistResDTO;
 import it.finanze.sanita.fse2.ms.srvingestion.exceptions.BusinessException;
 import it.finanze.sanita.fse2.ms.srvingestion.exceptions.ConnectionRefusedException;
@@ -45,7 +45,7 @@ public class SrvQueryClient implements ISrvQueryClient {
      * The Srv Query Configuration 
      */
     @Autowired
-    private SrvQueryCFG srvQueryConfig; 
+    private MicroservicesConfig msConfig; 
 	
     /** 
      * Checks whether the document exists by calling the Srv Query Microservice 
@@ -61,7 +61,7 @@ public class SrvQueryClient implements ISrvQueryClient {
         HttpEntity<?> entity = new HttpEntity<>(docId, headers);
 
         ResponseEntity<ResourceExistResDTO> response;
-        String url = srvQueryConfig.getEdsSrvQueryHost() + "/v1/document/check-exist/"  + docId;
+        String url = msConfig.getUdpSrvQueryHost() + "/v1/document/check-exist/"  + docId;
         
         try {
             response = restTemplate.exchange(url, HttpMethod.GET, entity, ResourceExistResDTO.class);
@@ -70,7 +70,7 @@ public class SrvQueryClient implements ISrvQueryClient {
             return responseBody != null && responseBody.isExist();
         } catch(ResourceAccessException cex) {
             log.error("Connect error while call EDS Srv Query ep :" + cex);
-            throw new ConnectionRefusedException(srvQueryConfig.getEdsSrvQueryHost(),"Connection refused by SRV Query Host"); 
+            throw new ConnectionRefusedException(msConfig.getUdpSrvQueryHost(),"Connection refused by SRV Query Host"); 
         } catch(Exception ex) {
             log.error("Generic error while call EDS Srv Query ep :" + ex);
             throw new BusinessException("Generic error while call EDS Srv Query ep :" + ex);

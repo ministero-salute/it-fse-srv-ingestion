@@ -197,7 +197,7 @@ public class ExceptionCTL extends ResponseEntityExceptionHandler {
      */
     protected LogTraceInfoDTO getLogTraceInfo() {
         LogTraceInfoDTO out = new LogTraceInfoDTO(null, null);
-        SpanBuilder spanbuilder = tracer.spanBuilder("it-fse-srv-ingestion");
+        SpanBuilder spanbuilder = tracer.spanBuilder(Constants.Microservice.MS_NAME);
         if (spanbuilder != null) {
             out = new LogTraceInfoDTO(
                     spanbuilder.startSpan().getSpanContext().getSpanId(),

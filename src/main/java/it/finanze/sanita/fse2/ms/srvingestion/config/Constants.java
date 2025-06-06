@@ -71,6 +71,11 @@ public final class Constants {
 		}
 	}
 
+	public static class Microservice{
+		public static final String MS_NAME =  "it-fse-srv-ingestion";
+
+		private Microservice(){}
+	}
 	/**
 	 * Constants used in logging. 
 	 *

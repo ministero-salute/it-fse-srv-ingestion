@@ -13,6 +13,7 @@ package it.finanze.sanita.fse2.ms.srvingestion.controller;
 
 import io.opentelemetry.api.trace.SpanBuilder;
 import io.opentelemetry.api.trace.Tracer;
+import it.finanze.sanita.fse2.ms.srvingestion.config.Constants;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import it.finanze.sanita.fse2.ms.srvingestion.dto.response.LogTraceInfoDTO; 
@@ -29,7 +30,7 @@ public abstract class AbstractCTL {
 
 	protected LogTraceInfoDTO getLogTraceInfo() {
 		LogTraceInfoDTO out = new LogTraceInfoDTO(null, null);
-		SpanBuilder spanbuilder = tracer.spanBuilder("it-fse-srv-ingestion");
+		SpanBuilder spanbuilder = tracer.spanBuilder(Constants.Microservice.MS_NAME);
 		if (spanbuilder != null) {
 			out = new LogTraceInfoDTO(
 					spanbuilder.startSpan().getSpanContext().getSpanId(),

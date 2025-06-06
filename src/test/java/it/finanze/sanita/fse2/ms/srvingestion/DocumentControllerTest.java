@@ -26,7 +26,6 @@ import it.finanze.sanita.fse2.ms.srvingestion.repository.entity.StagingDocumentE
 import it.finanze.sanita.fse2.ms.srvingestion.service.IDocumentSRV;
 import it.finanze.sanita.fse2.ms.srvingestion.utility.ProfileUtility;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.mockito.Mockito;

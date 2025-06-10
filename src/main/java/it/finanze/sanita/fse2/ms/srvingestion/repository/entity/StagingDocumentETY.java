@@ -20,60 +20,69 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 
+import it.finanze.sanita.fse2.ms.srvingestion.dto.DocumentDTO;
 import it.finanze.sanita.fse2.ms.srvingestion.enums.ProcessorOperationEnum;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
-import lombok.NoArgsConstructor; 
-
+import lombok.NoArgsConstructor;
 
 @Document(collection = "#{@ingestionStagingBean}")
 @Data
 @NoArgsConstructor
 public class StagingDocumentETY {
 
-	/** 
-	 * Mongo ID 
-	 */
-	@Id
-	private String id; 
-	
-	/** 
-	 * The document identifier 
-	 */
-	@Field("identifier")
-	@Size(min = DEFAULT_STRING_MIN_SIZE, max = DEFAULT_STRING_MAX_SIZE)
-	private String identifier;      
-	
-	/** 
-	 * The operation to be executed on the document 
-	 */
-	@Field("operation")
-	@Size(min = DEFAULT_STRING_MIN_SIZE, max = DEFAULT_STRING_MAX_SIZE)
-	private ProcessorOperationEnum operation;  
+    /**
+     * Mongo ID
+     */
+    @Id
+    private String id;
 
-	/** 
-	 * The bundle
-	 */
-	@Field("document")
-	@Size(min = DEFAULT_STRING_MIN_SIZE, max = DEFAULT_STRING_MAX_SIZE)
-	private org.bson.Document document;
-	
-	/** 
-	 * The insertion date of the document 
-	 */
-	@Field("insertion_date")
-	private Date insertionDate;
-	
-	/** 
-	 * Workflow instance id. 
-	 */
-	@Field("workflow_instance_id")
-	private String workflowInstanceId;
-	
-	/** 
-	 * Document Organization ID. 
-	 */
-	@Field("rde")
-	private String rde;
-	
+    /**
+     * The document identifier
+     */
+    @Field("identifier")
+    @Size(min = DEFAULT_STRING_MIN_SIZE, max = DEFAULT_STRING_MAX_SIZE)
+    private String identifier;
+
+    /**
+     * The operation to be executed on the document
+     */
+    @Field("operation")
+    @Size(min = DEFAULT_STRING_MIN_SIZE, max = DEFAULT_STRING_MAX_SIZE)
+    private ProcessorOperationEnum operation;
+
+    /**
+     * The bundle
+     */
+    @Field("document")
+    @Size(min = DEFAULT_STRING_MIN_SIZE, max = DEFAULT_STRING_MAX_SIZE)
+    private org.bson.Document document;
+
+    /**
+     * The insertion date of the document
+     */
+    @Field("insertion_date")
+    private Date insertionDate;
+
+    /**
+     * Workflow instance id.
+     */
+    @Field("workflow_instance_id")
+    private String workflowInstanceId;
+
+    /**
+     * Document Organization ID.
+     */
+    @Field("rde")
+    private String rde;
+
+    public StagingDocumentETY(DocumentDTO dto, String wii, ProcessorOperationEnum operation) {
+        this.identifier = dto.getIdentifier();
+        this.operation = operation;
+        this.document = org.bson.Document.parse(dto.getJsonString());
+        this.insertionDate = new Date();
+        this.workflowInstanceId = wii;
+        this.rde = dto.getRde();
+    }
+
 }

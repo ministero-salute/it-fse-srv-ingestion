@@ -11,7 +11,6 @@
  */
 package it.finanze.sanita.fse2.ms.srvingestion.controller.impl;
 
-import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,115 +40,120 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.constraints.Size;
 import lombok.extern.slf4j.Slf4j;
 
-
-/** 
- * Document Controller 
+/**
+ * Document Controller
  */
 @RestController
 @Slf4j
 public class DocumentCTL extends AbstractCTL implements IDocumentCTL {
 
-	/**
-	 * Serial version UID 
-	 */
-	private static final long serialVersionUID = -8298415975725845794L; 
-	
-	
-	@Autowired
-	private transient DocumentSRV documentService;
-	
-	@Autowired
-	private KafkaSRV kafkaService;
+    /**
+     * Serial version UID
+     */
+    private static final long serialVersionUID = -8298415975725845794L;
 
-	@Autowired
-	private transient KafkaTopicCFG kafkaTopicCFG;
+    @Autowired
+    private transient DocumentSRV documentService;
 
-	@Override
-	public ResponseEntity<DocumentResponseDTO> addDocument(HttpServletRequest request, DocumentDTO documentDTO, String wii) throws OperationException, KafkaException, EmptyDocumentException, DocumentAlreadyExistsException {
-		log.debug(Constants.Logs.CALLED_API_POST_DOCUMENT);
-		final LogTraceInfoDTO traceInfoDTO = getLogTraceInfo();
-		
-		log.info("[START] {}() with arguments {}={}, {}={}", "create", "traceId", traceInfoDTO.getTraceID(), "wif", wii);
-		
-		documentDTO.setInsertionDate(new Date()); 
-		StagingDocumentETY ety = documentService.insert(documentDTO, wii);
-		String mongoId = ety.getId();
-		String topic = kafkaTopicCFG.getIngestionDataProcessorPublicationTopic();
-		kafkaService.notifyDataProcessor(topic, mongoId, ProcessorOperationEnum.PUBLISH);
-		
-		log.info("[EXIT] {}() with arguments {}={}, {}={}", "create", "traceId", traceInfoDTO.getTraceID(),	"wif", wii);
-		return new ResponseEntity<>(new DocumentResponseDTO(getLogTraceInfo()), HttpStatus.CREATED); 
-	}
+    @Autowired
+    private KafkaSRV kafkaService;
 
-	@Override
-	public ResponseEntity<DocumentResponseDTO> insertReplaceDocument(DocumentDTO documentDTO, String wii, HttpServletRequest request) throws OperationException, KafkaException, EmptyDocumentException, UnsupportedOperationException, DocumentNotFoundException {
-		final LogTraceInfoDTO traceInfoDTO = getLogTraceInfo();
-		
-		log.info("[START] {}() with arguments {}={}, {}={}", "replace",	"traceId", traceInfoDTO.getTraceID(), "wif", wii);
-		
-		documentDTO.setInsertionDate(new Date());
-		StagingDocumentETY ety = documentService.replace(documentDTO, wii);
-		String mongoId = ety.getId(); 
-		String topic = kafkaTopicCFG.getIngestionDataProcessorGenericTopic();
-		kafkaService.notifyDataProcessor(topic, mongoId, ProcessorOperationEnum.REPLACE);
+    @Autowired
+    private transient KafkaTopicCFG kafkaTopicCFG;
 
-		log.info("[EXIT] {}() with arguments {}={}, {}={}", "replace", "traceId", traceInfoDTO.getTraceID(), "wif", wii);
-		return new ResponseEntity<>(new DocumentResponseDTO(getLogTraceInfo()), HttpStatus.OK);
-	}
+    @Override
+    public ResponseEntity<DocumentResponseDTO> create(HttpServletRequest request, DocumentDTO documentDTO,
+            String wii)
+            throws OperationException, KafkaException, EmptyDocumentException, DocumentAlreadyExistsException {
 
-	@Override
-	public ResponseEntity<DocumentResponseDTO> insertUpdateDocument(HttpServletRequest request, DocumentDTO documentDTO) throws OperationException, KafkaException, EmptyDocumentException, UnsupportedOperationException, DocumentAlreadyExistsException, DocumentNotFoundException {
-		final LogTraceInfoDTO traceInfoDTO = getLogTraceInfo();
-		
-		log.info("[START] {}() with arguments {}={}", "update", "traceId", traceInfoDTO.getTraceID());
-		
-		documentDTO.setInsertionDate(new Date());
-		Boolean success = documentService.update(documentDTO);
-		if(!success){ 
-			//TODO: fare in modo che venga restituito l'errore da Client e riportato qui (o al massimo generare eccezioni) al posto di avere un semplice Booleano con esito.
-			// se abbiamo solo .is2xxSuccessful(); non ce ne facciamo nulla e perdiamo le info sulla chiamata
-			return new ResponseEntity<>(new DocumentResponseDTO(getLogTraceInfo()), HttpStatus.INTERNAL_SERVER_ERROR);
-		}
+        log.debug(Constants.Logs.CALLED_API_POST_DOCUMENT);
+        final LogTraceInfoDTO traceInfoDTO = getLogTraceInfo();
+        log.info("[START] {}() with arguments {}={}, {}={}", "create", "traceId", traceInfoDTO.getTraceID(), "wif",
+                wii);
 
-		log.info("[EXIT] {}() with arguments {}={}", "update", "traceId", traceInfoDTO.getTraceID());
-		return new ResponseEntity<>(new DocumentResponseDTO(getLogTraceInfo()), HttpStatus.OK);
-	}
+        StagingDocumentETY ety = documentService.create(documentDTO, wii);
 
-	@Override
-	public ResponseEntity<DocumentResponseDTO> insertDeleteDocument(HttpServletRequest request, @PathVariable String identifier) throws OperationException, KafkaException, EmptyDocumentException, DocumentNotFoundException {
-		log.debug(Constants.Logs.CALLED_API_DELETE_DOCUMENT);
-		final LogTraceInfoDTO traceInfoDTO = getLogTraceInfo();
-		
-		log.info("[START] {}() with arguments {}={}", "delete", "traceId", traceInfoDTO.getTraceID());
-		
-		Boolean success = documentService.delete(identifier);
-		if(!success){ 
-			//TODO: fare in modo che venga restituito l'errore da Client e riportato qui (o al massimo generare eccezioni) al posto di avere un semplice Booleano con esito.
-			// se abbiamo solo .is2xxSuccessful(); non ce ne facciamo nulla e perdiamo le info sulla chiamata
-			return new ResponseEntity<>(new DocumentResponseDTO(getLogTraceInfo()), HttpStatus.INTERNAL_SERVER_ERROR);
-		}
-		log.info("[EXIT] {}() with arguments {}={}", "delete", "traceId", traceInfoDTO.getTraceID());
-		
-		return new ResponseEntity<>(new DocumentResponseDTO(getLogTraceInfo()), HttpStatus.OK);
-	}
+        // After saving in Staging Area, notify Processor for processing the document
+        String mongoId = ety.getId();
+        String topic = kafkaTopicCFG.getIngestionDataProcessorPublicationTopic();
+        kafkaService.notifyDataProcessor(topic, mongoId, ProcessorOperationEnum.PUBLISH);
 
-	@Override
-	public ResponseEntity<DocumentDTO> getDocumentById(HttpServletRequest request,
-			@Size(min = 0, max = 100, message = "identifier does not match the expected size") String id)
-			throws DocumentNotFoundException {
-		log.info(Constants.Logs.CALLED_API_GET_DOCUMENT_BY_IDENTIFIER);  
-		
-		DocumentDTO document = documentService.getDocumentById(id); 
-		return ResponseEntity.status(HttpStatus.OK).body(document);	
-	}
+        log.info("[EXIT] {}() with arguments {}={}, {}={}", "create", "traceId", traceInfoDTO.getTraceID(), "wif", wii);
+        return new ResponseEntity<>(new DocumentResponseDTO(getLogTraceInfo()), HttpStatus.CREATED);
+    }
 
-	@Override
-	public ResponseEntity<List<DocumentDTO>> getDocuments(HttpServletRequest request) {
-		
-		log.info(Constants.Logs.CALLED_API_GET_DOCUMENTS);  
-		
-		List<DocumentDTO> response = documentService.getDocuments(); 
-		
-		return ResponseEntity.status(HttpStatus.OK).body(response);	
-	}
+    @Override
+    public ResponseEntity<DocumentResponseDTO> replace(DocumentDTO documentDTO, String wii, HttpServletRequest request)
+            throws OperationException, KafkaException, EmptyDocumentException, UnsupportedOperationException,
+            DocumentNotFoundException {
+
+        final LogTraceInfoDTO traceInfoDTO = getLogTraceInfo();
+        log.info("[START] {}() with arguments {}={}, {}={}", "replace", "traceId", traceInfoDTO.getTraceID(), "wif",
+                wii);
+
+        StagingDocumentETY ety = documentService.replace(documentDTO, wii);
+
+        // After saving in Staging Area, notify Processor for processing the document
+        String mongoId = ety.getId();
+        String topic = kafkaTopicCFG.getIngestionDataProcessorGenericTopic();
+        kafkaService.notifyDataProcessor(topic, mongoId, ProcessorOperationEnum.REPLACE);
+
+        log.info("[EXIT] {}() with arguments {}={}, {}={}", "replace", "traceId", traceInfoDTO.getTraceID(), "wif",
+                wii);
+        return new ResponseEntity<>(new DocumentResponseDTO(getLogTraceInfo()), HttpStatus.OK);
+    }
+
+    @Override
+    public ResponseEntity<DocumentResponseDTO> update(HttpServletRequest request, DocumentDTO documentDTO)
+            throws OperationException, KafkaException, EmptyDocumentException, UnsupportedOperationException,
+            DocumentAlreadyExistsException, DocumentNotFoundException {
+        final LogTraceInfoDTO traceInfoDTO = getLogTraceInfo();
+
+        log.info("[START] {}() with arguments {}={}", "update", "traceId", traceInfoDTO.getTraceID());
+
+        Boolean result = documentService.update(documentDTO);
+        if (result == false) {
+            return new ResponseEntity<>(new DocumentResponseDTO(getLogTraceInfo()), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
+        log.info("[EXIT] {}() with arguments {}={}", "update", "traceId", traceInfoDTO.getTraceID());
+        return new ResponseEntity<>(new DocumentResponseDTO(getLogTraceInfo()), HttpStatus.OK);
+    }
+
+    @Override
+    public ResponseEntity<DocumentResponseDTO> delete(HttpServletRequest request, @PathVariable String identifier)
+            throws OperationException, KafkaException, EmptyDocumentException, DocumentNotFoundException {
+
+        log.debug(Constants.Logs.CALLED_API_DELETE_DOCUMENT);
+        final LogTraceInfoDTO traceInfoDTO = getLogTraceInfo();
+        log.info("[START] {}() with arguments {}={}", "delete", "traceId", traceInfoDTO.getTraceID());
+
+        Boolean result = documentService.delete(identifier);
+        if (result == false) {
+            return new ResponseEntity<>(new DocumentResponseDTO(getLogTraceInfo()), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
+        log.info("[EXIT] {}() with arguments {}={}", "delete", "traceId", traceInfoDTO.getTraceID());
+        return new ResponseEntity<>(new DocumentResponseDTO(getLogTraceInfo()), HttpStatus.OK);
+    }
+
+    @Override
+    public ResponseEntity<DocumentDTO> getDocumentById(HttpServletRequest request,
+            @Size(min = 0, max = 100, message = "identifier does not match the expected size") String id)
+            throws DocumentNotFoundException {
+        log.info(Constants.Logs.CALLED_API_GET_DOCUMENT_BY_IDENTIFIER);
+
+        DocumentDTO document = documentService.getDocumentById(id);
+        return ResponseEntity.status(HttpStatus.OK).body(document);
+    }
+
+    @Override
+    public ResponseEntity<List<DocumentDTO>> getDocuments(HttpServletRequest request) {
+
+        log.info(Constants.Logs.CALLED_API_GET_DOCUMENTS);
+
+        List<DocumentDTO> response = documentService.getDocuments();
+
+        return ResponseEntity.status(HttpStatus.OK).body(response);
+    }
 }

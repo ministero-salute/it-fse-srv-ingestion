@@ -25,35 +25,33 @@ import it.finanze.sanita.fse2.ms.srvingestion.exceptions.OperationException;
 import it.finanze.sanita.fse2.ms.srvingestion.repository.IDocumentStagingRepo;
 import it.finanze.sanita.fse2.ms.srvingestion.repository.entity.StagingDocumentETY;
 
-/** 
- * The implementation of the Document Repo 
+/**
+ * The implementation of the Document Repo
  */
 @Repository
 public class DocumentStagingRepo implements IDocumentStagingRepo {
 
-	
-	@Autowired
-	private MongoTemplate mongoTemplate; 
-	
-	
-	@Override
-	public StagingDocumentETY insert(StagingDocumentETY ety) throws OperationException {
-		try {
-			return mongoTemplate.insert(ety); 
-		} catch(MongoException ex) {
-			throw new OperationException(Constants.Logs.ERROR_MONGO_INSERT, ex); 
-		}
-	}
-	
-	@Override
-	public StagingDocumentETY findById(String id) {
-		StagingDocumentETY ety = mongoTemplate.findById(id, StagingDocumentETY.class);
-		return ObjectUtils.isEmpty(ety) ? new StagingDocumentETY() : ety;
-	} 
-	
-	@Override
-	public List<StagingDocumentETY> findAll() {
-		return mongoTemplate.findAll(StagingDocumentETY.class);
-	}
+    @Autowired
+    private MongoTemplate mongoTemplate;
+
+    @Override
+    public StagingDocumentETY save(StagingDocumentETY ety) throws OperationException {
+        try {
+            return mongoTemplate.insert(ety);
+        } catch (MongoException ex) {
+            throw new OperationException(Constants.Logs.ERROR_MONGO_INSERT, ex);
+        }
+    }
+
+    @Override
+    public StagingDocumentETY findById(String id) {
+        StagingDocumentETY ety = mongoTemplate.findById(id, StagingDocumentETY.class);
+        return ObjectUtils.isEmpty(ety) ? new StagingDocumentETY() : ety;
+    }
+
+    @Override
+    public List<StagingDocumentETY> findAll() {
+        return mongoTemplate.findAll(StagingDocumentETY.class);
+    }
 
 }

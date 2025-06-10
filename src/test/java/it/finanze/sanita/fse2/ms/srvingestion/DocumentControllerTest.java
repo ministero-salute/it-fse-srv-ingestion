@@ -11,20 +11,18 @@
  */
 package it.finanze.sanita.fse2.ms.srvingestion;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import it.finanze.sanita.fse2.ms.srvingestion.base.AbstractTest;
-import it.finanze.sanita.fse2.ms.srvingestion.client.impl.DataProcessorClient;
-import it.finanze.sanita.fse2.ms.srvingestion.client.impl.SrvQueryClient;
-import it.finanze.sanita.fse2.ms.srvingestion.config.Constants;
-import it.finanze.sanita.fse2.ms.srvingestion.controller.impl.DocumentCTL;
-import it.finanze.sanita.fse2.ms.srvingestion.dto.DocumentDTO;
-import it.finanze.sanita.fse2.ms.srvingestion.enums.ProcessorOperationEnum;
-import it.finanze.sanita.fse2.ms.srvingestion.exceptions.ConnectionRefusedException;
-import it.finanze.sanita.fse2.ms.srvingestion.exceptions.EmptyDocumentException;
-import it.finanze.sanita.fse2.ms.srvingestion.exceptions.OperationException;
-import it.finanze.sanita.fse2.ms.srvingestion.repository.entity.StagingDocumentETY;
-import it.finanze.sanita.fse2.ms.srvingestion.service.IDocumentSRV;
-import it.finanze.sanita.fse2.ms.srvingestion.utility.ProfileUtility;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
+import java.util.ArrayList;
+import java.util.List;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
@@ -42,19 +40,21 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
-import java.util.ArrayList;
-import java.util.List;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
-
+import it.finanze.sanita.fse2.ms.srvingestion.base.AbstractTest;
+import it.finanze.sanita.fse2.ms.srvingestion.client.impl.DataProcessorClient;
+import it.finanze.sanita.fse2.ms.srvingestion.client.impl.SrvQueryClient;
+import it.finanze.sanita.fse2.ms.srvingestion.config.Constants;
+import it.finanze.sanita.fse2.ms.srvingestion.controller.impl.DocumentCTL;
+import it.finanze.sanita.fse2.ms.srvingestion.dto.DocumentDTO;
+import it.finanze.sanita.fse2.ms.srvingestion.enums.ProcessorOperationEnum;
+import it.finanze.sanita.fse2.ms.srvingestion.exceptions.ConnectionRefusedException;
+import it.finanze.sanita.fse2.ms.srvingestion.exceptions.EmptyDocumentException;
+import it.finanze.sanita.fse2.ms.srvingestion.exceptions.OperationException;
+import it.finanze.sanita.fse2.ms.srvingestion.repository.entity.StagingDocumentETY;
+import it.finanze.sanita.fse2.ms.srvingestion.service.IDocumentSRV;
+import it.finanze.sanita.fse2.ms.srvingestion.utility.ProfileUtility;
 
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
 @AutoConfigureMockMvc
@@ -62,351 +62,353 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ActiveProfiles(Constants.Profile.TEST)
 class DocumentControllerTest extends AbstractTest {
 
-	@Autowired
-	ServletWebServerApplicationContext webServerAppCtxt;
+    @Autowired
+    ServletWebServerApplicationContext webServerAppCtxt;
 
-	@Autowired
-	MockMvc mvc; 
-	
-	@Autowired
-	DocumentCTL documentCTL; 
+    @Autowired
+    MockMvc mvc;
 
-	@MockitoSpyBean
-	IDocumentSRV documentService;
+    @Autowired
+    DocumentCTL documentCTL;
 
-	@MockitoBean
-	ProfileUtility profileUtility;
+    @MockitoSpyBean
+    IDocumentSRV documentService;
 
-	@MockitoBean
-	private SrvQueryClient srvQueryClient;
+    @MockitoBean
+    ProfileUtility profileUtility;
 
-	@MockitoBean
-	private DataProcessorClient dataProcessorClient;
+    @MockitoBean
+    private SrvQueryClient srvQueryClient;
+
+    @MockitoBean
+    private DataProcessorClient dataProcessorClient;
 
     static final String DOCUMENT_TEST_IDENTIFIER_C = "testIdentifierRepoC";
-    static final String DOCUMENT_TEST_JSON_STRING_C = "{\"jsonString\": \"testC\"}"; 
-    
-    static final String DOCUMENT_TEST_IDENTIFIER_PUT = "testIdentifierRepoPut"; 
-    static final ProcessorOperationEnum DOCUMENT_TEST_OPERATION_PUT = ProcessorOperationEnum.UPDATE; 
-    static final String DOCUMENT_TEST_JSON_STRING_PUT = "{\"jsonString\": \"testPut\"}"; 
-    
-    static final String DOCUMENT_TEST_IDENTIFIER_DELETE = "testIdentifierRepoDelete"; 
-	
-    static final String DOCUMENT_TEST_IDENTIFIER_NOT_FOUND = "testIdentifierRepoNotFound"; 
+    static final String DOCUMENT_TEST_JSON_STRING_C = "{\"jsonString\": \"testC\"}";
 
-    static final String DOCUMENT_TEST_IDENTIFIER_REPLACE = "testIdentifierRepoReplace"; 
-    static final ProcessorOperationEnum DOCUMENT_TEST_OPERATION_REPLACE = ProcessorOperationEnum.REPLACE; 
-    static final String DOCUMENT_TEST_JSON_STRING_REPLACE = "{\"jsonString\": \"testReplace\"}"; 
-    
-    static final ProcessorOperationEnum DOCUMENT_TEST_OPERATION_DELETE = ProcessorOperationEnum.DELETE; 
+    static final String DOCUMENT_TEST_IDENTIFIER_PUT = "testIdentifierRepoPut";
+    static final ProcessorOperationEnum DOCUMENT_TEST_OPERATION_PUT = ProcessorOperationEnum.UPDATE;
+    static final String DOCUMENT_TEST_JSON_STRING_PUT = "{\"jsonString\": \"testPut\"}";
 
-	@BeforeEach
-	public void setup() {
-		mongo.dropCollection(StagingDocumentETY.class);
-		populateStagingCollection();
+    static final String DOCUMENT_TEST_IDENTIFIER_DELETE = "testIdentifierRepoDelete";
 
-	}
+    static final String DOCUMENT_TEST_IDENTIFIER_NOT_FOUND = "testIdentifierRepoNotFound";
+
+    static final String DOCUMENT_TEST_IDENTIFIER_REPLACE = "testIdentifierRepoReplace";
+    static final ProcessorOperationEnum DOCUMENT_TEST_OPERATION_REPLACE = ProcessorOperationEnum.REPLACE;
+    static final String DOCUMENT_TEST_JSON_STRING_REPLACE = "{\"jsonString\": \"testReplace\"}";
+
+    static final ProcessorOperationEnum DOCUMENT_TEST_OPERATION_DELETE = ProcessorOperationEnum.DELETE;
+
+    @BeforeEach
+    public void setup() {
+        mongo.dropCollection(StagingDocumentETY.class);
+        populateStagingCollection();
+
+    }
 
     @Test
-	void livenessCheckCtlTest() throws Exception {
-		mvc.perform(get("http://localhost:" + webServerAppCtxt.getWebServer().getPort() + webServerAppCtxt.getServletContext().getContextPath() + "/status").contentType(MediaType.APPLICATION_JSON_VALUE)).andExpectAll(
-	            status().is2xxSuccessful()
-	        );
-	} 
-	
-	String getBaseUrl() {
-		return "http://localhost:" + webServerAppCtxt.getWebServer().getPort() + webServerAppCtxt.getServletContext().getContextPath() + "/v1";
-	}
- 
-	@Test
-	void addEmptyDocumentTest() throws Exception {
-    	DocumentDTO dtoC = new DocumentDTO(); 
-    	List<DocumentDTO> dtoList= new ArrayList<DocumentDTO>(); 
-        ObjectMapper objectMapper = new ObjectMapper(); 
+    void livenessCheckCtlTest() throws Exception {
+        mvc.perform(get("http://localhost:" + webServerAppCtxt.getWebServer().getPort()
+                + webServerAppCtxt.getServletContext().getContextPath() + "/status")
+                .contentType(MediaType.APPLICATION_JSON_VALUE)).andExpectAll(
+                        status().is2xxSuccessful());
+    }
 
-		dtoC.setOperation(ProcessorOperationEnum.PUBLISH);
-    	dtoC.setIdentifier(DOCUMENT_TEST_IDENTIFIER_C); 
-    	dtoC.setJsonString(null); 
-    	   	
-    	dtoList.add(dtoC);
+    String getBaseUrl() {
+        return "http://localhost:" + webServerAppCtxt.getWebServer().getPort()
+                + webServerAppCtxt.getServletContext().getContextPath() + "/v1";
+    }
 
-		MockHttpServletRequestBuilder builder =
-	            MockMvcRequestBuilders.post(getBaseUrl() + "/document").content(objectMapper.writeValueAsString(dtoC)); 
-    	   	
-		mvc.perform(builder
-	            .contentType(MediaType.APPLICATION_JSON_VALUE))
-	            .andExpect(status().is4xxClientError());
-	}
-
-	@Test
-	void insertUpdateDocumentTest() throws Exception {
-    	DocumentDTO dtoC = new DocumentDTO();
-    	List<DocumentDTO> dtoList= new ArrayList<DocumentDTO>();
+    @Test
+    void addEmptyDocumentTest() throws Exception {
+        DocumentDTO dtoC = new DocumentDTO();
+        List<DocumentDTO> dtoList = new ArrayList<DocumentDTO>();
         ObjectMapper objectMapper = new ObjectMapper();
 
-    	dtoC.setIdentifier(DOCUMENT_TEST_IDENTIFIER_PUT);
-    	dtoC.setOperation(DOCUMENT_TEST_OPERATION_PUT);
-		dtoC.setJsonString(DOCUMENT_TEST_JSON_STRING_PUT);
-    	dtoList.add(dtoC);
+        dtoC.setOperation(ProcessorOperationEnum.PUBLISH);
+        dtoC.setIdentifier(DOCUMENT_TEST_IDENTIFIER_C);
+        dtoC.setJsonString(null);
 
-		given(srvQueryClient.checkExists(anyString())).willReturn(true);
-		given(dataProcessorClient.sendRequestToDataProcessor(any(DocumentDTO.class))).willReturn(true);
+        dtoList.add(dtoC);
 
-		MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.post(getBaseUrl() + "/document/workflowinstanceid/{wii}", "mock_wii").content(objectMapper.writeValueAsString(dtoC));
+        MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.post(getBaseUrl() + "/document")
+                .content(objectMapper.writeValueAsString(dtoC));
 
-	    mvc.perform(builder
-	            .contentType(MediaType.APPLICATION_JSON_VALUE))
-	            .andExpect(status().is2xxSuccessful());
-	}
+        mvc.perform(builder
+                .contentType(MediaType.APPLICATION_JSON_VALUE))
+                .andExpect(status().is4xxClientError());
+    }
 
-	@Test
-	void insertUpdateDocumentWithDocumentNotFoundTest() throws Exception {
-		DocumentDTO dtoC = new DocumentDTO();
-		List<DocumentDTO> dtoList= new ArrayList<DocumentDTO>();
-		ObjectMapper objectMapper = new ObjectMapper();
+    @Test
+    void insertUpdateDocumentTest() throws Exception {
+        DocumentDTO dtoC = new DocumentDTO();
+        List<DocumentDTO> dtoList = new ArrayList<DocumentDTO>();
+        ObjectMapper objectMapper = new ObjectMapper();
 
-		dtoC.setIdentifier(DOCUMENT_TEST_IDENTIFIER_PUT);
-		dtoC.setOperation(DOCUMENT_TEST_OPERATION_DELETE);
-		dtoC.setJsonString(DOCUMENT_TEST_JSON_STRING_PUT);
+        dtoC.setIdentifier(DOCUMENT_TEST_IDENTIFIER_PUT);
+        dtoC.setOperation(DOCUMENT_TEST_OPERATION_PUT);
+        dtoC.setJsonString(DOCUMENT_TEST_JSON_STRING_PUT);
+        dtoList.add(dtoC);
 
-		dtoList.add(dtoC);
+        given(srvQueryClient.checkExists(anyString())).willReturn(true);
+        given(dataProcessorClient.sendRequestToDataProcessor(any(DocumentDTO.class))).willReturn(true);
 
-		given(srvQueryClient.checkExists(anyString())).willReturn(false);
+        MockHttpServletRequestBuilder builder = MockMvcRequestBuilders
+                .post(getBaseUrl() + "/document/workflowinstanceid/{wii}", "mock_wii")
+                .content(objectMapper.writeValueAsString(dtoC));
 
-		MockHttpServletRequestBuilder builder =
-				MockMvcRequestBuilders.put(getBaseUrl() + "/document").content(objectMapper.writeValueAsString(dtoC));
+        mvc.perform(builder
+                .contentType(MediaType.APPLICATION_JSON_VALUE))
+                .andExpect(status().is2xxSuccessful());
+    }
 
+    @Test
+    void insertUpdateDocumentWithDocumentNotFoundTest() throws Exception {
+        DocumentDTO dtoC = new DocumentDTO();
+        List<DocumentDTO> dtoList = new ArrayList<DocumentDTO>();
+        ObjectMapper objectMapper = new ObjectMapper();
 
-		mvc.perform(builder
-						.contentType(MediaType.APPLICATION_JSON_VALUE))
-				.andExpect(status().is4xxClientError());
+        dtoC.setIdentifier(DOCUMENT_TEST_IDENTIFIER_PUT);
+        dtoC.setOperation(DOCUMENT_TEST_OPERATION_DELETE);
+        dtoC.setJsonString(DOCUMENT_TEST_JSON_STRING_PUT);
 
+        dtoList.add(dtoC);
 
-	}
+        given(srvQueryClient.checkExists(anyString())).willReturn(false);
 
-	@Test
-	void insertReplaceDocumentTest() throws Exception {
-    	DocumentDTO dtoC = new DocumentDTO(); 
-    	List<DocumentDTO> dtoList= new ArrayList<DocumentDTO>(); 
-        ObjectMapper objectMapper = new ObjectMapper(); 
+        MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.put(getBaseUrl() + "/document")
+                .content(objectMapper.writeValueAsString(dtoC));
 
-    	dtoC.setIdentifier(DOCUMENT_TEST_IDENTIFIER_REPLACE); 
-    	dtoC.setOperation(DOCUMENT_TEST_OPERATION_REPLACE); 
-    	dtoC.setJsonString(DOCUMENT_TEST_JSON_STRING_REPLACE); 
-    	   	
-    	dtoList.add(dtoC);
+        mvc.perform(builder
+                .contentType(MediaType.APPLICATION_JSON_VALUE))
+                .andExpect(status().is4xxClientError());
 
-		given(srvQueryClient.checkExists(anyString())).willReturn(true);
-		when(dataProcessorClient.sendRequestToDataProcessor(any(DocumentDTO.class))).thenReturn(true);
+    }
 
-		MockHttpServletRequestBuilder builder =
-	            MockMvcRequestBuilders.put(getBaseUrl() + "/document/metadata").content(objectMapper.writeValueAsString(dtoC)); 
-    	   	
-	    
-	    mvc.perform(builder
-	            .contentType(MediaType.APPLICATION_JSON_VALUE))
-	            .andExpect(status().is2xxSuccessful()); 
-	    
-	    
-	}
+    @Test
+    void insertReplaceDocumentTest() throws Exception {
+        DocumentDTO dtoC = new DocumentDTO();
+        List<DocumentDTO> dtoList = new ArrayList<DocumentDTO>();
+        ObjectMapper objectMapper = new ObjectMapper();
 
-	@Test
-	void insertReplaceWithDocumentNotFoundTest() throws Exception {
-		DocumentDTO dtoC = new DocumentDTO();
-		List<DocumentDTO> dtoList= new ArrayList<DocumentDTO>();
-		ObjectMapper objectMapper = new ObjectMapper();
+        dtoC.setIdentifier(DOCUMENT_TEST_IDENTIFIER_REPLACE);
+        dtoC.setOperation(DOCUMENT_TEST_OPERATION_REPLACE);
+        dtoC.setJsonString(DOCUMENT_TEST_JSON_STRING_REPLACE);
 
-		dtoC.setIdentifier(DOCUMENT_TEST_IDENTIFIER_REPLACE);
-		dtoC.setOperation(DOCUMENT_TEST_OPERATION_REPLACE);
-		dtoC.setJsonString(DOCUMENT_TEST_JSON_STRING_REPLACE);
+        dtoList.add(dtoC);
 
-		dtoList.add(dtoC);
-
-		given(srvQueryClient.checkExists(anyString())).willReturn(false);
-
-		MockHttpServletRequestBuilder builder =
-				MockMvcRequestBuilders.put(getBaseUrl() + "/document/metadata").content(objectMapper.writeValueAsString(dtoC));
-
-
-		mvc.perform(builder
-						.contentType(MediaType.APPLICATION_JSON_VALUE))
-				.andExpect(status().is4xxClientError());
-
-
-	}
-
-	@Test
-	void insertUpdateDocumentEmptyBundleTest() throws Exception {
-    	DocumentDTO dtoC = new DocumentDTO(); 
-    	List<DocumentDTO> dtoList= new ArrayList<DocumentDTO>(); 
-
-    	dtoC.setIdentifier(DOCUMENT_TEST_IDENTIFIER_PUT); 
-    	dtoC.setOperation(DOCUMENT_TEST_OPERATION_PUT); 
-    	dtoC.setJsonString(""); 
-    	   	
-    	dtoList.add(dtoC);
-
-		given(srvQueryClient.checkExists(anyString())).willReturn(true);
-
-		mvc.perform(
-			put(getBaseUrl() + "/document", dtoC).contentType(MediaType.APPLICATION_JSON_VALUE)).andExpectAll(
-				status().is4xxClientError()
-			);
-	} 
-	
-
-	@Test
-	void insertUpdateDocumentErrorTest() throws Exception {
-    	DocumentDTO dtoC = new DocumentDTO(); 
-    	List<DocumentDTO> dtoList= new ArrayList<DocumentDTO>(); 
-
-    	dtoC.setIdentifier(DOCUMENT_TEST_IDENTIFIER_PUT); 
-    	dtoC.setOperation(ProcessorOperationEnum.PUBLISH);
-    	dtoC.setJsonString(DOCUMENT_TEST_JSON_STRING_PUT); 
-    	   	
-    	dtoList.add(dtoC);
-
-		given(srvQueryClient.checkExists(anyString())).willReturn(true);
-
-		mvc.perform(put(getBaseUrl() + "/document", dtoC).contentType(MediaType.APPLICATION_JSON_VALUE)).andExpectAll(
-				status().is4xxClientError()
-			);
-
-	} 
-	
-	@Test
-	void insertDeleteDocumentTest() throws Exception {
-        
-	    MockHttpServletRequestBuilder builder =
-	            MockMvcRequestBuilders.delete(getBaseUrl() + "/document/identifier/" + DOCUMENT_TEST_IDENTIFIER_DELETE);
-
-		given(srvQueryClient.checkExists(anyString())).willReturn(true);
-		given(dataProcessorClient.sendRequestToDataProcessor(any(DocumentDTO.class))).willReturn(true);
-
-		mvc.perform(builder
-	            .contentType(MediaType.APPLICATION_JSON_VALUE))
-	            .andExpect(status().is2xxSuccessful()); 
-
-	}
-
-	@Test
-	void insertDeleteDocumentNotFoundTest() throws Exception {
-
-		MockHttpServletRequestBuilder builder =
-				MockMvcRequestBuilders.delete(getBaseUrl() + "/document/identifier/" + "");
-
-		given(srvQueryClient.checkExists(anyString())).willReturn(true);
-
-		mvc.perform(builder
-						.contentType(MediaType.APPLICATION_JSON_VALUE))
-				.andExpect(status().is4xxClientError()); 
-
-	}
-
-	@Test
-	void getDocumentsTest() throws Exception {
-	
-	mvc.perform(get(getBaseUrl() + "/document").contentType(MediaType.APPLICATION_JSON_VALUE)).andExpectAll(
-            status().is2xxSuccessful()
-        );
-	} 
-	
-	@Test
-	void getDocumentsByIdTest() throws Exception {
-    	DocumentDTO dtoC = new DocumentDTO(); 
-
-    	dtoC.setIdentifier(DOCUMENT_TEST_IDENTIFIER_C); 
-    	dtoC.setJsonString(DOCUMENT_TEST_JSON_STRING_C); 
-    	   	
-    	String wii = "WII";
-    	
-    	StagingDocumentETY ety = documentService.insert(dtoC,wii);
-    	String mongoId = ety.getId(); 
-    	
-
-		mvc.perform(get(getBaseUrl() + "/document/" + mongoId).contentType(MediaType.APPLICATION_JSON_VALUE)).andExpectAll(
-				status().is(200)
-			);
-	
-	} 
-	
-	@Test
-	void getDocumentsByIdNotFoundTest() throws Exception {
-			            
-		mvc.perform(get(getBaseUrl() + "/document/" + DOCUMENT_TEST_IDENTIFIER_NOT_FOUND).contentType(MediaType.APPLICATION_JSON_VALUE)).andExpectAll(
-				status().is4xxClientError()
-			); 
-	} 
-	
-	@Test
-	void genericExceptionTest() {
-		assertThrows(Exception.class, () -> { throw new Exception("Test Exception"); }); 
-	}
-
-	@Test
-	void insertReplaceDocumentDatabaseErrorTest() throws Exception {
-		DocumentDTO dtoC = new DocumentDTO();
-		List<DocumentDTO> dtoList= new ArrayList<>();
-		ObjectMapper objectMapper = new ObjectMapper();
-
-		dtoC.setIdentifier(DOCUMENT_TEST_IDENTIFIER_PUT);
-		dtoC.setOperation(DOCUMENT_TEST_OPERATION_REPLACE);
-		dtoC.setJsonString(DOCUMENT_TEST_JSON_STRING_PUT);
-
-		dtoList.add(dtoC);
-
-		given(srvQueryClient.checkExists(anyString())).willReturn(true);
-		given(dataProcessorClient.sendRequestToDataProcessor(any(DocumentDTO.class))).willReturn(true);
-
-		Mockito.doThrow(OperationException.class).when(documentService).insert(any(), anyString());
-
-		MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.post(getBaseUrl() + "/document/workflowinstanceid/{wii}", "mock_wii").content(objectMapper.writeValueAsString(dtoC));
-
-		mvc.perform(builder.contentType(MediaType.APPLICATION_JSON_VALUE))
-				.andExpect(status().isInternalServerError());
-	}
-
-	@Test
-	void insertReplaceEmptyDocumentErrorTest() throws Exception {
-		DocumentDTO dtoC = new DocumentDTO();
-		List<DocumentDTO> dtoList= new ArrayList<>();
-		ObjectMapper objectMapper = new ObjectMapper();
-
-		dtoC.setIdentifier(DOCUMENT_TEST_IDENTIFIER_PUT);
-		dtoC.setOperation(DOCUMENT_TEST_OPERATION_REPLACE);
-		dtoC.setJsonString(DOCUMENT_TEST_JSON_STRING_PUT);
-
-		dtoList.add(dtoC);
-
-		given(srvQueryClient.checkExists(anyString())).willReturn(true);
-		given(dataProcessorClient.sendRequestToDataProcessor(any(DocumentDTO.class))).willReturn(true);
-
-		Mockito.doThrow(EmptyDocumentException.class).when(documentService).insert(any(), anyString());
-
-		MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.post(getBaseUrl() + "/document/workflowinstanceid/{wii}", "mock_wii").content(objectMapper.writeValueAsString(dtoC));
-
-		mvc.perform(builder.contentType(MediaType.APPLICATION_JSON_VALUE))
-				.andExpect(status().isNotFound());
-	}
-
-	@Test
-	void insertReplaceConnectionRefusedErrorTest() throws Exception {
-		DocumentDTO dtoC = new DocumentDTO();
-		List<DocumentDTO> dtoList= new ArrayList<>();
-		ObjectMapper objectMapper = new ObjectMapper();
-
-		dtoC.setIdentifier(DOCUMENT_TEST_IDENTIFIER_PUT);
-		dtoC.setOperation(DOCUMENT_TEST_OPERATION_REPLACE);
-		dtoC.setJsonString(DOCUMENT_TEST_JSON_STRING_PUT);
-
-		dtoList.add(dtoC);
-
-		given(srvQueryClient.checkExists(anyString())).willThrow(ConnectionRefusedException.class);
-		given(dataProcessorClient.sendRequestToDataProcessor(any(DocumentDTO.class))).willThrow(ConnectionRefusedException.class);
-
-		MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.put(getBaseUrl() + "/document/workflowinstanceid/{wii}", "mock_wii").content(objectMapper.writeValueAsString(dtoC));
-
-		mvc.perform(builder.contentType(MediaType.APPLICATION_JSON_VALUE))
-				.andExpect(status().isBadGateway());
-	}
+        given(srvQueryClient.checkExists(anyString())).willReturn(true);
+        when(dataProcessorClient.sendRequestToDataProcessor(any(DocumentDTO.class))).thenReturn(true);
+
+        MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.put(getBaseUrl() + "/document/metadata")
+                .content(objectMapper.writeValueAsString(dtoC));
+
+        mvc.perform(builder
+                .contentType(MediaType.APPLICATION_JSON_VALUE))
+                .andExpect(status().is2xxSuccessful());
+
+    }
+
+    @Test
+    void insertReplaceWithDocumentNotFoundTest() throws Exception {
+        DocumentDTO dtoC = new DocumentDTO();
+        List<DocumentDTO> dtoList = new ArrayList<DocumentDTO>();
+        ObjectMapper objectMapper = new ObjectMapper();
+
+        dtoC.setIdentifier(DOCUMENT_TEST_IDENTIFIER_REPLACE);
+        dtoC.setOperation(DOCUMENT_TEST_OPERATION_REPLACE);
+        dtoC.setJsonString(DOCUMENT_TEST_JSON_STRING_REPLACE);
+
+        dtoList.add(dtoC);
+
+        given(srvQueryClient.checkExists(anyString())).willReturn(false);
+
+        MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.put(getBaseUrl() + "/document/metadata")
+                .content(objectMapper.writeValueAsString(dtoC));
+
+        mvc.perform(builder
+                .contentType(MediaType.APPLICATION_JSON_VALUE))
+                .andExpect(status().is4xxClientError());
+
+    }
+
+    @Test
+    void insertUpdateDocumentEmptyBundleTest() throws Exception {
+        DocumentDTO dtoC = new DocumentDTO();
+        List<DocumentDTO> dtoList = new ArrayList<DocumentDTO>();
+
+        dtoC.setIdentifier(DOCUMENT_TEST_IDENTIFIER_PUT);
+        dtoC.setOperation(DOCUMENT_TEST_OPERATION_PUT);
+        dtoC.setJsonString("");
+
+        dtoList.add(dtoC);
+
+        given(srvQueryClient.checkExists(anyString())).willReturn(true);
+
+        mvc.perform(
+                put(getBaseUrl() + "/document", dtoC).contentType(MediaType.APPLICATION_JSON_VALUE)).andExpectAll(
+                        status().is4xxClientError());
+    }
+
+    @Test
+    void insertUpdateDocumentErrorTest() throws Exception {
+        DocumentDTO dtoC = new DocumentDTO();
+        List<DocumentDTO> dtoList = new ArrayList<DocumentDTO>();
+
+        dtoC.setIdentifier(DOCUMENT_TEST_IDENTIFIER_PUT);
+        dtoC.setOperation(ProcessorOperationEnum.PUBLISH);
+        dtoC.setJsonString(DOCUMENT_TEST_JSON_STRING_PUT);
+
+        dtoList.add(dtoC);
+
+        given(srvQueryClient.checkExists(anyString())).willReturn(true);
+
+        mvc.perform(put(getBaseUrl() + "/document", dtoC).contentType(MediaType.APPLICATION_JSON_VALUE)).andExpectAll(
+                status().is4xxClientError());
+
+    }
+
+    @Test
+    void insertDeleteDocumentTest() throws Exception {
+
+        MockHttpServletRequestBuilder builder = MockMvcRequestBuilders
+                .delete(getBaseUrl() + "/document/identifier/" + DOCUMENT_TEST_IDENTIFIER_DELETE);
+
+        given(srvQueryClient.checkExists(anyString())).willReturn(true);
+        given(dataProcessorClient.sendRequestToDataProcessor(any(DocumentDTO.class))).willReturn(true);
+
+        mvc.perform(builder
+                .contentType(MediaType.APPLICATION_JSON_VALUE))
+                .andExpect(status().is2xxSuccessful());
+
+    }
+
+    @Test
+    void insertDeleteDocumentNotFoundTest() throws Exception {
+
+        MockHttpServletRequestBuilder builder = MockMvcRequestBuilders
+                .delete(getBaseUrl() + "/document/identifier/" + "");
+
+        given(srvQueryClient.checkExists(anyString())).willReturn(true);
+
+        mvc.perform(builder
+                .contentType(MediaType.APPLICATION_JSON_VALUE))
+                .andExpect(status().is4xxClientError());
+
+    }
+
+    @Test
+    void getDocumentsTest() throws Exception {
+
+        mvc.perform(get(getBaseUrl() + "/document").contentType(MediaType.APPLICATION_JSON_VALUE)).andExpectAll(
+                status().is2xxSuccessful());
+    }
+
+    @Test
+    void getDocumentsByIdTest() throws Exception {
+        DocumentDTO dtoC = new DocumentDTO();
+
+        dtoC.setIdentifier(DOCUMENT_TEST_IDENTIFIER_C);
+        dtoC.setJsonString(DOCUMENT_TEST_JSON_STRING_C);
+
+        String wii = "WII";
+
+        StagingDocumentETY ety = documentService.create(dtoC, wii);
+        String mongoId = ety.getId();
+
+        mvc.perform(get(getBaseUrl() + "/document/" + mongoId).contentType(MediaType.APPLICATION_JSON_VALUE))
+                .andExpectAll(
+                        status().is(200));
+
+    }
+
+    @Test
+    void getDocumentsByIdNotFoundTest() throws Exception {
+
+        mvc.perform(get(getBaseUrl() + "/document/" + DOCUMENT_TEST_IDENTIFIER_NOT_FOUND)
+                .contentType(MediaType.APPLICATION_JSON_VALUE)).andExpectAll(
+                        status().is4xxClientError());
+    }
+
+    @Test
+    void genericExceptionTest() {
+        assertThrows(Exception.class, () -> {
+            throw new Exception("Test Exception");
+        });
+    }
+
+    @Test
+    void insertReplaceDocumentDatabaseErrorTest() throws Exception {
+        DocumentDTO dtoC = new DocumentDTO();
+        List<DocumentDTO> dtoList = new ArrayList<>();
+        ObjectMapper objectMapper = new ObjectMapper();
+
+        dtoC.setIdentifier(DOCUMENT_TEST_IDENTIFIER_PUT);
+        dtoC.setOperation(DOCUMENT_TEST_OPERATION_REPLACE);
+        dtoC.setJsonString(DOCUMENT_TEST_JSON_STRING_PUT);
+
+        dtoList.add(dtoC);
+
+        given(srvQueryClient.checkExists(anyString())).willReturn(true);
+        given(dataProcessorClient.sendRequestToDataProcessor(any(DocumentDTO.class))).willReturn(true);
+
+        Mockito.doThrow(OperationException.class).when(documentService).create(any(), anyString());
+
+        MockHttpServletRequestBuilder builder = MockMvcRequestBuilders
+                .post(getBaseUrl() + "/document/workflowinstanceid/{wii}", "mock_wii")
+                .content(objectMapper.writeValueAsString(dtoC));
+
+        mvc.perform(builder.contentType(MediaType.APPLICATION_JSON_VALUE))
+                .andExpect(status().isInternalServerError());
+    }
+
+    @Test
+    void insertReplaceEmptyDocumentErrorTest() throws Exception {
+        DocumentDTO dtoC = new DocumentDTO();
+        List<DocumentDTO> dtoList = new ArrayList<>();
+        ObjectMapper objectMapper = new ObjectMapper();
+
+        dtoC.setIdentifier(DOCUMENT_TEST_IDENTIFIER_PUT);
+        dtoC.setOperation(DOCUMENT_TEST_OPERATION_REPLACE);
+        dtoC.setJsonString(DOCUMENT_TEST_JSON_STRING_PUT);
+
+        dtoList.add(dtoC);
+
+        given(srvQueryClient.checkExists(anyString())).willReturn(true);
+        given(dataProcessorClient.sendRequestToDataProcessor(any(DocumentDTO.class))).willReturn(true);
+
+        Mockito.doThrow(EmptyDocumentException.class).when(documentService).create(any(), anyString());
+
+        MockHttpServletRequestBuilder builder = MockMvcRequestBuilders
+                .post(getBaseUrl() + "/document/workflowinstanceid/{wii}", "mock_wii")
+                .content(objectMapper.writeValueAsString(dtoC));
+
+        mvc.perform(builder.contentType(MediaType.APPLICATION_JSON_VALUE))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    void insertReplaceConnectionRefusedErrorTest() throws Exception {
+        DocumentDTO dtoC = new DocumentDTO();
+        List<DocumentDTO> dtoList = new ArrayList<>();
+        ObjectMapper objectMapper = new ObjectMapper();
+
+        dtoC.setIdentifier(DOCUMENT_TEST_IDENTIFIER_PUT);
+        dtoC.setOperation(DOCUMENT_TEST_OPERATION_REPLACE);
+        dtoC.setJsonString(DOCUMENT_TEST_JSON_STRING_PUT);
+
+        dtoList.add(dtoC);
+
+        given(srvQueryClient.checkExists(anyString())).willThrow(ConnectionRefusedException.class);
+        given(dataProcessorClient.sendRequestToDataProcessor(any(DocumentDTO.class)))
+                .willThrow(ConnectionRefusedException.class);
+
+        MockHttpServletRequestBuilder builder = MockMvcRequestBuilders
+                .put(getBaseUrl() + "/document/workflowinstanceid/{wii}", "mock_wii")
+                .content(objectMapper.writeValueAsString(dtoC));
+
+        mvc.perform(builder.contentType(MediaType.APPLICATION_JSON_VALUE))
+                .andExpect(status().isBadGateway());
+    }
 }

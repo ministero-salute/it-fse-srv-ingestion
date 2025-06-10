@@ -11,7 +11,6 @@
  */
 package it.finanze.sanita.fse2.ms.srvingestion.dto;
 
-
 import static it.finanze.sanita.fse2.ms.srvingestion.utility.ValidationUtility.DEFAULT_STRING_MAX_SIZE;
 import static it.finanze.sanita.fse2.ms.srvingestion.utility.ValidationUtility.DEFAULT_STRING_MIN_SIZE;
 
@@ -20,52 +19,62 @@ import java.util.Date;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import it.finanze.sanita.fse2.ms.srvingestion.enums.ProcessorOperationEnum;
+import it.finanze.sanita.fse2.ms.srvingestion.repository.entity.StagingDocumentETY;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 /**
- * Document DTO class 
+ * Document DTO class
  *
  */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class DocumentDTO {
 
-	/** 
-	 * The doc identifier 
-	 */
-	@JsonProperty("identifier")
-	@Size(min = DEFAULT_STRING_MIN_SIZE, max = DEFAULT_STRING_MAX_SIZE)
-	private String identifier; 
-	
-	/** 
-	 * The operation to be executed (CREATE, UPDATE, REPLACE or DELETE) 
-	 */
-	@JsonProperty("operation")
-	@Size(min = DEFAULT_STRING_MIN_SIZE, max = DEFAULT_STRING_MAX_SIZE)
-	private ProcessorOperationEnum operation;    
+    /**
+     * The doc identifier
+     */
+    @JsonProperty("identifier")
+    @Size(min = DEFAULT_STRING_MIN_SIZE, max = DEFAULT_STRING_MAX_SIZE)
+    private String identifier;
 
-	/** 
-	 * The JSON string of the document 
-	 */
-	@JsonProperty("jsonString")
-	@Size(min = DEFAULT_STRING_MIN_SIZE, max = DEFAULT_STRING_MAX_SIZE)
-	private String jsonString;
-	
-	/** 
-	 * The Insertion Date 
-	 */
-	@JsonProperty("insertionDate")
-	private Date insertionDate; 
+    /**
+     * The operation to be executed (CREATE, UPDATE, REPLACE or DELETE)
+     */
+    @JsonProperty("operation")
+    @Size(min = DEFAULT_STRING_MIN_SIZE, max = DEFAULT_STRING_MAX_SIZE)
+    private ProcessorOperationEnum operation;
 
-	/**
-	 * The Insertion Date
-	 */
-	@JsonProperty("rde")
-	private String rde;
+    /**
+     * The JSON string of the document
+     */
+    @JsonProperty("jsonString")
+    @Size(min = DEFAULT_STRING_MIN_SIZE, max = DEFAULT_STRING_MAX_SIZE)
+    private String jsonString;
 
-	
+    /**
+     * The Insertion Date
+     */
+    @JsonProperty("insertionDate")
+    private Date insertionDate;
+
+    /**
+     * The Insertion Date
+     */
+    @JsonProperty("rde")
+    private String rde;
+
+    public DocumentDTO(StagingDocumentETY entity) {
+        this.identifier = entity.getIdentifier();
+        this.operation = entity.getOperation();
+        this.jsonString = entity.getDocument().toJson();
+        this.rde = entity.getRde();
+        this.insertionDate = entity.getInsertionDate();
+    }
+
 }

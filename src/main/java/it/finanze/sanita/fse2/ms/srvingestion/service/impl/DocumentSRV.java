@@ -11,7 +11,6 @@
  */
 package it.finanze.sanita.fse2.ms.srvingestion.service.impl;
 
-import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,108 +32,106 @@ import it.finanze.sanita.fse2.ms.srvingestion.repository.entity.StagingDocumentE
 import it.finanze.sanita.fse2.ms.srvingestion.repository.mongo.impl.DocumentStagingRepo;
 import it.finanze.sanita.fse2.ms.srvingestion.service.IDocumentSRV;
 
-/** 
- * Document Service Implementation 
+/**
+ * Document Service Implementation
  *
  */
 @Service
 public class DocumentSRV implements IDocumentSRV {
-	
-	
-	@Autowired
-	private DocumentStagingRepo documentStagingRepo; 
-	
-	@Autowired
-	private transient SrvQueryClient srvQueryClient;
-	
-	@Autowired
-	private transient DataProcessorClient dataProcessorClient;
 
-	@Autowired
-	DocumentConverter documentConverter;
-	
-	@Override
-	public StagingDocumentETY insert(final DocumentDTO dto, final String wii) throws OperationException, EmptyDocumentException {
-				
-		if (ObjectUtils.isEmpty(dto.getJsonString())) {
-				throw new EmptyDocumentException(Constants.Logs.ERROR_EMPTY_DOCUMENT); 
-		} 
-		StagingDocumentETY document = documentConverter.toEntity(dto);
-		document.setWorkflowInstanceId(wii);
-		document.setOperation(ProcessorOperationEnum.PUBLISH);
-		return documentStagingRepo.insert(document); 
-	} 
-	
-	@Override
-	public StagingDocumentETY replace(final DocumentDTO dto, final String wii) throws OperationException, EmptyDocumentException, DocumentNotFoundException  {
-		
-		boolean exist = srvQueryClient.checkExists(dto.getIdentifier());
-		if (Boolean.FALSE.equals(exist)) {
-			throw new DocumentNotFoundException("Error: document not found!");
-		}
+    @Autowired
+    private DocumentStagingRepo documentStagingRepo;
 
-		if (ObjectUtils.isEmpty(dto.getJsonString())) {
-			throw new EmptyDocumentException(Constants.Logs.ERROR_EMPTY_DOCUMENT); 
-		} 
-		
-		StagingDocumentETY document = documentConverter.toEntity(dto);
-		document.setWorkflowInstanceId(wii);
-		document.setOperation(ProcessorOperationEnum.REPLACE);
-		return documentStagingRepo.insert(document); 
-	}
-	
-	@Override
-	public Boolean update(final DocumentDTO dto) throws EmptyDocumentException, DocumentNotFoundException, ConnectionRefusedException, BusinessException {
-		
-		boolean exist = srvQueryClient.checkExists(dto.getIdentifier());
-		if (Boolean.FALSE.equals(exist)) {
-			throw new DocumentNotFoundException("Error: document not found!");
-		}
+    @Autowired
+    private transient SrvQueryClient srvQueryClient;
 
-		if (ObjectUtils.isEmpty(dto.getJsonString())) {
-			throw new EmptyDocumentException(Constants.Logs.ERROR_EMPTY_DOCUMENT); 
-		} 
-	
-		dto.setOperation(ProcessorOperationEnum.UPDATE);
-		return dataProcessorClient.sendRequestToDataProcessor(dto);
+    @Autowired
+    private transient DataProcessorClient dataProcessorClient;
 
-	}
-	
-	@Override
-	public Boolean delete(final String id) throws DocumentNotFoundException, ConnectionRefusedException, BusinessException {
-		
-		boolean exist = srvQueryClient.checkExists(id);
-		if (Boolean.FALSE.equals(exist)) {
-			throw new DocumentNotFoundException("Error: document not found!");
-		}
+    @Autowired
+    DocumentConverter documentConverter;
 
-		DocumentDTO dto = new DocumentDTO();
-		dto.setIdentifier(id);
-		dto.setOperation(ProcessorOperationEnum.DELETE);
-		dto.setJsonString(null);
-		dto.setInsertionDate(new Date());
-		return dataProcessorClient.sendRequestToDataProcessor(dto);
+    @Override
+    public StagingDocumentETY create(final DocumentDTO dto, final String wii)
+            throws OperationException, EmptyDocumentException {
 
-	}
+        if (ObjectUtils.isEmpty(dto.getJsonString())) {
+            throw new EmptyDocumentException(Constants.Logs.ERROR_EMPTY_DOCUMENT);
+        }
 
-	
-	@Override
-	public DocumentDTO getDocumentById(String id) throws DocumentNotFoundException {
-		StagingDocumentETY ety =  documentStagingRepo.findById(id);
-		
-		if(ObjectUtils.isEmpty(ety.getId())) {
-			throw new DocumentNotFoundException(Constants.Logs.ERROR_DOCUMENT_NOT_FOUND); 
-		} 
-		
-		return documentConverter.toDto(ety); 
-	} 
-	
-	
-	@Override
-	public List<DocumentDTO> getDocuments() {
-		List<StagingDocumentETY> etyList = documentStagingRepo.findAll();
-		return documentConverter.toDtoList(etyList); 	
-	}
-	
+        StagingDocumentETY document = new StagingDocumentETY(dto, wii, ProcessorOperationEnum.PUBLISH);
+
+        return documentStagingRepo.save(document);
+    }
+
+    @Override
+    public StagingDocumentETY replace(final DocumentDTO dto, final String wii)
+            throws OperationException, EmptyDocumentException, DocumentNotFoundException {
+
+        boolean exist = srvQueryClient.checkExists(dto.getIdentifier());
+        if (Boolean.FALSE.equals(exist)) {
+            throw new DocumentNotFoundException("Error: document not found!");
+        }
+
+        if (ObjectUtils.isEmpty(dto.getJsonString())) {
+            throw new EmptyDocumentException(Constants.Logs.ERROR_EMPTY_DOCUMENT);
+        }
+
+        StagingDocumentETY document = new StagingDocumentETY(dto, wii, ProcessorOperationEnum.REPLACE);
+        return documentStagingRepo.save(document);
+    }
+
+    @Override
+    public Boolean update(final DocumentDTO dto)
+            throws EmptyDocumentException, DocumentNotFoundException, ConnectionRefusedException, BusinessException {
+
+        boolean exist = srvQueryClient.checkExists(dto.getIdentifier());
+        if (Boolean.FALSE.equals(exist)) {
+            throw new DocumentNotFoundException("Error: document not found!");
+        }
+
+        if (ObjectUtils.isEmpty(dto.getJsonString())) {
+            throw new EmptyDocumentException(Constants.Logs.ERROR_EMPTY_DOCUMENT);
+        }
+
+        dto.setOperation(ProcessorOperationEnum.UPDATE);
+        return dataProcessorClient.sendRequestToDataProcessor(dto);
+
+    }
+
+    @Override
+    public Boolean delete(final String id)
+            throws DocumentNotFoundException, ConnectionRefusedException, BusinessException {
+
+        boolean exist = srvQueryClient.checkExists(id);
+        if (Boolean.FALSE.equals(exist)) {
+            throw new DocumentNotFoundException("Error: document not found!");
+        }
+
+        DocumentDTO dto = DocumentDTO.builder()
+                .identifier(id)
+                .operation(ProcessorOperationEnum.DELETE)
+                .build();
+
+        return dataProcessorClient.sendRequestToDataProcessor(dto);
+
+    }
+
+    @Override
+    public DocumentDTO getDocumentById(String id) throws DocumentNotFoundException {
+        StagingDocumentETY ety = documentStagingRepo.findById(id);
+
+        if (ObjectUtils.isEmpty(ety.getId())) {
+            throw new DocumentNotFoundException(Constants.Logs.ERROR_DOCUMENT_NOT_FOUND);
+        }
+
+        return new DocumentDTO(ety);
+    }
+
+    @Override
+    public List<DocumentDTO> getDocuments() {
+        List<StagingDocumentETY> etyList = documentStagingRepo.findAll();
+        return documentConverter.toDtoList(etyList);
+    }
 
 }

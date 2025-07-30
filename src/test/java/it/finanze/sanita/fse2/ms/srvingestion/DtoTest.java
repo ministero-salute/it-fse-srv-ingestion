@@ -23,7 +23,7 @@ import org.springframework.test.context.ActiveProfiles;
 
 import it.finanze.sanita.fse2.ms.srvingestion.base.AbstractTest;
 import it.finanze.sanita.fse2.ms.srvingestion.config.Constants;
-import it.finanze.sanita.fse2.ms.srvingestion.dto.DocumentDTO;
+import it.finanze.sanita.fse2.ms.srvingestion.dto.UdpDocumentDTO;
 import it.finanze.sanita.fse2.ms.srvingestion.dto.KafkaDataProcessorDTO;
 import it.finanze.sanita.fse2.ms.srvingestion.dto.KafkaMessageDTO;
 import it.finanze.sanita.fse2.ms.srvingestion.enums.EventStatusEnum;
@@ -79,13 +79,13 @@ class DtoTest extends AbstractTest {
 	
 	@Test
 	void documentReferenceDtoTest() {
-    	DocumentDTO dto = new DocumentDTO(); 
+		UdpDocumentDTO dto = new UdpDocumentDTO();
 
     	dto.setIdentifier(DOCUMENT_TEST_IDENTIFIER); 
     	dto.setJsonString(DOCUMENT_TEST_JSON_STRING); 
     	    	
     	
-    	assertEquals(DocumentDTO.class, dto.getClass()); 
+		assertEquals(UdpDocumentDTO.class, dto.getClass());
     	assertEquals(String.class, dto.getIdentifier().getClass()); 
     	assertEquals(String.class, dto.getJsonString().getClass()); 
 

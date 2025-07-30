@@ -21,7 +21,7 @@ import lombok.Data;
  */
 @Data
 @Component
-public class MicroservicesConfig {
+public class MsCFG {
 
 	/**
 	 *  Udp Srv Query Config

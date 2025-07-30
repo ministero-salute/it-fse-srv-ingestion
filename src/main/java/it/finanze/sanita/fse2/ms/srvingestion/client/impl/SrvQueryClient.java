@@ -11,6 +11,8 @@
  */
 package it.finanze.sanita.fse2.ms.srvingestion.client.impl;
 
+import java.net.URI;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -19,9 +21,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import it.finanze.sanita.fse2.ms.srvingestion.client.ISrvQueryClient;
-import it.finanze.sanita.fse2.ms.srvingestion.config.MicroservicesConfig;
+import it.finanze.sanita.fse2.ms.srvingestion.config.MsCFG;
 import it.finanze.sanita.fse2.ms.srvingestion.dto.response.ResourceExistResDTO;
 import it.finanze.sanita.fse2.ms.srvingestion.exceptions.BusinessException;
 import it.finanze.sanita.fse2.ms.srvingestion.exceptions.ConnectionRefusedException;
@@ -34,49 +37,52 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @Component
 public class SrvQueryClient implements ISrvQueryClient {
-	
-	/**
-	 * The Rest Template 
-	 */
+
+    /**
+     * The Rest Template
+     */
     @Autowired
     private RestTemplate restTemplate;
 
-    /** 
-     * The Srv Query Configuration 
+    /**
+     * The Srv Query Configuration
      */
     @Autowired
-    private MicroservicesConfig msConfig; 
-	
-    /** 
-     * Checks whether the document exists by calling the Srv Query Microservice 
+    private MsCFG srvQueryConfig;
+
+    /**
+     * Checks whether the document exists by calling the Srv Query Microservice
      */
-	@Override
-	public boolean checkExists(String docId) {
-        log.debug("Calling eds Srv Query ep - START"); 
+    @Override
+    public boolean checkExists(String docId) {
+        log.debug("Calling eds Srv Query ep - START");
 
         HttpHeaders headers = new HttpHeaders();
-        headers.set("Content-Type", "application/json"); 
+        headers.set("Content-Type", "application/json");
 
-        
         HttpEntity<?> entity = new HttpEntity<>(docId, headers);
 
         ResponseEntity<ResourceExistResDTO> response;
-        String url = msConfig.getUdpSrvQueryHost() + "/v1/document/check-exist/"  + docId;
-        
+        final URI uri = UriComponentsBuilder
+                .fromUriString(srvQueryConfig.getUdpSrvQueryHost())
+                .path("/v1/document/check-exist/{identifier}")
+                .buildAndExpand(docId)
+                .toUri();
+
         try {
-            response = restTemplate.exchange(url, HttpMethod.GET, entity, ResourceExistResDTO.class);
+            response = restTemplate.exchange(uri, HttpMethod.GET, entity, ResourceExistResDTO.class);
             log.debug("{} status returned from Srv Query", response.getStatusCode());
             final ResourceExistResDTO responseBody = response.getBody();
             return responseBody != null && responseBody.isExist();
-        } catch(ResourceAccessException cex) {
+        } catch (ResourceAccessException cex) {
             log.error("Connect error while call EDS Srv Query ep :" + cex);
-            throw new ConnectionRefusedException(msConfig.getUdpSrvQueryHost(),"Connection refused by SRV Query Host"); 
-        } catch(Exception ex) {
+            throw new ConnectionRefusedException(srvQueryConfig.getUdpSrvQueryHost(),
+                    "Connection refused by SRV Query Host");
+        } catch (Exception ex) {
             log.error("Generic error while call EDS Srv Query ep :" + ex);
             throw new BusinessException("Generic error while call EDS Srv Query ep :" + ex);
         }
-        
-	}
 
-} 
+    }
 
+}

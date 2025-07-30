@@ -97,7 +97,8 @@ public class KafkaSRV implements IKafkaSRV {
  
 	
 	@Override
-	public void notifyDataProcessor(final String topic, final String mongoId, final ProcessorOperationEnum key) throws KafkaException {
+	public void notifyUdpDataProcessor(final String topic, final String mongoId, final ProcessorOperationEnum key)
+			throws KafkaException {
 		try {
 			String message = mongoId;
 			sendMessage(topic, key, message,true);

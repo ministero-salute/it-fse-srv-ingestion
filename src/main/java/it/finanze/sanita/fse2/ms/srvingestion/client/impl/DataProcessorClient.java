@@ -24,8 +24,8 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import it.finanze.sanita.fse2.ms.srvingestion.client.IDataProcessorClient;
-import it.finanze.sanita.fse2.ms.srvingestion.config.MicroservicesConfig;
-import it.finanze.sanita.fse2.ms.srvingestion.dto.DocumentDTO;
+import it.finanze.sanita.fse2.ms.srvingestion.config.MsCFG;
+import it.finanze.sanita.fse2.ms.srvingestion.dto.UdpDocumentDTO;
 import it.finanze.sanita.fse2.ms.srvingestion.dto.response.DocumentResponseDTO;
 import it.finanze.sanita.fse2.ms.srvingestion.exceptions.BusinessException;
 import it.finanze.sanita.fse2.ms.srvingestion.exceptions.ConnectionRefusedException;
@@ -48,29 +48,27 @@ public class DataProcessorClient implements IDataProcessorClient {
      * The Data Processor Configuration
      */
     @Autowired
-    private MicroservicesConfig microservicesCfg;
+    private MsCFG msCFG;
 
     @Override
-    public Boolean sendRequestToDataProcessor(DocumentDTO reqDTO) {
-
+    public Boolean sendRequestToDataProcessor(UdpDocumentDTO reqDTO) {
         log.debug("Calling eds Data Processor ep - START");
         log.debug("Operation: " + reqDTO.getOperation().getName());
 
         HttpHeaders headers = new HttpHeaders();
         headers.set("Content-Type", "application/json");
+
         HttpEntity<?> entity = new HttpEntity<>(reqDTO, headers);
-        URI url = UriComponentsBuilder.fromUriString(microservicesCfg.getUdpDataProcessorHost())
-                .path("/v1/process")
-                .build().toUri();
 
         ResponseEntity<DocumentResponseDTO> response = null;
+        String url = msCFG.getUdpDataProcessorHost() + "/v1/process";
 
         try {
             response = restTemplate.exchange(url, HttpMethod.POST, entity, DocumentResponseDTO.class);
             log.debug("{} status returned from Data Processor", response.getStatusCode());
         } catch (ResourceAccessException cex) {
             log.error("Connect error while call eds ingestion ep :" + cex);
-            throw new ConnectionRefusedException(microservicesCfg.getUdpDataProcessorHost(), "Connection refused");
+            throw new ConnectionRefusedException(msCFG.getUdpDataProcessorHost(), "Connection refused");
         } catch (Exception ex) {
             log.error("Generic error while call eds ingestion ep :" + ex);
             throw new BusinessException("Generic error while call eds ingestion ep :" + ex);

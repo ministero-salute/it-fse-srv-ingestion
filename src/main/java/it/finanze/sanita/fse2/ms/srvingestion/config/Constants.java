@@ -11,11 +11,24 @@
  */
 package it.finanze.sanita.fse2.ms.srvingestion.config;
 
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
+
 /**
  * Constants application.
  */
 public final class Constants {
 
+
+	@NoArgsConstructor(access = AccessLevel.PRIVATE)
+	public static final class Endpoint {
+		public static final String PUBLISH_DOCUMENT_PATH = "/workflowinstanceid/{wii}";
+		public static final String REPLACE_DOCUMENT_PATH = "/workflowinstanceid/{wii}";
+		public static final String UPDATE_DOCUMENT_PATH = "/metadata";
+		public static final String DELETE_DOCUMENT_PATH = "/identifier/{identifier}";
+		public static final String FIND_BY_ID_PATH = "/udp/{id}";
+		public static final String FIND_ALL_PATH = "/udp";
+	}
 
 	/** 
 	 * Contains the constants for the launch profile of the SpringBoot application. 

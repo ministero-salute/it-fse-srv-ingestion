@@ -13,13 +13,12 @@ package it.finanze.sanita.fse2.ms.srvingestion.service;
 
 import java.util.List;
 
-import it.finanze.sanita.fse2.ms.srvingestion.dto.DocumentDTO;
-import it.finanze.sanita.fse2.ms.srvingestion.exceptions.BusinessException;
-import it.finanze.sanita.fse2.ms.srvingestion.exceptions.ConnectionRefusedException;
+import it.finanze.sanita.fse2.ms.srvingestion.dto.UdpDocumentDTO;
+import it.finanze.sanita.fse2.ms.srvingestion.dto.request.SendToUdpDocumentRequestDTO;
 import it.finanze.sanita.fse2.ms.srvingestion.exceptions.DocumentNotFoundException;
 import it.finanze.sanita.fse2.ms.srvingestion.exceptions.EmptyDocumentException;
+import it.finanze.sanita.fse2.ms.srvingestion.exceptions.KafkaException;
 import it.finanze.sanita.fse2.ms.srvingestion.exceptions.OperationException;
-import it.finanze.sanita.fse2.ms.srvingestion.repository.entity.StagingDocumentETY;
 
 /**
  * Interface for Document Service
@@ -29,50 +28,27 @@ public interface IDocumentSRV {
 
     /**
      * Inserts one Document Creation Request in the staging database
-     * 
-     * @param dto The document to insert
-     * @return DocumentReferenceETY The document entity
-     * @throws OperationException     If a data-layer error occurs
-     * @throws EmptyDocumentException An exception thrown when a document to be
-     *                                inserted is empty
      */
-    StagingDocumentETY create(DocumentDTO dto, String wii) throws OperationException, EmptyDocumentException;
+    boolean publish(SendToUdpDocumentRequestDTO dto, String wii)
+            throws OperationException, EmptyDocumentException, KafkaException;
 
     /**
      * Replace one Document Creation Request in the staging database
-     * 
-     * @param dto The document to insert
-     * @return DocumentReferenceETY The document entity
-     * @throws OperationException        If a data-layer error occurs
-     * @throws EmptyDocumentException    An exception thrown when a document to be
-     *                                   inserted is empty
-     * @throws DocumentNotFoundException
      */
-    StagingDocumentETY replace(DocumentDTO dto, String wii)
-            throws OperationException, EmptyDocumentException, DocumentNotFoundException;
+    boolean replace(SendToUdpDocumentRequestDTO dto, String wii)
+            throws DocumentNotFoundException, EmptyDocumentException, OperationException, KafkaException;
 
     /**
      * Updates one Document in the Fhir Server, calling the Data Processor Service
      * 
-     * @param dto The document to update
-     * @throws OperationException        If a data-layer error occurs
-     * @throws EmptyDocumentException    An exception thrown when a document to be
-     *                                   inserted is empty
-     * @throws DocumentNotFoundException
      */
-    Boolean update(final DocumentDTO dto)
-            throws EmptyDocumentException, DocumentNotFoundException, ConnectionRefusedException, BusinessException;
+    boolean update(SendToUdpDocumentRequestDTO dto);
 
     /**
      * Deletes one Document in the Fhir Server, calling the Data Processor Service
      * 
-     * @param id The id of the document to delete
-     * @throws OperationException        If a data-layer error occurs
-     * @throws EmptyDocumentException    An exception thrown when a document to be
-     *                                   inserted is empty
-     * @throws DocumentNotFoundException
      */
-    Boolean delete(final String id) throws DocumentNotFoundException, ConnectionRefusedException, BusinessException;
+    boolean delete(String identifier) throws DocumentNotFoundException;
 
     /**
      * Retrieves a document from the staging database given its Mongo ID
@@ -82,13 +58,13 @@ public interface IDocumentSRV {
      * @throws DocumentNotFoundException An exception thrown when the document is
      *                                   not found on MongoDB
      */
-    DocumentDTO getDocumentById(String id) throws DocumentNotFoundException;
+    UdpDocumentDTO getDocumentById(String id) throws DocumentNotFoundException;
 
     /**
      * Retrieves the list of all documents from the staging database
      * 
      * @return List The list of all documents retrieved from MongoDB
      */
-    List<DocumentDTO> getDocuments();
+    List<UdpDocumentDTO> getDocuments();
 
 }

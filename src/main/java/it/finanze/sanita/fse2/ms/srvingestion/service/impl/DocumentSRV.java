@@ -11,26 +11,28 @@
  */
 package it.finanze.sanita.fse2.ms.srvingestion.service.impl;
 
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
 
-import it.finanze.sanita.fse2.ms.srvingestion.client.impl.DataProcessorClient;
-import it.finanze.sanita.fse2.ms.srvingestion.client.impl.SrvQueryClient;
+import it.finanze.sanita.fse2.ms.srvingestion.client.IDataProcessorClient;
+import it.finanze.sanita.fse2.ms.srvingestion.client.ISrvQueryClient;
 import it.finanze.sanita.fse2.ms.srvingestion.config.Constants;
-import it.finanze.sanita.fse2.ms.srvingestion.dto.DocumentDTO;
-import it.finanze.sanita.fse2.ms.srvingestion.dto.converter.DocumentConverter;
+import it.finanze.sanita.fse2.ms.srvingestion.config.kafka.KafkaTopicCFG;
+import it.finanze.sanita.fse2.ms.srvingestion.dto.UdpDocumentDTO;
+import it.finanze.sanita.fse2.ms.srvingestion.dto.request.SendToUdpDocumentRequestDTO;
 import it.finanze.sanita.fse2.ms.srvingestion.enums.ProcessorOperationEnum;
-import it.finanze.sanita.fse2.ms.srvingestion.exceptions.BusinessException;
-import it.finanze.sanita.fse2.ms.srvingestion.exceptions.ConnectionRefusedException;
 import it.finanze.sanita.fse2.ms.srvingestion.exceptions.DocumentNotFoundException;
 import it.finanze.sanita.fse2.ms.srvingestion.exceptions.EmptyDocumentException;
+import it.finanze.sanita.fse2.ms.srvingestion.exceptions.KafkaException;
 import it.finanze.sanita.fse2.ms.srvingestion.exceptions.OperationException;
+import it.finanze.sanita.fse2.ms.srvingestion.repository.IDocumentRepo;
 import it.finanze.sanita.fse2.ms.srvingestion.repository.entity.StagingDocumentETY;
-import it.finanze.sanita.fse2.ms.srvingestion.repository.mongo.impl.DocumentStagingRepo;
 import it.finanze.sanita.fse2.ms.srvingestion.service.IDocumentSRV;
+import it.finanze.sanita.fse2.ms.srvingestion.service.IKafkaSRV;
 
 /**
  * Document Service Implementation
@@ -39,99 +41,126 @@ import it.finanze.sanita.fse2.ms.srvingestion.service.IDocumentSRV;
 @Service
 public class DocumentSRV implements IDocumentSRV {
 
-    @Autowired
-    private DocumentStagingRepo documentStagingRepo;
+    private IDocumentRepo documentRepo;
+    private ISrvQueryClient srvQueryClient;
+    private IKafkaSRV kafkaService;
+    private IDataProcessorClient dataProcessorClient;
+    private KafkaTopicCFG kafkaTopicCFG;
 
-    @Autowired
-    private transient SrvQueryClient srvQueryClient;
-
-    @Autowired
-    private transient DataProcessorClient dataProcessorClient;
-
-    @Autowired
-    DocumentConverter documentConverter;
+    public DocumentSRV(@Autowired IDocumentRepo documentRepo, @Autowired ISrvQueryClient srvQueryClient,
+            @Autowired IKafkaSRV kafkaService,
+            @Autowired IDataProcessorClient dataProcessorClient, @Autowired KafkaTopicCFG kafkaTopicCFG) {
+        this.documentRepo = documentRepo;
+        this.srvQueryClient = srvQueryClient;
+        this.kafkaService = kafkaService;
+        this.dataProcessorClient = dataProcessorClient;
+        this.kafkaTopicCFG = kafkaTopicCFG;
+    }
 
     @Override
-    public StagingDocumentETY create(final DocumentDTO dto, final String wii)
-            throws OperationException, EmptyDocumentException {
+    public boolean publish(final SendToUdpDocumentRequestDTO dto, final String wii)
+            throws OperationException, EmptyDocumentException, KafkaException {
 
         if (ObjectUtils.isEmpty(dto.getJsonString())) {
             throw new EmptyDocumentException(Constants.Logs.ERROR_EMPTY_DOCUMENT);
         }
 
-        StagingDocumentETY document = new StagingDocumentETY(dto, wii, ProcessorOperationEnum.PUBLISH);
-
-        return documentStagingRepo.save(document);
-    }
-
-    @Override
-    public StagingDocumentETY replace(final DocumentDTO dto, final String wii)
-            throws OperationException, EmptyDocumentException, DocumentNotFoundException {
-
-        boolean exist = srvQueryClient.checkExists(dto.getIdentifier());
-        if (Boolean.FALSE.equals(exist)) {
-            throw new DocumentNotFoundException("Error: document not found!");
-        }
-
-        if (ObjectUtils.isEmpty(dto.getJsonString())) {
-            throw new EmptyDocumentException(Constants.Logs.ERROR_EMPTY_DOCUMENT);
-        }
-
-        StagingDocumentETY document = new StagingDocumentETY(dto, wii, ProcessorOperationEnum.REPLACE);
-        return documentStagingRepo.save(document);
-    }
-
-    @Override
-    public Boolean update(final DocumentDTO dto)
-            throws EmptyDocumentException, DocumentNotFoundException, ConnectionRefusedException, BusinessException {
-
-        boolean exist = srvQueryClient.checkExists(dto.getIdentifier());
-        if (Boolean.FALSE.equals(exist)) {
-            throw new DocumentNotFoundException("Error: document not found!");
-        }
-
-        if (ObjectUtils.isEmpty(dto.getJsonString())) {
-            throw new EmptyDocumentException(Constants.Logs.ERROR_EMPTY_DOCUMENT);
-        }
-
-        dto.setOperation(ProcessorOperationEnum.UPDATE);
-        return dataProcessorClient.sendRequestToDataProcessor(dto);
-
-    }
-
-    @Override
-    public Boolean delete(final String id)
-            throws DocumentNotFoundException, ConnectionRefusedException, BusinessException {
-
-        boolean exist = srvQueryClient.checkExists(id);
-        if (Boolean.FALSE.equals(exist)) {
-            throw new DocumentNotFoundException("Error: document not found!");
-        }
-
-        DocumentDTO dto = DocumentDTO.builder()
-                .identifier(id)
-                .operation(ProcessorOperationEnum.DELETE)
+        StagingDocumentETY document = StagingDocumentETY.builder()
+                .identifier(dto.getIdentifier())
+                .operation(ProcessorOperationEnum.PUBLISH)
+                .rde(dto.getRde())
+                .document(org.bson.Document.parse(dto.getJsonString()))
+                .insertionDate(new Date())
+                .workflowInstanceId(wii)
                 .build();
 
-        return dataProcessorClient.sendRequestToDataProcessor(dto);
+        StagingDocumentETY ety = documentRepo.save(document);
 
+        kafkaService.notifyUdpDataProcessor(kafkaTopicCFG.getIngestionDataProcessorPublicationTopic(), ety.getId(),
+                ProcessorOperationEnum.PUBLISH);
+
+        return true;
     }
 
     @Override
-    public DocumentDTO getDocumentById(String id) throws DocumentNotFoundException {
-        StagingDocumentETY ety = documentStagingRepo.findById(id);
+    public boolean replace(SendToUdpDocumentRequestDTO dto, String wii)
+            throws DocumentNotFoundException, EmptyDocumentException, OperationException, KafkaException {
+
+        boolean exist = srvQueryClient.checkExists(dto.getIdentifier());
+
+        if (Boolean.FALSE.equals(exist)) {
+            throw new DocumentNotFoundException("Error: document not found!");
+        }
+
+        if (ObjectUtils.isEmpty(dto.getJsonString())) {
+            throw new EmptyDocumentException(Constants.Logs.ERROR_EMPTY_DOCUMENT);
+        }
+
+        StagingDocumentETY document = StagingDocumentETY.builder()
+                .identifier(dto.getIdentifier())
+                .operation(ProcessorOperationEnum.REPLACE)
+                .rde(dto.getRde())
+                .document(org.bson.Document.parse(dto.getJsonString()))
+                .insertionDate(new Date())
+                .workflowInstanceId(wii)
+                .build();
+
+        StagingDocumentETY ety = documentRepo.save(document);
+
+        kafkaService.notifyUdpDataProcessor(kafkaTopicCFG.getIngestionDataProcessorGenericTopic(), ety.getId(),
+                ProcessorOperationEnum.REPLACE);
+
+        return true;
+    }
+
+    @Override
+    public boolean update(SendToUdpDocumentRequestDTO dto) {
+
+        UdpDocumentDTO documentDTO = UdpDocumentDTO.builder()
+                .identifier(dto.getIdentifier())
+                .operation(ProcessorOperationEnum.UPDATE)
+                .rde(dto.getRde())
+                .jsonString(dto.getJsonString())
+                .insertionDate(new Date())
+                .build();
+
+        return dataProcessorClient.sendRequestToDataProcessor(documentDTO);
+    }
+
+    @Override
+    public boolean delete(String identifier) throws DocumentNotFoundException {
+
+        UdpDocumentDTO documentDTO = UdpDocumentDTO.builder()
+                .identifier(identifier)
+                .operation(ProcessorOperationEnum.DELETE)
+                .jsonString(null)
+                .insertionDate(new Date())
+                .build();
+
+        boolean exist = srvQueryClient.checkExists(identifier);
+
+        if (Boolean.FALSE.equals(exist)) {
+            throw new DocumentNotFoundException("Error: document not found!");
+        }
+
+        return dataProcessorClient.sendRequestToDataProcessor(documentDTO);
+    }
+
+    @Override
+    public UdpDocumentDTO getDocumentById(String id) throws DocumentNotFoundException {
+        StagingDocumentETY ety = documentRepo.findById(id);
 
         if (ObjectUtils.isEmpty(ety.getId())) {
             throw new DocumentNotFoundException(Constants.Logs.ERROR_DOCUMENT_NOT_FOUND);
         }
 
-        return new DocumentDTO(ety);
+        return new UdpDocumentDTO(ety);
     }
 
     @Override
-    public List<DocumentDTO> getDocuments() {
-        List<StagingDocumentETY> etyList = documentStagingRepo.findAll();
-        return documentConverter.toDtoList(etyList);
+    public List<UdpDocumentDTO> getDocuments() {
+        List<StagingDocumentETY> etyList = documentRepo.findAll();
+        return UdpDocumentDTO.buildListFromEty(etyList);
     }
 
 }

@@ -20,7 +20,7 @@ import it.finanze.sanita.fse2.ms.srvingestion.repository.entity.StagingDocumentE
  * The interface for the Document Repository
  *
  */
-public interface IDocumentStagingRepo {
+public interface IDocumentRepo {
 
     /**
      * Processes a creation or update request on the staging database.

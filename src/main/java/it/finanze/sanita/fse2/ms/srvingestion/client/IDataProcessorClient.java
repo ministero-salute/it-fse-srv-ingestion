@@ -11,7 +11,7 @@
  */
 package it.finanze.sanita.fse2.ms.srvingestion.client;
 
-import it.finanze.sanita.fse2.ms.srvingestion.dto.DocumentDTO;
+import it.finanze.sanita.fse2.ms.srvingestion.dto.UdpDocumentDTO;
 
 /**
  * Interface for Data Processor Client
@@ -27,6 +27,6 @@ public interface IDataProcessorClient {
 	 * @param reqDTO  The DocumentReferenceDTO object to send to the Data Processor Microservice
 	 * @return boolean  A boolean representing whether the request has been successful 
 	 */
-    Boolean sendRequestToDataProcessor(final DocumentDTO reqDTO); 
+	Boolean sendRequestToDataProcessor(final UdpDocumentDTO reqDTO);
 
 }

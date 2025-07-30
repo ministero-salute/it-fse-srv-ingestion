@@ -21,7 +21,7 @@ import lombok.EqualsAndHashCode;
 @EqualsAndHashCode(callSuper = true)
 public class DocumentResponseDTO extends ResponseDTO { 
 
-	//aggiungere iddocument? 
+	private boolean result;
 	
 	public DocumentResponseDTO() {
 		super();

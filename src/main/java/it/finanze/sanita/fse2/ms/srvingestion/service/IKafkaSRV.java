@@ -44,7 +44,8 @@ public interface IKafkaSRV extends Serializable {
 	  * @param key  The message key 
 	  * @throws KafkaException  Generic Kafka Exception 
 	  */
-	void notifyDataProcessor(String topic, String transactionId, ProcessorOperationEnum key) throws KafkaException;
+		void notifyUdpDataProcessor(String topic, String transactionId, ProcessorOperationEnum key)
+				throws KafkaException;
 	
 
 }

@@ -37,7 +37,7 @@ import org.springframework.web.client.RestTemplate;
 import it.finanze.sanita.fse2.ms.srvingestion.client.impl.DataProcessorClient;
 import it.finanze.sanita.fse2.ms.srvingestion.client.impl.SrvQueryClient;
 import it.finanze.sanita.fse2.ms.srvingestion.config.Constants;
-import it.finanze.sanita.fse2.ms.srvingestion.dto.DocumentDTO;
+import it.finanze.sanita.fse2.ms.srvingestion.dto.UdpDocumentDTO;
 import it.finanze.sanita.fse2.ms.srvingestion.dto.response.DocumentResponseDTO;
 import it.finanze.sanita.fse2.ms.srvingestion.dto.response.ResourceExistResDTO;
 import it.finanze.sanita.fse2.ms.srvingestion.enums.ProcessorOperationEnum;
@@ -118,7 +118,7 @@ public class ClientTest {
 		
 		DocumentResponseDTO mockResponseDto = new DocumentResponseDTO(); 
 
-		DocumentDTO document = new DocumentDTO(); 
+		UdpDocumentDTO document = new UdpDocumentDTO();
 		document.setIdentifier(TEST_IDENTIFIER); 
 		document.setOperation(TEST_OPERATION); 
 		document.setJsonString(TEST_JSON_STRING);
@@ -138,7 +138,7 @@ public class ClientTest {
 	@DisplayName("Client Test - Srv Data Processor Connection Refused Exception")
 	void srvDataProcessorExceptionTest() {
 		
-		DocumentDTO document = new DocumentDTO(); 
+		UdpDocumentDTO document = new UdpDocumentDTO();
 		document.setIdentifier(TEST_IDENTIFIER); 
 		document.setOperation(TEST_OPERATION); 
 		document.setJsonString(TEST_JSON_STRING);
@@ -153,7 +153,7 @@ public class ClientTest {
 	@DisplayName("Client Test - Srv Data Processor Business Exception")
 	void srvDataProcessorBusinessExceptionTest() {
 		
-		DocumentDTO document = new DocumentDTO(); 
+		UdpDocumentDTO document = new UdpDocumentDTO();
 		document.setIdentifier(TEST_IDENTIFIER); 
 		document.setOperation(TEST_OPERATION); 
 		document.setJsonString(TEST_JSON_STRING);

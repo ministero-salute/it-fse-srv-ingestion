@@ -14,7 +14,9 @@ package it.finanze.sanita.fse2.ms.srvingestion.dto;
 import static it.finanze.sanita.fse2.ms.srvingestion.utility.ValidationUtility.DEFAULT_STRING_MAX_SIZE;
 import static it.finanze.sanita.fse2.ms.srvingestion.utility.ValidationUtility.DEFAULT_STRING_MIN_SIZE;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -34,7 +36,15 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class DocumentDTO {
+public class UdpDocumentDTO {
+
+    public UdpDocumentDTO(StagingDocumentETY entity) {
+        this.identifier = entity.getIdentifier();
+        this.operation = entity.getOperation();
+        this.jsonString = entity.getDocument().toJson();
+        this.rde = entity.getRde();
+        this.insertionDate = entity.getInsertionDate();
+    }
 
     /**
      * The doc identifier
@@ -69,12 +79,13 @@ public class DocumentDTO {
     @JsonProperty("rde")
     private String rde;
 
-    public DocumentDTO(StagingDocumentETY entity) {
-        this.identifier = entity.getIdentifier();
-        this.operation = entity.getOperation();
-        this.jsonString = entity.getDocument().toJson();
-        this.rde = entity.getRde();
-        this.insertionDate = entity.getInsertionDate();
-    }
+    public static List<UdpDocumentDTO> buildListFromEty(List<StagingDocumentETY> documentEtyList) {
+        List<UdpDocumentDTO> output = new ArrayList<>();
 
+        for (StagingDocumentETY document : documentEtyList) {
+            output.add(new UdpDocumentDTO(document));
+        }
+
+        return output;
+    }
 }

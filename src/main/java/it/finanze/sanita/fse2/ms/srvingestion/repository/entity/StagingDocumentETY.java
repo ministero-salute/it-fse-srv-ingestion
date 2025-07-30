@@ -20,15 +20,19 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 
-import it.finanze.sanita.fse2.ms.srvingestion.dto.DocumentDTO;
+import it.finanze.sanita.fse2.ms.srvingestion.dto.UdpDocumentDTO;
 import it.finanze.sanita.fse2.ms.srvingestion.enums.ProcessorOperationEnum;
 import jakarta.validation.constraints.Size;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Document(collection = "#{@ingestionStagingBean}")
 @Data
+@Builder
 @NoArgsConstructor
+@AllArgsConstructor
 public class StagingDocumentETY {
 
     /**
@@ -76,7 +80,7 @@ public class StagingDocumentETY {
     @Field("rde")
     private String rde;
 
-    public StagingDocumentETY(DocumentDTO dto, String wii, ProcessorOperationEnum operation) {
+    public StagingDocumentETY(UdpDocumentDTO dto, String wii, ProcessorOperationEnum operation) {
         this.identifier = dto.getIdentifier();
         this.operation = operation;
         this.document = org.bson.Document.parse(dto.getJsonString());
